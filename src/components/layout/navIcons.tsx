@@ -1,0 +1,176 @@
+type NavIconProps = {
+  active?: boolean;
+};
+
+const svgProps = {
+  width: 24,
+  height: 24,
+  viewBox: "0 0 24 24",
+  shapeRendering: "geometricPrecision" as const,
+  "aria-hidden": true,
+};
+
+const stroke = {
+  stroke: "currentColor",
+  strokeWidth: 1.8,
+  strokeLinecap: "round" as const,
+  strokeLinejoin: "round" as const,
+};
+
+/**
+ * Instagram-style nav glyphs: outline inactive, filled active.
+ */
+export function HomeIcon({ active = false }: NavIconProps) {
+  const outline =
+    "M12 3.5 3.5 10.5V20.5h6.5v-6h4v6h6.5V10.5L12 3.5Z";
+
+  if (active) {
+    return (
+      <svg {...svgProps}>
+        <path fill="currentColor" d={outline} />
+        <rect x="10" y="14.5" width="4" height="6" fill="#FFFFFF" />
+      </svg>
+    );
+  }
+
+  return (
+    <svg {...svgProps} fill="none">
+      <path d={outline} {...stroke} />
+    </svg>
+  );
+}
+
+export function AskIcon({ active = false }: NavIconProps) {
+  // Rounded speech bubble (no circle+tail slash)
+  const outline =
+    "M4.5 3.5h15A3.5 3.5 0 0 1 23 7v6.5a3.5 3.5 0 0 1-3.5 3.5H10.5L5.5 21.5V17H4.5A3.5 3.5 0 0 1 1 13.5V7A3.5 3.5 0 0 1 4.5 3.5Z";
+
+  if (active) {
+    return (
+      <svg {...svgProps}>
+        <path fill="currentColor" d={outline} />
+      </svg>
+    );
+  }
+
+  return (
+    <svg {...svgProps} fill="none">
+      <path d={outline} {...stroke} />
+    </svg>
+  );
+}
+
+export function KitIcon({ active = false }: NavIconProps) {
+  // Rounded Erlenmeyer / flask — lab test, soft corners
+  const outline =
+    "M9.5 3.5h5v4.5l4 10.5a2 2 0 0 1-1.9 2.5H7.4a2 2 0 0 1-1.9-2.5l4-10.5V3.5Z";
+
+  if (active) {
+    return (
+      <svg {...svgProps}>
+        <path fill="currentColor" d={outline} />
+      </svg>
+    );
+  }
+
+  return (
+    <svg {...svgProps} fill="none">
+      <path d={outline} {...stroke} />
+      <path d="M9.5 3.5h5" {...stroke} />
+    </svg>
+  );
+}
+
+/** Document / full report — Results tab */
+export function ResultsIcon({ active = false }: NavIconProps) {
+  const outline =
+    "M7 3.5h7l4 4v13.5a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V5.5a2 2 0 0 1 2-2Z";
+
+  if (active) {
+    return (
+      <svg {...svgProps}>
+        <path fill="currentColor" d={outline} />
+        <path fill="#FFFFFF" d="M14 3.5v4h4" />
+      </svg>
+    );
+  }
+
+  return (
+    <svg {...svgProps} fill="none">
+      <path d={outline} {...stroke} />
+      <path d="M14 3.5v4h4" {...stroke} />
+    </svg>
+  );
+}
+
+/** Care tab — Depop-style + (care action, not another house) */
+export function CarePlusIcon({ active = false }: NavIconProps) {
+  if (active) {
+    return (
+      <svg {...svgProps}>
+        <circle cx="12" cy="12" r="9" fill="currentColor" />
+        <path
+          fill="#FFFFFF"
+          d="M11 7.5h2v3.5H16.5v2H13V16.5h-2V13H7.5v-2H11V7.5Z"
+        />
+      </svg>
+    );
+  }
+
+  return (
+    <svg {...svgProps} fill="none">
+      <circle cx="12" cy="12" r="9" {...stroke} />
+      <path d="M12 8v8M8 12h8" {...stroke} />
+    </svg>
+  );
+}
+
+export function VetIcon({ active = false }: NavIconProps) {
+  return <CarePlusIcon active={active} />;
+}
+
+export function YouIcon({ active = false }: NavIconProps) {
+  if (active) {
+    return (
+      <svg {...svgProps}>
+        <circle cx="12" cy="7.5" r="3.5" fill="currentColor" />
+        <path
+          fill="currentColor"
+          d="M4.5 20.5c0.5-3.8 3.6-6.5 7.5-6.5s7 2.7 7.5 6.5"
+        />
+      </svg>
+    );
+  }
+
+  return (
+    <svg {...svgProps} fill="none">
+      <circle cx="12" cy="7.5" r="3.5" {...stroke} />
+      <path d="M4.5 20.5c0.5-3.8 3.6-6.5 7.5-6.5s7 2.7 7.5 6.5" {...stroke} />
+    </svg>
+  );
+}
+
+/** Contacts / socials — at-sign */
+export function ContactsIcon({ active = false }: NavIconProps) {
+  if (active) {
+    return (
+      <svg {...svgProps}>
+        <circle cx="12" cy="12" r="9" fill="currentColor" />
+        <path
+          fill="#FFFFFF"
+          d="M12.9 7.2c-2.2 0-3.6 1.5-3.6 3.7 0 2.3 1.5 3.8 3.5 3.8.7 0 1.3-.2 1.7-.5v.2c0 1.1-.6 1.8-1.6 1.8-.8 0-1.3-.4-1.5-1.1l-1.7.3c.4 1.4 1.6 2.2 3.2 2.2 2.1 0 3.4-1.3 3.4-3.5V10.9c0-2.3-1.4-3.7-3.4-3.7zm0 1.6c1 0 1.6.8 1.6 2s-.6 2.1-1.6 2.1-1.7-.9-1.7-2.1.7-2 1.7-2z"
+        />
+      </svg>
+    );
+  }
+
+  return (
+    <svg {...svgProps} fill="none">
+      <circle cx="12" cy="12" r="9" {...stroke} />
+      <path
+        d="M12.2 8.2c-1.6 0-2.7 1.2-2.7 2.9s1.1 2.9 2.6 2.9c.5 0 1-.1 1.3-.4v.1c0 .9-.4 1.4-1.2 1.4-.6 0-1-.3-1.2-.9l-1.5.3c.3 1.2 1.3 1.8 2.7 1.8 1.7 0 2.8-1.1 2.8-2.9V11c0-1.8-1.1-2.8-2.8-2.8zm0 1.4c.8 0 1.3.6 1.3 1.5s-.5 1.6-1.3 1.6-1.3-.7-1.3-1.6.5-1.5 1.3-1.5z"
+        {...stroke}
+      />
+    </svg>
+  );
+}

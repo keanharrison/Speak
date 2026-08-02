@@ -1,0 +1,364 @@
+@import "../styles/themes.css";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html,
+body {
+  max-width: 100vw;
+  background: var(--color-canvas);
+  color: var(--color-ink);
+}
+
+body {
+  font-family: var(--font-inter), system-ui, sans-serif;
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* Shared tab page title — same size + plane on Home / Speak / Care / Profile */
+.page-title {
+  font-size: 28px;
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: -0.025em;
+  color: #0a0a0a;
+}
+
+/* Section headings — “Resume in Speak”, “Past screenings”, etc. */
+.section-title {
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.3;
+  color: #0a0a0a;
+}
+
+/* Eyebrows / muted labels — “Latest results” */
+.section-eyebrow {
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.4;
+  color: #6b6b6b;
+}
+
+/* Hide scrollbars everywhere inside the phone stage; content still scrolls */
+.scrollbar-hide,
+#speak-phone-stage,
+#speak-phone-stage * {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar,
+#speak-phone-stage::-webkit-scrollbar,
+#speak-phone-stage *::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
+/* Ask Speak — infinite suggestion marquee */
+@keyframes ask-marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.ask-marquee-track {
+  display: flex;
+  width: max-content;
+  gap: 0.625rem;
+  animation: ask-marquee 45s linear infinite;
+}
+
+.ask-marquee-track:hover,
+.ask-marquee-track:focus-within {
+  animation-play-state: paused;
+}
+
+/* ── Glass morphism lab (experiment) ─────────────────────────
+   Glass only reads when colorful blurred orbs sit behind it.
+   Do not use these on a flat cream canvas. */
+
+.glass-page-background {
+  background: #0a0a0a;
+  position: relative;
+  overflow: hidden;
+}
+
+.glass-orb-1 {
+  position: absolute;
+  width: 300px;
+  height: 300px;
+  border-radius: 50%;
+  background: #2f6f8c;
+  filter: blur(80px);
+  opacity: 0.55;
+  top: -100px;
+  left: -80px;
+  pointer-events: none;
+}
+
+.glass-orb-2 {
+  position: absolute;
+  width: 250px;
+  height: 250px;
+  border-radius: 50%;
+  background: #b5e0ef;
+  filter: blur(100px);
+  opacity: 0.5;
+  bottom: 50px;
+  right: -60px;
+  pointer-events: none;
+}
+
+.glass-orb-3 {
+  position: absolute;
+  width: 220px;
+  height: 220px;
+  border-radius: 50%;
+  background: #6b7db5;
+  filter: blur(90px);
+  opacity: 0.4;
+  top: 42%;
+  left: 20%;
+  pointer-events: none;
+}
+
+.glass-card {
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border: 0.5px solid rgba(255, 255, 255, 0.2);
+  border-radius: 20px;
+}
+
+/* ── App glass branding (black / grey / white) ───────────────── */
+
+.glass-light-page {
+  position: relative;
+  overflow: hidden;
+  min-height: 100%;
+  background: var(--color-canvas);
+}
+
+/* Soft graph-paper grid (cream onboarding feel) */
+.glass-light-page::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.45;
+  background-image:
+    linear-gradient(rgba(0, 0, 0, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 0, 0, 0.035) 1px, transparent 1px);
+  background-size: 24px 24px;
+  mask-image: linear-gradient(180deg, #000 0%, #000 55%, transparent 100%);
+  -webkit-mask-image: linear-gradient(
+    180deg,
+    #000 0%,
+    #000 55%,
+    transparent 100%
+  );
+}
+
+.glass-light-page::after {
+  content: "";
+  position: absolute;
+  width: 280px;
+  height: 280px;
+  border-radius: 50%;
+  pointer-events: none;
+  filter: blur(80px);
+  background: rgba(255, 255, 255, 0.7);
+  top: -120px;
+  right: -80px;
+  opacity: 0.8;
+}
+
+/* True frosted glass — shine through the body, not only the rim */
+.glass-light-card {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background: linear-gradient(
+    160deg,
+    rgba(255, 255, 255, 0.4) 0%,
+    rgba(255, 255, 255, 0.22) 38%,
+    rgba(255, 255, 255, 0.3) 62%,
+    rgba(255, 255, 255, 0.18) 100%
+  );
+  backdrop-filter: blur(40px) saturate(200%);
+  -webkit-backdrop-filter: blur(40px) saturate(200%);
+  border: none;
+  border-radius: 24px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.18), 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.glass-light-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  z-index: 0;
+  background: linear-gradient(
+    125deg,
+    rgba(255, 255, 255, 0.55) 0%,
+    rgba(255, 255, 255, 0.12) 28%,
+    rgba(255, 255, 255, 0.28) 48%,
+    rgba(255, 255, 255, 0.06) 72%,
+    rgba(255, 255, 255, 0.18) 100%
+  );
+}
+
+.glass-light-card > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* Secondary surfaces — frosted white/grey glass */
+.glass-panel {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background: linear-gradient(
+    160deg,
+    rgba(255, 255, 255, 0.58) 0%,
+    rgba(255, 255, 255, 0.4) 50%,
+    rgba(255, 255, 255, 0.48) 100%
+  );
+  backdrop-filter: blur(32px) saturate(170%);
+  -webkit-backdrop-filter: blur(32px) saturate(170%);
+  border: none;
+  border-radius: 20px;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.06);
+}
+
+.glass-panel::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  z-index: 0;
+  background: linear-gradient(
+    125deg,
+    rgba(255, 255, 255, 0.5) 0%,
+    rgba(255, 255, 255, 0.1) 40%,
+    rgba(255, 255, 255, 0.25) 100%
+  );
+}
+
+.glass-panel > * {
+  position: relative;
+  z-index: 1;
+}
+
+.glass-light-field {
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.62) 0%,
+    rgba(255, 255, 255, 0.45) 100%
+  );
+  backdrop-filter: blur(16px) saturate(160%);
+  -webkit-backdrop-filter: blur(16px) saturate(160%);
+  border: none;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.glass-light-field:focus {
+  box-shadow:
+    0 0 0 2px rgba(255, 255, 255, 0.25),
+    0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+/* Primary CTA — black */
+.glass-light-button {
+  background: rgba(10, 10, 10, 0.92);
+  backdrop-filter: blur(24px) saturate(160%);
+  -webkit-backdrop-filter: blur(24px) saturate(160%);
+  border: none;
+  color: #ffffff;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.28);
+}
+
+.glass-light-button:hover:not(:disabled) {
+  background: rgba(0, 0, 0, 0.96);
+}
+
+.glass-light-button:disabled {
+  opacity: 0.6;
+}
+
+.glass-name-continue {
+  background: rgba(10, 10, 10, 0.92);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.28);
+}
+
+.glass-name-continue:hover:not(:disabled) {
+  background: rgba(0, 0, 0, 0.96);
+}
+
+/* Blinking caret for soft-keyboard / custom typing fields */
+@keyframes typing-caret-blink {
+  0%,
+  49% {
+    opacity: 1;
+  }
+  50%,
+  100% {
+    opacity: 0;
+  }
+}
+
+.typing-caret {
+  display: inline-block;
+  width: 1px;
+  height: 1.15em;
+  flex-shrink: 0;
+  margin-left: 0;
+  margin-right: 0;
+  background: #0a0a0a;
+  vertical-align: text-bottom;
+  animation: typing-caret-blink 1.05s step-end infinite;
+}
+
+/* Secondary CTA — frosted light glass */
+.glass-light-button-secondary {
+  background: rgba(255, 255, 255, 0.48);
+  backdrop-filter: blur(24px) saturate(160%);
+  -webkit-backdrop-filter: blur(24px) saturate(160%);
+  border: none;
+  color: #0a0a0a;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+}
+
+.glass-light-button-secondary:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.58);
+}
+
+/* Tab bar — frosted glass pill, black icons */
+.glass-tab-bar {
+  background: rgba(255, 255, 255, 0.52);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  box-shadow:
+    0 10px 28px rgba(0, 0, 0, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(22px) saturate(180%);
+  -webkit-backdrop-filter: blur(22px) saturate(180%);
+}
+
+
+
+

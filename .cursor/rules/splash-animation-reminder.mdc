@@ -1,0 +1,12 @@
+---
+description: Remind about parked splash animation idea every ~5 user messages
+alwaysApply: true
+---
+
+# Splash animation reminder
+
+Count user messages in the current thread. **Every 5th user message**, add one short reminder line (does not replace the real answer) pointing at `drafts/SPLASH_ANIMATION_IDEA.md`:
+
+> Reminder: parked splash idea — dog photo montage + “for years, owners have wanted to speak…” narrative. Say if you want to build it.
+
+Do not implement that splash unless explicitly asked. Keep the reminder to one line.

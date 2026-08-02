@@ -1,0 +1,40 @@
+/* Speak theme tokens — switch via data-theme on <html> */
+
+/* Theme A — Cream + black (default) */
+[data-theme="cream"] {
+  --color-canvas: #f5f0e8;
+  --color-ink: #0a0a0a;
+  --color-accent: #0a0a0a;
+  --color-green: #2a8a5a;
+  --color-blue: #4a7fa5;
+  --color-muted: #6b6b6b;
+  --color-amber: #c4763a;
+  --color-surface: #ffffff;
+  --color-sky: #b5e0ef;
+}
+
+/* Theme B — Speak Sky (source #B5E0EF) */
+[data-theme="sky"] {
+  --color-canvas: #f0f5f8;
+  --color-ink: #171c1f;
+  --color-accent: #2f6f8c;
+  --color-green: #2a8a5a;
+  --color-blue: #4a8fad;
+  --color-muted: #6e7a84;
+  --color-amber: #b85c4a;
+  --color-surface: #ffffff;
+  --color-sky: #b5e0ef;
+}
+
+/* Theme C — Warm legacy */
+[data-theme="warm"] {
+  --color-canvas: #f5f0e8;
+  --color-ink: #1a1a1a;
+  --color-accent: #c4763a;
+  --color-green: #2a8a5a;
+  --color-blue: #4a7fa5;
+  --color-muted: #777777;
+  --color-amber: #c4763a;
+  --color-surface: #ffffff;
+  --color-sky: #b5e0ef;
+}
