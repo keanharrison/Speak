@@ -20,12 +20,18 @@ export const metadata: Metadata = {
   title: "Speak — At-home pet health screening",
   description:
     "Quarterly at-home screening that catches change early — and helps you show up prepared for your vet.",
+  icons: {
+    icon: "/images/speak-app-icon.png",
+    apple: "/images/speak-app-icon.png",
+  },
 };
 
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
+  /** Prefer resizing the layout when Safari chrome / keyboard shows */
+  interactiveWidget: "resizes-content",
 };
 
 export default function RootLayout({

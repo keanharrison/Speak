@@ -24,11 +24,7 @@ export function HomeRotatingTip({ tips }: HomeRotatingTipProps) {
   if (!tips.length) return null;
 
   return (
-    <section
-      aria-label="Tip"
-      className="mt-5 rounded-[14px] bg-surface px-4 py-4"
-      style={{ border: "0.5px solid rgba(0,0,0,0.08)" }}
-    >
+    <section aria-label="Tip" className="glass-panel mt-5 px-4 py-4">
       <p className="text-[11px] font-medium uppercase tracking-[0.06em] text-muted">
         Tip
       </p>

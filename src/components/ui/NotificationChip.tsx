@@ -14,7 +14,7 @@ export function NotificationChip({
   const isChanged = status === "changed";
 
   return (
-    <div className="rounded-card bg-white px-3.5 py-3">
+    <div className="glass-panel rounded-card px-3.5 py-3">
       <div className="flex items-start gap-2">
         <span
           className={`mt-1.5 h-2 w-2 shrink-0 rounded-full ${

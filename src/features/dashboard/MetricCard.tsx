@@ -1,4 +1,3 @@
-import { brand } from "@/constants/brand";
 import { StatusBadge } from "@/components/ui/StatusBadge";
 import { Sparkline } from "@/features/dashboard/Sparkline";
 import { markerDisplayValue } from "@/lib/marker-ui";
@@ -14,8 +13,7 @@ export function MetricCard({ card, onSelect }: MetricCardProps) {
     <button
       type="button"
       onClick={() => onSelect(card.id)}
-      className="flex min-h-[132px] w-full cursor-pointer flex-col rounded-card bg-surface p-4 text-left transition-opacity hover:opacity-90"
-      style={{ border: brand.cardBorder }}
+      className="glass-panel flex min-h-[132px] w-full cursor-pointer flex-col p-4 text-left transition-opacity hover:opacity-90"
     >
       <p className="text-[11px] text-muted">{card.plainLabel}</p>
       <p className="mt-2 text-[20px] font-semibold tracking-tight text-ink">

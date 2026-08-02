@@ -40,7 +40,7 @@ export default function MorePage() {
           <li key={link.href}>
             <Link
               href={link.href}
-              className="block rounded-card border border-black/[0.07] bg-white p-4"
+              className="glass-panel block p-4"
             >
               <p className="text-[15px] font-medium text-ink">{link.label}</p>
               <p className="mt-1 text-[13px] text-muted">{link.description}</p>

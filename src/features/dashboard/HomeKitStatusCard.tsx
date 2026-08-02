@@ -25,15 +25,12 @@ export function HomeKitStatusCard({
   return (
     <section
       aria-label="Kit status"
-      className={`rounded-[14px] bg-surface px-4 ${compact ? "py-3" : "py-4"} ${
-        featured ? "mt-0" : "mt-0"
-      }`}
-      style={{
-        border: featured
-          ? "0.5px solid rgba(196,118,58,0.45)"
-          : "0.5px solid rgba(0,0,0,0.08)",
-        backgroundColor: featured ? "#FDF3E7" : undefined,
-      }}
+      className={`glass-panel px-4 ${compact ? "py-3" : "py-4"}`}
+      style={
+        featured
+          ? { borderColor: "rgba(196,118,58,0.45)" }
+          : undefined
+      }
     >
       <div className="flex items-baseline justify-between gap-3">
         <h2 className="text-[15px] font-semibold text-ink">{heading}</h2>

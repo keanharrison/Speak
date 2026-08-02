@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { DemoBackArrow } from "@/components/layout/DemoBackArrow";
 import { OpenInSpeak } from "@/features/ask/OpenInSpeak";
 import { CompactMarkerCard } from "@/features/dashboard/CompactMarkerCard";
 import { HomeLatestSummary } from "@/features/dashboard/HomeLatestSummary";
@@ -65,18 +66,14 @@ export function DashboardView({ data }: DashboardViewProps) {
 
   return (
     <div className="relative min-h-full overflow-x-hidden">
+      <DemoBackArrow href="/explore" tone="light" />
       <main
         className="relative z-10 w-full flex-1 px-5 pb-6"
         style={{
-          paddingTop: "max(2.25rem, calc(env(safe-area-inset-top) + 0.65rem))",
+          paddingTop: "max(2.25rem, calc(var(--speak-page-safe-top) + 0.65rem))",
         }}
       >
-        <Link
-          href="/intro"
-          className="inline-flex min-h-[44px] items-center text-[14px] font-medium text-[#0A0A0A]/70 transition-colors hover:text-[#0A0A0A]"
-        >
-          Back
-        </Link>
+        <div className="min-h-[44px]" aria-hidden />
 
         <div className="mt-2 mb-5">
           {firstName ? (

@@ -1,5 +1,5 @@
 import { OpenInSpeak } from "@/features/ask/OpenInSpeak";
-import { PersonAvatar } from "@/components/ui/PersonAvatar";
+import { BaileyAvatar } from "@/components/ui/BaileyAvatar";
 import { StatusBadge } from "@/components/ui/StatusBadge";
 import type { MarkerStatus } from "@/types";
 
@@ -31,7 +31,7 @@ export function HomeLatestSummary({
       <div className="glass-light-card relative z-10 mt-2 overflow-hidden px-4 py-4">
         <div className="flex items-start justify-between gap-3">
           <div className="flex min-w-0 items-start gap-3">
-            <PersonAvatar size="sm" className="mt-0.5" label="Owner" />
+            <BaileyAvatar size="sm" className="mt-0.5" />
             <div className="min-w-0">
               <p className="text-[17px] font-semibold text-[#0A0A0A]">{quarter}</p>
               <p className="mt-0.5 text-[12px] text-[#6b6b6b]">{dateLabel}</p>

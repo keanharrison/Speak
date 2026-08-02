@@ -26,7 +26,7 @@ export function VetView({ data }: VetViewProps) {
     <main
       className="relative z-10 mx-auto w-full flex-1 overflow-x-hidden px-5 pb-6"
       style={{
-        paddingTop: "max(2.25rem, calc(env(safe-area-inset-top) + 0.65rem))",
+        paddingTop: "max(2.25rem, calc(var(--speak-page-safe-top) + 0.65rem))",
       }}
     >
       {/* Spacer matches Home “← Back” row so titles share one plane */}

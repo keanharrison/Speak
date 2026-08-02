@@ -27,7 +27,15 @@ const config: Config = {
         card: brand.radius.card,
       },
       fontFamily: {
-        sans: ["var(--font-inter)", "system-ui", "sans-serif"],
+        sans: [
+          "-apple-system",
+          "BlinkMacSystemFont",
+          "SF Pro Text",
+          "SF Pro Display",
+          "var(--font-inter)",
+          "system-ui",
+          "sans-serif",
+        ],
         intro: ["var(--font-ibm-plex-mono)", "ui-monospace", "monospace"],
       },
       fontSize: {

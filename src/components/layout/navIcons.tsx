@@ -28,7 +28,7 @@ export function HomeIcon({ active = false }: NavIconProps) {
     return (
       <svg {...svgProps}>
         <path fill="currentColor" d={outline} />
-        <rect x="10" y="14.5" width="4" height="6" fill="#FFFFFF" />
+        <rect x="10" y="14.5" width="4" height="6" fill="#0A0A0A" />
       </svg>
     );
   }
@@ -90,7 +90,7 @@ export function ResultsIcon({ active = false }: NavIconProps) {
     return (
       <svg {...svgProps}>
         <path fill="currentColor" d={outline} />
-        <path fill="#FFFFFF" d="M14 3.5v4h4" />
+        <path fill="#0A0A0A" d="M14 3.5v4h4" />
       </svg>
     );
   }
@@ -110,7 +110,7 @@ export function CarePlusIcon({ active = false }: NavIconProps) {
       <svg {...svgProps}>
         <circle cx="12" cy="12" r="9" fill="currentColor" />
         <path
-          fill="#FFFFFF"
+          fill="#0A0A0A"
           d="M11 7.5h2v3.5H16.5v2H13V16.5h-2V13H7.5v-2H11V7.5Z"
         />
       </svg>
@@ -150,27 +150,22 @@ export function YouIcon({ active = false }: NavIconProps) {
   );
 }
 
-/** Contacts / socials — at-sign */
+/** Contacts / socials — Speak “S” only (no circle) */
 export function ContactsIcon({ active = false }: NavIconProps) {
-  if (active) {
-    return (
-      <svg {...svgProps}>
-        <circle cx="12" cy="12" r="9" fill="currentColor" />
-        <path
-          fill="#FFFFFF"
-          d="M12.9 7.2c-2.2 0-3.6 1.5-3.6 3.7 0 2.3 1.5 3.8 3.5 3.8.7 0 1.3-.2 1.7-.5v.2c0 1.1-.6 1.8-1.6 1.8-.8 0-1.3-.4-1.5-1.1l-1.7.3c.4 1.4 1.6 2.2 3.2 2.2 2.1 0 3.4-1.3 3.4-3.5V10.9c0-2.3-1.4-3.7-3.4-3.7zm0 1.6c1 0 1.6.8 1.6 2s-.6 2.1-1.6 2.1-1.7-.9-1.7-2.1.7-2 1.7-2z"
-        />
-      </svg>
-    );
-  }
-
   return (
     <svg {...svgProps} fill="none">
-      <circle cx="12" cy="12" r="9" {...stroke} />
-      <path
-        d="M12.2 8.2c-1.6 0-2.7 1.2-2.7 2.9s1.1 2.9 2.6 2.9c.5 0 1-.1 1.3-.4v.1c0 .9-.4 1.4-1.2 1.4-.6 0-1-.3-1.2-.9l-1.5.3c.3 1.2 1.3 1.8 2.7 1.8 1.7 0 2.8-1.1 2.8-2.9V11c0-1.8-1.1-2.8-2.8-2.8zm0 1.4c.8 0 1.3.6 1.3 1.5s-.5 1.6-1.3 1.6-1.3-.7-1.3-1.6.5-1.5 1.3-1.5z"
-        {...stroke}
-      />
+      <text
+        x="12"
+        y="13"
+        textAnchor="middle"
+        dominantBaseline="central"
+        fill="currentColor"
+        fontSize={active ? "18" : "17"}
+        fontWeight="800"
+        fontFamily="system-ui, -apple-system, BlinkMacSystemFont, sans-serif"
+      >
+        S
+      </text>
     </svg>
   );
 }

@@ -2,12 +2,10 @@
 
 import { FormEvent, useEffect, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { PersonAvatar } from "@/components/ui/PersonAvatar";
+import { BaileyAvatar } from "@/components/ui/BaileyAvatar";
 import { Menu, Mic, SquarePen, X } from "lucide-react";
 import { useTabBarVisibility } from "@/components/layout/TabBarVisibility";
-import { SoftKeyboard } from "@/features/ask/SoftKeyboard";
 import { VoiceNotePanel } from "@/features/ask/VoiceNotePanel";
-import { prefersSoftKeyboard } from "@/lib/device";
 import type { AskMessage, AskPageContent, AskSuggestion } from "@/types";
 
 type AskViewProps = {
@@ -43,7 +41,7 @@ function chatTitleForId(data: AskPageContent, chatId: string | null) {
 
 /**
  * Speak chat — suggested questions + thread.
- * Composer pinned to bottom; rises with soft keyboard.
+ * Composer pinned to bottom; native mobile keyboard (no custom SoftKeyboard).
  */
 export function AskView({ data }: AskViewProps) {
   const searchParams = useSearchParams();
@@ -57,7 +55,6 @@ export function AskView({ data }: AskViewProps) {
   const [threadTitle, setThreadTitle] = useState<string | null>(() =>
     chatTitleForId(data, chatId),
   );
-  const [keyboardOpen, setKeyboardOpen] = useState(false);
   const [composerFocused, setComposerFocused] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [voiceNoteOpen, setVoiceNoteOpen] = useState(false);
@@ -67,7 +64,7 @@ export function AskView({ data }: AskViewProps) {
   const lastAboutRef = useRef<string | null>(aboutTopic);
   const lastChatRef = useRef<string | null>(chatId);
 
-  const showSuggestions = messages.length === 0 && !keyboardOpen;
+  const showSuggestions = messages.length === 0 && !composerFocused;
 
   useEffect(() => {
     if (chatId === lastChatRef.current) return;
@@ -96,44 +93,23 @@ export function AskView({ data }: AskViewProps) {
   }, [aboutTopic, chatId, data.aboutGreeting]);
 
   useEffect(() => {
-    setTabBarVisible(!keyboardOpen && !voiceNoteOpen);
+    setTabBarVisible(!composerFocused && !voiceNoteOpen);
     return () => setTabBarVisible(true);
-  }, [keyboardOpen, voiceNoteOpen, setTabBarVisible]);
+  }, [composerFocused, voiceNoteOpen, setTabBarVisible]);
 
   useEffect(() => {
     threadEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  function openKeyboard() {
-    if (prefersSoftKeyboard()) setKeyboardOpen(true);
-  }
-
-  function dismissKeyboard() {
-    setKeyboardOpen(false);
+  function blurComposer() {
     inputRef.current?.blur();
     setComposerFocused(false);
   }
 
-  /** Soft keyboard only from a direct tap on the composer — not from focus alone. */
   function focusComposer() {
-    openKeyboard();
     inputRef.current?.focus();
     setComposerFocused(true);
   }
-
-  // Leaving the tab/URL bar: drop soft keyboard, keep caret if input still focused.
-  useEffect(() => {
-    const hideSoftOnly = () => setKeyboardOpen(false);
-    const onVis = () => {
-      if (document.visibilityState === "hidden") hideSoftOnly();
-    };
-    window.addEventListener("blur", hideSoftOnly);
-    document.addEventListener("visibilitychange", onVis);
-    return () => {
-      window.removeEventListener("blur", hideSoftOnly);
-      document.removeEventListener("visibilitychange", onVis);
-    };
-  }, []);
 
   function replyForQuestion(question: string): string {
     const match = data.suggestions.find(
@@ -153,7 +129,7 @@ export function AskView({ data }: AskViewProps) {
       { role: "speak", body: replyForQuestion(trimmed) },
     ]);
     setDraft("");
-    dismissKeyboard();
+    blurComposer();
   }
 
   function handleReturn() {
@@ -174,7 +150,7 @@ export function AskView({ data }: AskViewProps) {
     setDraft("");
     setThreadTitle(null);
     setSidebarOpen(false);
-    dismissKeyboard();
+    blurComposer();
   }
 
   function openPastChat(id: string) {
@@ -183,14 +159,14 @@ export function AskView({ data }: AskViewProps) {
     setMessages(chat.messages.map((message) => ({ ...message })));
     setThreadTitle(chat.title);
     setSidebarOpen(false);
-    dismissKeyboard();
+    blurComposer();
   }
 
   return (
     <main
       className="absolute inset-0 z-10 flex flex-col overflow-hidden bg-transparent"
       style={{
-        paddingTop: "max(2.25rem, calc(env(safe-area-inset-top) + 0.65rem))",
+        paddingTop: "max(2.25rem, calc(var(--speak-page-safe-top) + 0.65rem))",
       }}
     >
       {/* Spacer matches Home “← Back” row so titles share one plane */}
@@ -223,7 +199,7 @@ export function AskView({ data }: AskViewProps) {
       <div className="scrollbar-hide min-h-0 flex-1 overflow-y-auto px-5">
         {messages.length === 0 ? (
           <div className="flex h-full min-h-[120px] flex-col items-center justify-center px-4 text-center">
-            <PersonAvatar size="lg" className="mb-4" label="You" />
+            <BaileyAvatar size="lg" className="mb-4" />
             <p className="text-[15px] font-medium text-[#0A0A0A]">
               Ask about Bailey&apos;s results
             </p>
@@ -278,23 +254,9 @@ export function AskView({ data }: AskViewProps) {
         ) : null}
       </div>
 
-      {/* Dismiss soft keyboard — tap above composer/keys to restore nav */}
-      {keyboardOpen ? (
-        <button
-          type="button"
-          className="absolute inset-0 z-20 cursor-default"
-          aria-label="Dismiss keyboard"
-          onClick={dismissKeyboard}
-        />
-      ) : null}
-
-      {/* Composer — pinned to bottom; rises with keyboard */}
+      {/* Composer — pinned to bottom; OS keyboard on real devices */}
       {!voiceNoteOpen ? (
-        <div
-          className={`relative z-30 shrink-0 bg-transparent px-5 pt-1 ${
-            keyboardOpen ? "pb-2" : "pb-[5.5rem]"
-          }`}
-        >
+        <div className="relative z-30 shrink-0 bg-transparent px-5 pb-[4.25rem] pt-1">
           <form onSubmit={handleSubmit}>
             <div
               className="glass-panel relative flex min-h-[48px] cursor-text items-center gap-2 px-3 py-2"
@@ -335,7 +297,7 @@ export function AskView({ data }: AskViewProps) {
                   }
                   if (event.key === "Escape") {
                     event.preventDefault();
-                    dismissKeyboard();
+                    blurComposer();
                   }
                 }}
                 className={`h-full min-w-0 flex-1 bg-transparent pl-1 text-left text-[15px] text-[#0A0A0A] outline-none ${
@@ -347,7 +309,7 @@ export function AskView({ data }: AskViewProps) {
                 aria-label="Voice note"
                 onClick={(event) => {
                   event.stopPropagation();
-                  dismissKeyboard();
+                  blurComposer();
                   setVoiceNoteOpen(true);
                 }}
                 className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#0A0A0A] text-white"
@@ -373,23 +335,6 @@ export function AskView({ data }: AskViewProps) {
           ]);
         }}
       />
-
-      {keyboardOpen ? (
-        <div className="relative z-30 shrink-0">
-          <SoftKeyboard
-            onKey={(key) => {
-              setDraft((prev) => prev + key);
-              inputRef.current?.focus();
-            }}
-            onBackspace={() => {
-              setDraft((prev) => prev.slice(0, -1));
-              inputRef.current?.focus();
-            }}
-            onReturn={handleReturn}
-            onDismiss={dismissKeyboard}
-          />
-        </div>
-      ) : null}
 
       {sidebarOpen ? (
         <div className="absolute inset-0 z-50">

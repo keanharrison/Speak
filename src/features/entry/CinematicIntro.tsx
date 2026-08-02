@@ -101,27 +101,19 @@ const LINES = [
     duration: 2.0,
     file: "04-loop.mp4",
     need: "Motion: googling / phone scroll / watching and waiting",
-    /** Full caption on screen → keep googling 1s → dog + question */
-    afterTypeHoldMs: 1000,
-    /** Ramp music so it’s loud as the question text appears */
-    preLoudMusicMs: 500,
+    /** Full caption → 1.5s → dog + question */
+    afterTypeHoldMs: 1500,
   },
   /**
    * Final dog clip + question together (types like other captions).
-   * Then black → Speak (black absorbs the 0.2s trimmed from this beat).
+   * Then Speak endcard on blurred ocean — no mid-black cut.
    */
   {
-    text: "But what if owners didn't have to guess?",
-    duration: 5.2,
+    text: "But what if we didn't have to guess?",
+    duration: 4.85,
     file: "05-turn.mp4",
     layout: "caption",
-    loudMusic: true,
     need: "Motion: dog looking into lens — slow push-in",
-  },
-  {
-    text: "",
-    duration: 1.0,
-    layout: "black",
   },
 ] as const;
 
@@ -148,28 +140,29 @@ const CLOSENESS_TRIM_END_S = 0.2;
 const CLOSENESS_WALL_S = 1.45 + 1.1 + 3.15;
 
 /** Pre-play greeting (portrait type → Next → landscape play) */
-const GREETING_COPY = `Hello,
+const GREETING_COPY = `Welcome to Speak!
 
-Thank you for your interest in Speak.
+Before you view our product demo, we invite you to watch a brief video.
 
-Before you take a look at our demo, we'd like to show you a brief video.
-
-For the best viewing experience, rotate your phone and turn up your volume.`;
-const GREETING_CHAR_MS = 62;
-/** Extra beat after “Hello,” */
-const GREETING_AFTER_HELLO_MS = 750;
+- Kean & McCoy`;
+const GREETING_CHAR_MS = 42;
+/** Beat after title before body line */
+const GREETING_AFTER_TITLE_MS = 520;
+/** Next appears after typing finishes */
+const GREETING_NEXT_DELAY_MS = 800;
 
 /** Voiceover — place file in /public/audio/ (served on Vercel as a static asset). */
 const AUDIO_SRC = "/audio/intro-vo.m4a?v=20260731i";
-/** Soft abstract backdrop behind the greeting card */
-const GREETING_BG_SRC = "/images/intro/greeting-bg-walk.png";
+/** Front screen + blurred video backdrop */
+const GREETING_BG_SRC = "/images/intro/greeting-bg-front.jpg";
+
+/** Shared type for greeting + captions (system / SF stack) */
+const INTRO_MESSAGE_TYPE =
+  "font-medium leading-relaxed tracking-[-0.01em] text-white";
 /** Skip lead-in on VO (0 = play from start) */
 const AUDIO_START_S = 0;
-/** Music — under VO; lifts hard when the question + dog clip hit */
+/** Music — steady under VO for the whole intro (no swell) */
 const MUSIC_VOLUME = 0.55;
-const MUSIC_QUESTION_VOLUME = 1;
-/** Web Audio boost above element max (1.0) on the question beat */
-const MUSIC_QUESTION_GAIN = 1.85;
 
 /** Caption — white */
 const CAPTION_COLOR = "#FFFFFF";
@@ -178,12 +171,14 @@ const CHAR_MS = 32;
 const PUNCT_PAUSE_MS = 160;
 /** Black hold before Speak — cut straight to brand */
 const BLACK_BEFORE_SPEAK_MS = 0;
-/** Speak visible before fade-out starts */
-const SPEAK_HOLD_MS = 2200;
+/** Speak word alone on blurred ocean (was 2.2s; +2s) */
+const SPEAK_HOLD_MS = 4200;
+/** Logo + Speak wordmark hold after logo appears */
+const SPEAK_LOGO_HOLD_MS = 2000;
 /** Speak opacity transition */
-const SPEAK_FADE_MS = 1400;
-/** Full-screen fade into name page (black → explore) */
-const FADE_TO_NAME_MS = 2400;
+const SPEAK_FADE_MS = 900;
+/** Full-screen fade to black before name page */
+const FADE_TO_NAME_MS = 1600;
 /** Music keeps playing and eases out across the name-page handoff */
 export const MUSIC_OUT_MS = 3600;
 /** How long play/pause feedback stays on screen after a tap */
@@ -216,6 +211,68 @@ function PauseGlyph() {
       <span className="block h-5 w-[5px] rounded-[1px] bg-black" />
       <span className="block h-5 w-[5px] rounded-[1px] bg-black" />
     </span>
+  );
+}
+
+function BackArrowGlyph() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      className="h-5 w-5"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2.25"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden
+    >
+      <path d="M15 18l-6-6 6-6" />
+    </svg>
+  );
+}
+
+function ForwardArrowGlyph() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      className="h-5 w-5"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2.25"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden
+    >
+      <path d="M9 18l6-6-6-6" />
+    </svg>
+  );
+}
+
+/** Shared top inset for intro nav chevrons (below status / notch) */
+const INTRO_ARROW_TOP =
+  "max(2.15rem, calc(var(--speak-page-safe-top) + 1.85rem))";
+
+/** App icon mark — white S on black squircle, no bark lines */
+function SpeakMark({ className = "" }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 100 100"
+      className={className}
+      aria-hidden
+    >
+      <rect width="100" height="100" rx="22" fill="#0A0A0A" />
+      <text
+        x="50"
+        y="68"
+        textAnchor="middle"
+        fill="#FFFFFF"
+        fontFamily="ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', sans-serif"
+        fontSize="64"
+        fontWeight="700"
+      >
+        S
+      </text>
+    </svg>
   );
 }
 
@@ -277,6 +334,7 @@ export function CinematicIntro() {
   const [missing, setMissing] = useState<Record<string, boolean>>({});
   const missingRef = useRef<Record<string, boolean>>({});
   const [speakIn, setSpeakIn] = useState(false);
+  const [speakLogo, setSpeakLogo] = useState(false);
   const [nameFade, setNameFade] = useState(false);
   const [paused, setPaused] = useState(false);
   const [controlFlash, setControlFlash] = useState<ControlFlash>(null);
@@ -331,7 +389,6 @@ export function CinematicIntro() {
   );
 
   const musicFadeRef = useRef<number | null>(null);
-  const musicLoudRef = useRef(false);
 
   const clearMusicFade = useCallback(() => {
     if (musicFadeRef.current != null) {
@@ -376,7 +433,6 @@ export function CinematicIntro() {
 
   const stopVoice = useCallback(() => {
     clearMusicFade();
-    musicLoudRef.current = false;
     setMusicGain(1);
     const audio = audioRef.current;
     if (audio) {
@@ -396,7 +452,6 @@ export function CinematicIntro() {
     const music = getIntroMusic();
     musicRef.current = music;
     if (!music) return;
-    musicLoudRef.current = false;
     setMusicGain(1);
     setMusicVolumeNow(MUSIC_VOLUME);
     music.currentTime = 0;
@@ -613,6 +668,7 @@ export function CinematicIntro() {
         setClipZoom(false);
         activeFileRef.current = null;
         setSpeakIn(false);
+        setSpeakLogo(false);
         setNameFade(false);
         setPhase("black");
         beatTimersRef.current.push(
@@ -630,22 +686,20 @@ export function CinematicIntro() {
             } catch {
               /* ignore */
             }
-            // Hold Speak, then fade logo → name page (portrait)
+            // Speak word → logo+word → full black → name page
             beatTimersRef.current.push(
               window.setTimeout(() => {
                 if (runIdRef.current !== runId) return;
-                setSpeakIn(false);
+                setSpeakLogo(true);
                 beatTimersRef.current.push(
                   window.setTimeout(() => {
                     if (runIdRef.current !== runId) return;
                     clearBeatTimers();
-                    // Stop VO; let music fade out through the black → name handoff
                     const audio = audioRef.current;
                     if (audio) {
                       audio.pause();
                       audio.currentTime = AUDIO_START_S;
                     }
-                    musicLoudRef.current = false;
                     fadeMusicOut(MUSIC_OUT_MS);
                     setPhase("fade");
                     setNameFade(true);
@@ -657,7 +711,7 @@ export function CinematicIntro() {
                     window.setTimeout(() => {
                       router.push("/explore");
                     }, FADE_TO_NAME_MS);
-                  }, SPEAK_FADE_MS),
+                  }, SPEAK_LOGO_HOLD_MS),
                 );
               }, SPEAK_HOLD_MS),
             );
@@ -700,20 +754,8 @@ export function CinematicIntro() {
 
       const snapText =
         "snapText" in next && Boolean((next as { snapText?: boolean }).snapText);
-      const loudMusic =
-        "loudMusic" in next &&
-        Boolean((next as { loudMusic?: boolean }).loudMusic);
-
-      if (loudMusic) {
-        musicLoudRef.current = true;
-        setMusicVolumeNow(MUSIC_QUESTION_VOLUME);
-        setMusicGain(MUSIC_QUESTION_GAIN);
-      }
 
       if (layout === "center") {
-        musicLoudRef.current = true;
-        setMusicVolumeNow(MUSIC_QUESTION_VOLUME);
-        setMusicGain(MUSIC_QUESTION_GAIN);
         typeRunRef.current += 1;
         clearTimers();
         typeResumeRef.current = null;
@@ -729,12 +771,6 @@ export function CinematicIntro() {
         typeResumeRef.current = null;
         setLineText("");
       } else if (afterTypeHoldMs != null) {
-        const preLoudMs =
-          "preLoudMusicMs" in next &&
-          typeof (next as { preLoudMusicMs?: number }).preLoudMusicMs ===
-            "number"
-            ? (next as { preLoudMusicMs: number }).preLoudMusicMs
-            : null;
         typeBeatLine(
           next.text,
           0,
@@ -742,16 +778,6 @@ export function CinematicIntro() {
           pauses,
           () => {
             if (runIdRef.current !== runId || pausedRef.current) return;
-            if (preLoudMs != null && afterTypeHoldMs > preLoudMs) {
-              beatTimersRef.current.push(
-                window.setTimeout(() => {
-                  if (runIdRef.current !== runId || pausedRef.current) return;
-                  musicLoudRef.current = true;
-                  setMusicVolumeNow(MUSIC_QUESTION_VOLUME);
-                  setMusicGain(MUSIC_QUESTION_GAIN);
-                }, afterTypeHoldMs - preLoudMs),
-              );
-            }
             beatTimersRef.current.push(
               window.setTimeout(() => {
                 if (runIdRef.current !== runId || pausedRef.current) return;
@@ -921,10 +947,8 @@ export function CinematicIntro() {
       const music = getIntroMusic();
       musicRef.current = music;
       if (music) {
-        setMusicVolumeNow(
-          musicLoudRef.current ? MUSIC_QUESTION_VOLUME : MUSIC_VOLUME,
-        );
-        setMusicGain(musicLoudRef.current ? MUSIC_QUESTION_GAIN : 1);
+        setMusicVolumeNow(MUSIC_VOLUME);
+        setMusicGain(1);
         void music.play().catch(() => {
           /* ignore */
         });
@@ -1066,12 +1090,12 @@ export function CinematicIntro() {
     clearBeatTimers();
     setNameFade(false);
     setSpeakIn(false);
+    setSpeakLogo(false);
     setLineText("");
     setLineIndex(0);
     setRevealed({});
     setClipZoom(false);
     setOpenReveal(false);
-    musicLoudRef.current = false;
     activeFileRef.current = null;
     setPhase("playing");
     setPaused(false);
@@ -1086,39 +1110,107 @@ export function CinematicIntro() {
     setPhase("idle");
   }, [phase, greetingNextVisible]);
 
-  // Slow greeting type — Next available immediately for editing
+  /** Demo navigation — step back through greeting → play → film */
+  const goBack = useCallback(() => {
+    if (phase === "idle") {
+      setPhase("greeting");
+      return;
+    }
+
+    // playing / speak / fade / black → stop and return to play screen
+    runIdRef.current += 1;
+    typeRunRef.current += 1;
+    clearTimers();
+    clearBeatTimers();
+    clearFlashTimer();
+    stopVoice();
+    pauseVideos();
+    setPaused(false);
+    pausedRef.current = false;
+    setLineText("");
+    setLineIndex(0);
+    setSpeakIn(false);
+    setSpeakLogo(false);
+    setNameFade(false);
+    setOpenReveal(false);
+    setClipZoom(false);
+    setControlFlash(null);
+    setRevealed({});
+    activeFileRef.current = null;
+    setPhase("idle");
+  }, [
+    phase,
+    clearTimers,
+    clearBeatTimers,
+    clearFlashTimer,
+    stopVoice,
+    pauseVideos,
+  ]);
+
+  /** Skip ahead to the name page from the video screen. */
+  const goForward = useCallback(() => {
+    runIdRef.current += 1;
+    typeRunRef.current += 1;
+    clearTimers();
+    clearBeatTimers();
+    clearFlashTimer();
+    stopVoice();
+    pauseVideos();
+    try {
+      sessionStorage.setItem("introSeen", "true");
+    } catch {
+      /* ignore */
+    }
+    router.push("/explore");
+  }, [
+    clearTimers,
+    clearBeatTimers,
+    clearFlashTimer,
+    stopVoice,
+    pauseVideos,
+    router,
+  ]);
+
+  // Greeting typewriter — Next appears when typing finishes
   useEffect(() => {
     if (phase !== "greeting") return;
     let cancelled = false;
     let i = 0;
     setGreetingText("");
     setGreetingDone(false);
-    setGreetingNextVisible(true);
+    setGreetingNextVisible(false);
     const tick = () => {
       if (cancelled) return;
       if (i >= GREETING_COPY.length) {
         setGreetingDone(true);
+        window.setTimeout(() => {
+          if (!cancelled) setGreetingNextVisible(true);
+        }, GREETING_NEXT_DELAY_MS);
         return;
       }
       i += 1;
+
+      // After “Welcome to Speak!” skip the blank line so the caret
+      // lands on the body (one newline only, no empty middle line).
+      const finishedTitle = GREETING_COPY.slice(0, i).endsWith("Speak!");
+      if (finishedTitle && GREETING_COPY[i] === "\n") {
+        i += 1; // keep a single line break
+        while (i < GREETING_COPY.length && GREETING_COPY[i] === "\n") {
+          i += 1; // drop the empty line
+        }
+      }
+
       const next = GREETING_COPY.slice(0, i);
       setGreetingText(next);
       const justTyped = GREETING_COPY[i - 1] ?? "";
-      const afterHelloComma =
-        justTyped === "," && next.trimEnd() === "Hello,";
-      const afterDemoComma =
-        justTyped === "," &&
-        next.includes("our demo,") &&
-        next.endsWith("demo,");
+
       let delay = GREETING_CHAR_MS;
-      if (afterHelloComma) {
-        delay = GREETING_AFTER_HELLO_MS;
-      } else if (afterDemoComma) {
-        delay = GREETING_CHAR_MS + 520;
+      if (finishedTitle) {
+        delay = GREETING_AFTER_TITLE_MS;
       } else if (justTyped === "\n") {
-        delay = GREETING_CHAR_MS + 280;
+        delay = GREETING_CHAR_MS + 160;
       } else if (/[.!]/.test(justTyped)) {
-        delay = GREETING_CHAR_MS + 220;
+        delay = GREETING_CHAR_MS + 260;
       }
       window.setTimeout(tick, delay);
     };
@@ -1145,73 +1237,97 @@ export function CinematicIntro() {
         "openLead" in active &&
         (active as { openLead?: boolean }).openLead,
     );
-  // Keep glass mounted through idle → open black → first clip (no outline flash)
-  const showVideoStage =
-    showIdle || openLeadActive || (showVideo && !hideStageForBeat);
+  const showFilmShell = showIdle || showVideo;
+  const showBlurBg =
+    showFilmShell || phase === "speak" || phase === "fade" || phase === "black";
   const showCaptionUnder = showVideo && activeLayout === "caption";
   const showCenterLine = showVideo && activeLayout === "center";
-  // Mid-film black only — open-lead stays inside the glass stage
+  // Mid-film black only — open-lead stays on the film shell
   const showBlackBeat = showVideo && activeLayout === "black" && !openLeadActive;
   const showControlFlash =
     showVideo &&
     !hideStageForBeat &&
     (controlFlash === "pause" || controlFlash === "play");
+  const showSpeakEnd =
+    phase === "speak" || (phase === "fade" && speakIn && !nameFade);
 
   return (
     <main className="relative flex min-h-0 flex-1 flex-col overflow-hidden bg-black">
       <audio ref={audioRef} src={AUDIO_SRC} preload="auto" />
 
-      {showGreeting ? (
-        <div className="absolute inset-0 z-40 overflow-hidden bg-[#d8e6f4]">
+      {/* Blurred ocean still behind the glass film stage / Speak endcard */}
+      {showBlurBg ? (
+        <>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={GREETING_BG_SRC}
             alt=""
-            className="pointer-events-none absolute inset-0 h-full w-full object-cover object-[center_65%]"
+            className="pointer-events-none absolute inset-0 h-full w-full scale-110 object-cover blur-2xl"
             aria-hidden
           />
           <div
-            className="relative z-10 flex h-full flex-col"
+            className="pointer-events-none absolute inset-0 bg-black/40"
+            aria-hidden
+          />
+        </>
+      ) : null}
+
+      {showGreeting ? (
+        <div className="absolute inset-0 z-40 overflow-hidden bg-[#6a7a88]">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={GREETING_BG_SRC}
+            alt=""
+            className="pointer-events-none absolute inset-0 h-full w-full object-cover object-center"
+            aria-hidden
+          />
+          <div
+            className="pointer-events-none absolute inset-x-0 top-0 h-[52%] bg-gradient-to-b from-black/35 via-black/12 to-transparent"
+            aria-hidden
+          />
+
+          {/* Message centered in the sky half (above the sea line) */}
+          <div
+            className="relative z-10 flex h-[48%] flex-col items-center justify-center px-7"
             style={{
-              paddingTop: "max(7.5rem, calc(env(safe-area-inset-top) + 6.5rem))",
-              paddingBottom: "max(1.25rem, env(safe-area-inset-bottom))",
+              paddingTop: "max(2.5rem, calc(var(--speak-page-safe-top) + 1.5rem))",
               paddingLeft: "max(1.25rem, env(safe-area-inset-left))",
               paddingRight: "max(1.25rem, env(safe-area-inset-right))",
             }}
           >
-            <div className="mx-auto w-full max-w-[38rem]">
-              <div className="relative w-full">
-                <p
-                  className="invisible whitespace-pre-wrap text-left text-[15px] font-medium leading-relaxed tracking-[-0.01em] text-[#0A0A0A] sm:text-[16px]"
-                  aria-hidden
-                >
-                  {GREETING_COPY}
-                </p>
-                <p className="absolute inset-0 whitespace-pre-wrap text-left text-[15px] font-medium leading-relaxed tracking-[-0.01em] text-[#0A0A0A] sm:text-[16px]">
-                  {greetingText}
-                  {greetingText || greetingDone ? (
-                    <span
-                      className="ml-0.5 inline-block h-[1.05em] w-[2px] translate-y-[2px] bg-[#0A0A0A]"
-                      style={{
-                        animation:
-                          "typing-caret-blink 1.05s step-end infinite",
-                      }}
-                      aria-hidden
-                    />
-                  ) : null}
-                </p>
-              </div>
+            <div className="relative w-full max-w-md">
+              <p
+                className={`invisible whitespace-pre-wrap text-center text-[16px] sm:text-[17px] ${INTRO_MESSAGE_TYPE}`}
+                aria-hidden
+              >
+                {GREETING_COPY}
+              </p>
+              <p
+                className={`absolute inset-0 whitespace-pre-wrap text-center text-[16px] sm:text-[17px] ${INTRO_MESSAGE_TYPE}`}
+                style={{ textShadow: "0 1px 14px rgba(0,0,0,0.4)" }}
+              >
+                {greetingText}
+                {greetingText || greetingDone ? (
+                  <span
+                    className="ml-0.5 inline-block h-[1.05em] w-[2px] translate-y-[2px] bg-white"
+                    style={{
+                      animation: "typing-caret-blink 1.05s step-end infinite",
+                    }}
+                    aria-hidden
+                  />
+                ) : null}
+              </p>
             </div>
-            <div className="min-h-0 flex-1" aria-hidden />
           </div>
+
           {greetingNextVisible ? (
             <button
               type="button"
               onClick={goToPlayScreen}
-              className="absolute z-20 inline-flex h-10 items-center justify-center rounded-full bg-white px-5 text-[13px] font-semibold text-black shadow-[0_4px_14px_rgba(0,0,0,0.12)] transition hover:bg-white/92"
+              className="absolute z-20 inline-flex h-10 items-center justify-center rounded-full bg-white px-5 text-[13px] font-semibold text-black shadow-[0_8px_24px_rgba(0,0,0,0.28)] transition hover:bg-white/92"
               style={{
                 right: "max(1.25rem, env(safe-area-inset-right))",
-                bottom: "max(1.25rem, env(safe-area-inset-bottom))",
+                bottom: "max(1.35rem, calc(var(--speak-page-safe-bottom) + 0.75rem))",
               }}
             >
               Next
@@ -1220,40 +1336,40 @@ export function CinematicIntro() {
         </div>
       ) : null}
 
+      {/* Glass film stage over blurred ocean */}
       <div
-        className={`relative flex min-h-0 flex-1 flex-col items-center justify-center gap-3 ${
-          showGreeting ? "pointer-events-none opacity-0" : ""
+        className={`absolute inset-0 z-10 flex flex-col items-center justify-center gap-3 px-3 ${
+          showFilmShell && !showGreeting
+            ? ""
+            : "pointer-events-none opacity-0"
         }`}
         style={{
-          paddingTop: "max(0.5rem, env(safe-area-inset-top))",
-          paddingBottom: "max(0.5rem, env(safe-area-inset-bottom))",
-          paddingLeft: "max(0.75rem, env(safe-area-inset-left))",
-          paddingRight: "max(0.75rem, env(safe-area-inset-right))",
+          paddingTop: "max(3.25rem, calc(var(--speak-page-safe-top) + 2.5rem))",
+          paddingBottom:
+            "max(1.25rem, calc(var(--speak-page-safe-bottom) + 0.75rem))",
         }}
       >
-        {/* Playing stage — glass frame + reserved caption band */}
         <div
-          className={`relative aspect-[16/9] w-[min(72%,30rem)] max-h-[calc(100%-4.5rem)] overflow-hidden rounded-[16px] sm:rounded-[20px] group-data-[phone-orientation=portrait]/phone:w-[calc(100%-2.25rem)] group-data-[phone-orientation=portrait]/phone:max-w-none ${
-            showVideoStage
-              ? ""
-              : "pointer-events-none absolute opacity-0"
+          className={`relative aspect-[16/9] w-full max-w-[40rem] max-h-[min(58vh,28rem)] overflow-hidden rounded-[18px] sm:rounded-[22px] group-data-[phone-orientation=portrait]/phone:max-h-[min(42vh,22rem)] group-data-[phone-orientation=portrait]/phone:w-[calc(100%-0.5rem)] group-data-[phone-orientation=portrait]/phone:max-w-none ${
+            showFilmShell ? "" : "pointer-events-none absolute opacity-0"
           }`}
           style={{
-            border: "1px solid rgba(255,255,255,0.28)",
-            background:
-              "linear-gradient(145deg, rgba(255,255,255,0.14) 0%, rgba(255,255,255,0.04) 45%, rgba(0,0,0,0.25) 100%)",
+            border: "0.5px solid rgba(255,255,255,0.55)",
+            background: "rgba(255,255,255,0.12)",
             boxShadow:
-              "0 12px 48px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.35), inset 0 -1px 0 rgba(255,255,255,0.06)",
-            backdropFilter: "blur(18px) saturate(160%)",
-            WebkitBackdropFilter: "blur(18px) saturate(160%)",
+              "0 20px 50px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.65), inset 0 -1px 0 rgba(255,255,255,0.12)",
+            backdropFilter: "blur(28px) saturate(170%)",
+            WebkitBackdropFilter: "blur(28px) saturate(170%)",
           }}
         >
-          <div className="absolute inset-[1px] overflow-hidden rounded-[15px] sm:rounded-[19px] bg-black">
+          <div className="absolute inset-[1px] overflow-hidden rounded-[17px] sm:rounded-[21px] bg-black/80">
             <div
               className="absolute inset-0"
               style={{
-                opacity: openReveal ? 1 : 0,
-                transition: `opacity ${OPEN_REVEAL_MS}ms ease-out`,
+                opacity: showIdle ? 1 : openReveal ? 1 : 0,
+                transition: showIdle
+                  ? undefined
+                  : `opacity ${OPEN_REVEAL_MS}ms ease-out`,
               }}
             >
               {VIDEO_FILES.map((file) => {
@@ -1298,7 +1414,7 @@ export function CinematicIntro() {
             </div>
 
             {showIdle ? (
-              <div className="absolute inset-0 z-40 flex items-center justify-center bg-black">
+              <div className="absolute inset-0 z-40 flex items-center justify-center">
                 <button
                   type="button"
                   onClick={startIntro}
@@ -1341,10 +1457,10 @@ export function CinematicIntro() {
 
             {showVideo && activeMissing && active ? (
               <div className="pointer-events-none absolute inset-0 z-30 flex flex-col items-center justify-center gap-2 px-6 text-center">
-                <p className="font-intro text-[11px] uppercase tracking-[0.2em] text-white/35">
+                <p className="text-[11px] uppercase tracking-[0.2em] text-white/35">
                   {(activeFile ?? "").replace(".mp4", "")} · awaiting upload
                 </p>
-                <p className="font-intro max-w-xs text-[11px] leading-relaxed text-white/25">
+                <p className="max-w-xs text-[11px] leading-relaxed text-white/25">
                   {"need" in active ? active.need : ""}
                 </p>
               </div>
@@ -1352,20 +1468,50 @@ export function CinematicIntro() {
           </div>
         </div>
 
-        {/* Caption band always reserved while stage is up — prevents vertical jump */}
-        {showVideoStage ? (
-          <div className="flex w-full shrink-0 justify-center px-2">
+        {/* Captions under the glass stage — same type as greeting */}
+        {showFilmShell ? (
+          <div className="flex w-full shrink-0 justify-center px-3">
             <p
-              className="font-intro min-h-[2.75em] max-w-[min(22rem,92%)] text-center text-[12px] font-medium leading-snug tracking-wide sm:text-[13px]"
+              className={`min-h-[2.75em] max-w-[min(24rem,94%)] text-center text-[16px] sm:text-[17px] ${INTRO_MESSAGE_TYPE}`}
               style={{
                 color: CAPTION_COLOR,
                 visibility: showCaptionUnder ? "visible" : "hidden",
+                textShadow: "0 1px 14px rgba(0,0,0,0.55)",
               }}
               aria-hidden={!showCaptionUnder}
             >
               {showCaptionUnder ? lineText || "\u00a0" : "\u00a0"}
             </p>
           </div>
+        ) : null}
+
+        {(showIdle || showVideo) && !showGreeting ? (
+          <>
+            <button
+              type="button"
+              onClick={goBack}
+              aria-label="Back"
+              className="absolute z-[60] flex h-10 w-10 items-center justify-center rounded-full text-white/90 transition hover:bg-white/15"
+              style={{
+                top: INTRO_ARROW_TOP,
+                left: "max(0.65rem, env(safe-area-inset-left))",
+              }}
+            >
+              <BackArrowGlyph />
+            </button>
+            <button
+              type="button"
+              onClick={goForward}
+              aria-label="Skip to name"
+              className="absolute z-[60] flex h-10 w-10 items-center justify-center rounded-full text-white/90 transition hover:bg-white/15"
+              style={{
+                top: INTRO_ARROW_TOP,
+                right: "max(0.65rem, env(safe-area-inset-right))",
+              }}
+            >
+              <ForwardArrowGlyph />
+            </button>
+          </>
         ) : null}
       </div>
 
@@ -1384,8 +1530,8 @@ export function CinematicIntro() {
         <div
           className="absolute inset-0 z-30 flex items-center justify-center bg-black"
           style={{
-            paddingTop: "max(1rem, env(safe-area-inset-top))",
-            paddingBottom: "max(1rem, env(safe-area-inset-bottom))",
+            paddingTop: "max(1rem, var(--speak-page-safe-top))",
+            paddingBottom: "max(1rem, var(--speak-page-safe-bottom))",
             paddingLeft: "max(1.25rem, env(safe-area-inset-left))",
             paddingRight: "max(1.25rem, env(safe-area-inset-right))",
           }}
@@ -1397,7 +1543,7 @@ export function CinematicIntro() {
             onClick={togglePause}
           />
           <p
-            className="pointer-events-none font-intro max-w-[min(36rem,92%)] text-center text-[20px] font-medium leading-snug tracking-wide sm:text-[26px]"
+            className={`pointer-events-none max-w-[min(36rem,92%)] text-center text-[20px] sm:text-[26px] ${INTRO_MESSAGE_TYPE}`}
             style={{ color: CAPTION_COLOR }}
           >
             {lineText || "\u00a0"}
@@ -1405,26 +1551,52 @@ export function CinematicIntro() {
         </div>
       ) : null}
 
-      {phase === "speak" || (phase === "fade" && speakIn) ? (
+      {showSpeakEnd ? (
         <div
-          className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-black"
+          className="absolute inset-0 z-20 flex flex-col items-center justify-center"
           style={{
-            paddingTop: "max(1rem, env(safe-area-inset-top))",
-            paddingBottom: "max(1rem, env(safe-area-inset-bottom))",
+            paddingTop: "max(1rem, var(--speak-page-safe-top))",
+            paddingBottom: "max(1rem, var(--speak-page-safe-bottom))",
             paddingLeft: "max(1.25rem, env(safe-area-inset-left))",
             paddingRight: "max(1.25rem, env(safe-area-inset-right))",
           }}
         >
-          <p
-            className="text-[48px] font-bold tracking-tight text-white sm:text-[72px]"
+          <button
+            type="button"
+            onClick={goBack}
+            aria-label="Back"
+            className="absolute z-30 flex h-10 w-10 items-center justify-center rounded-full text-white/90 transition hover:bg-white/15"
             style={{
-              fontFamily: "Arial, Helvetica, sans-serif",
+              top: INTRO_ARROW_TOP,
+              left: "max(0.65rem, env(safe-area-inset-left))",
+            }}
+          >
+            <BackArrowGlyph />
+          </button>
+          <div
+            className="flex flex-col items-center"
+            style={{
               opacity: speakIn ? 1 : 0,
               transition: `opacity ${SPEAK_FADE_MS}ms ease-in-out`,
             }}
           >
-            Speak
-          </p>
+            <div
+              style={{
+                opacity: speakLogo ? 1 : 0,
+                transform: speakLogo ? "translateY(0)" : "translateY(8px)",
+                transition:
+                  "opacity 700ms cubic-bezier(0.22, 1, 0.36, 1), transform 700ms cubic-bezier(0.22, 1, 0.36, 1)",
+                marginBottom: speakLogo ? "1.1rem" : 0,
+                height: speakLogo ? undefined : 0,
+                overflow: "hidden",
+              }}
+            >
+              <SpeakMark className="h-[4.5rem] w-[4.5rem] sm:h-[5.5rem] sm:w-[5.5rem]" />
+            </div>
+            <p className="text-[48px] font-bold tracking-tight text-white sm:text-[72px]">
+              Speak
+            </p>
+          </div>
         </div>
       ) : null}
 

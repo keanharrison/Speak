@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { BaileyAvatar } from "@/components/ui/BaileyAvatar";
 import { PersonAvatar } from "@/components/ui/PersonAvatar";
 import { StatusBadge } from "@/components/ui/StatusBadge";
 import type { YouPageContent } from "@/types";
@@ -11,7 +12,7 @@ type YouViewProps = {
 
 type Tab = "pet" | "owner";
 
-/** iOS Settings-style switch */
+/** Clean iOS Settings switch — lime on / grey off, no clipped “tail” */
 function AppleSwitch({
   checked,
   label,
@@ -28,17 +29,17 @@ function AppleSwitch({
       aria-checked={checked}
       aria-label={label}
       onClick={onChange}
-      className="relative h-[31px] w-[51px] shrink-0 rounded-full transition-colors duration-200 ease-out"
+      className="relative isolate h-[31px] w-[51px] shrink-0 overflow-visible rounded-full border-0 p-0 transition-colors duration-200 ease-out"
       style={{
         backgroundColor: checked ? "#34C759" : "#E9E9EB",
       }}
     >
       <span
-        className="absolute top-[2px] h-[27px] w-[27px] rounded-full bg-white transition-transform duration-200 ease-out"
+        aria-hidden
+        className="pointer-events-none absolute left-[2px] top-[2px] block h-[27px] w-[27px] rounded-full bg-white transition-transform duration-200 ease-out"
         style={{
-          transform: checked ? "translateX(22px)" : "translateX(2px)",
-          boxShadow:
-            "0 3px 8px rgba(0,0,0,0.15), 0 1px 1px rgba(0,0,0,0.16)",
+          transform: checked ? "translateX(20px)" : "translateX(0)",
+          boxShadow: "0 3px 8px rgba(0,0,0,0.15), 0 1px 1px rgba(0,0,0,0.06)",
         }}
       />
     </button>
@@ -67,14 +68,14 @@ export function YouView({ data }: YouViewProps) {
     <main
       className="relative z-10 mx-auto w-full flex-1 overflow-x-hidden px-5 pb-6"
       style={{
-        paddingTop: "max(2.25rem, calc(env(safe-area-inset-top) + 0.65rem))",
+        paddingTop: "max(2.25rem, calc(var(--speak-page-safe-top) + 0.65rem))",
       }}
     >
       <div className="min-h-[44px]" aria-hidden />
       <h1 className="page-title mt-2">{data.title}</h1>
 
       <div
-        className="glass-panel mt-5 flex rounded-full p-1"
+        className="glass-segment-track mt-5 flex rounded-full p-1"
         role="tablist"
         aria-label="Profile sections"
       >
@@ -106,12 +107,7 @@ export function YouView({ data }: YouViewProps) {
         <div className="mt-6 flex flex-col gap-4">
           <section className="glass-panel overflow-hidden px-4 py-4">
             <div className="flex items-center gap-3">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src="/images/reference/labrador-smile.png"
-                alt=""
-                className="h-14 w-14 shrink-0 rounded-full object-cover"
-              />
+              <BaileyAvatar size="md" />
               <h2 className="text-[20px] font-semibold tracking-tight text-[#0A0A0A]">
                 {pet.title}
               </h2>
@@ -207,7 +203,7 @@ export function YouView({ data }: YouViewProps) {
             </dl>
           </section>
 
-          <section className="overflow-hidden rounded-[14px] bg-white">
+          <section className="glass-panel overflow-hidden">
             <h3 className="section-title px-4 pt-4">{data.notificationsHeading}</h3>
             <ul className="mt-1">
               {data.notifications.map((pref, i) => (

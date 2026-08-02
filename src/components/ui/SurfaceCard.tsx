@@ -1,5 +1,4 @@
 import type { ReactNode } from "react";
-import { brand } from "@/constants/brand";
 
 type SurfaceCardProps = {
   children: ReactNode;
@@ -12,12 +11,5 @@ export function SurfaceCard({
   className = "",
   as: Tag = "div",
 }: SurfaceCardProps) {
-  return (
-    <Tag
-      className={`rounded-card bg-surface ${className}`}
-      style={{ border: brand.cardBorder }}
-    >
-      {children}
-    </Tag>
-  );
+  return <Tag className={`glass-panel ${className}`}>{children}</Tag>;
 }

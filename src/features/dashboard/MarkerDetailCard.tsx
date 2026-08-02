@@ -12,10 +12,7 @@ type MarkerDetailCardProps = {
 /** Marker row on Home — consistent badge + reading + Open in Speak. */
 export function MarkerDetailCard({ card, onSelect }: MarkerDetailCardProps) {
   return (
-    <div
-      className="relative w-full rounded-[14px] bg-surface px-4 py-4 text-left"
-      style={{ border: "0.5px solid rgba(0,0,0,0.08)" }}
-    >
+    <div className="glass-panel relative w-full px-4 py-4 text-left">
       <button
         type="button"
         onClick={onSelect ? () => onSelect(card.id) : undefined}

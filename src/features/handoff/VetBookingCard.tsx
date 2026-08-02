@@ -4,10 +4,7 @@ export function VetBookingCard() {
   const appt = vetAppointment;
 
   return (
-    <article
-      className="rounded-[14px] bg-surface px-4 py-5"
-      style={{ border: "0.5px solid rgba(0,0,0,0.08)" }}
-    >
+    <article className="glass-panel px-4 py-5">
       <p className="text-[12px] font-medium uppercase tracking-[0.06em] text-accent">
         Clinic on file
       </p>

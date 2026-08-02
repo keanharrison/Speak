@@ -11,7 +11,7 @@ export default function EntryLayout({
 }>) {
   return (
     <PhoneFrame>
-      <div className="scrollbar-hide flex min-h-0 flex-1 flex-col overflow-y-auto">
+      <div className="scrollbar-hide flex h-full min-h-0 flex-1 flex-col overflow-y-auto overscroll-y-contain">
         {children}
       </div>
     </PhoneFrame>

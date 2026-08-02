@@ -1,30 +1,104 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { usePathname } from "next/navigation";
-import { RotateCw } from "lucide-react";
 
 type PhoneFrameProps = {
   children: React.ReactNode;
 };
 
 /**
- * iPhone frame for laptop demos.
- * Desktop circular-arrow control toggles portrait ↔ landscape (manual only).
- * Strips the bezel on real phones (portrait or landscape).
+ * Pin the demo to iOS Safari’s *visible* area:
+ * below the Dynamic Island, above the Safari toolbar / keyboard.
+ *
+ * Uses VisualViewport height + offsetTop (not 100vh/dvh alone).
+ * Bottom chrome gap = layoutHeight − vv.height − vv.offsetTop.
+ * @see https://developer.mozilla.org/en-US/docs/Web/API/Visual_Viewport_API
+ */
+function useSpeakViewport(enabled: boolean) {
+  useEffect(() => {
+    const root = document.documentElement;
+    const body = document.body;
+
+    if (!enabled) {
+      root.classList.remove("speak-device");
+      root.style.removeProperty("--speak-app-height");
+      root.style.removeProperty("--speak-app-top");
+      root.style.removeProperty("--speak-app-bottom-gap");
+      body.style.removeProperty("overflow");
+      body.style.removeProperty("position");
+      body.style.removeProperty("width");
+      body.style.removeProperty("height");
+      body.style.removeProperty("touch-action");
+      return;
+    }
+
+    root.classList.add("speak-device");
+
+    const sync = () => {
+      const vv = window.visualViewport;
+      const layoutH = root.clientHeight || window.innerHeight;
+
+      if (!vv) {
+        root.style.setProperty("--speak-app-height", "100svh");
+        root.style.setProperty("--speak-app-top", "0px");
+        root.style.setProperty("--speak-app-bottom-gap", "0px");
+        return;
+      }
+
+      const height = Math.max(1, Math.round(vv.height));
+      const top = Math.max(0, Math.round(vv.offsetTop));
+      const bottomGap = Math.max(0, Math.round(layoutH - height - top));
+
+      root.style.setProperty("--speak-app-height", `${height}px`);
+      root.style.setProperty("--speak-app-top", `${top}px`);
+      root.style.setProperty("--speak-app-bottom-gap", `${bottomGap}px`);
+    };
+
+    // Lock document scroll — only #speak-phone-stage children scroll
+    body.style.overflow = "hidden";
+    body.style.position = "fixed";
+    body.style.width = "100%";
+    body.style.height = "100%";
+    body.style.touchAction = "manipulation";
+
+    sync();
+    const vv = window.visualViewport;
+    vv?.addEventListener("resize", sync);
+    vv?.addEventListener("scroll", sync);
+    window.addEventListener("resize", sync);
+    window.addEventListener("orientationchange", sync);
+
+    // iOS sometimes settles insets a tick after chrome show/hide
+    const settle = window.setTimeout(sync, 150);
+
+    return () => {
+      window.clearTimeout(settle);
+      vv?.removeEventListener("resize", sync);
+      vv?.removeEventListener("scroll", sync);
+      window.removeEventListener("resize", sync);
+      window.removeEventListener("orientationchange", sync);
+      root.classList.remove("speak-device");
+      root.style.removeProperty("--speak-app-height");
+      root.style.removeProperty("--speak-app-top");
+      root.style.removeProperty("--speak-app-bottom-gap");
+      body.style.removeProperty("overflow");
+      body.style.removeProperty("position");
+      body.style.removeProperty("width");
+      body.style.removeProperty("height");
+      body.style.removeProperty("touch-action");
+    };
+  }, [enabled]);
+}
+
+/**
+ * iPhone frame for laptop demos — always portrait (same seat as every page).
+ * Strips the bezel on real phones.
  */
 export function PhoneFrame({ children }: PhoneFrameProps) {
-  const pathname = usePathname();
-  const isIntro = pathname === "/intro";
-  const [landscape, setLandscape] = useState(false);
   const [isRealPhone, setIsRealPhone] = useState(false);
   const [deviceTall, setDeviceTall] = useState(false);
 
-  useEffect(() => {
-    if (!isIntro) {
-      setLandscape(false);
-    }
-  }, [isIntro]);
+  useSpeakViewport(isRealPhone);
 
   useEffect(() => {
     const sync = () => {
@@ -46,33 +120,27 @@ export function PhoneFrame({ children }: PhoneFrameProps) {
   }, []);
 
   const shellClass = isRealPhone
-    ? "relative flex h-dvh w-full flex-col overflow-hidden bg-[#e8e8e8]"
-    : landscape
-      ? "relative flex h-[390px] max-h-[calc(100dvh-5rem)] w-[844px] max-w-[calc(100dvw-3rem)] flex-col overflow-hidden rounded-[42px] border-[10px] border-black bg-[#e8e8e8] shadow-[0_25px_50px_-12px_rgba(0,0,0,0.35)]"
-      : "relative flex h-[844px] max-h-[calc(100dvh-3rem)] w-[390px] max-w-full flex-col overflow-hidden rounded-[54px] border-[10px] border-black bg-[#e8e8e8] shadow-[0_25px_50px_-12px_rgba(0,0,0,0.35)]";
+    ? "speak-phone-shell--device"
+    : "relative flex h-[844px] max-h-[calc(100dvh-3rem)] w-[390px] max-w-full flex-col overflow-hidden rounded-[54px] border-[10px] border-black bg-[#e8e8e8] shadow-[0_25px_50px_-12px_rgba(0,0,0,0.35)]";
 
   const phoneOrientation = isRealPhone
     ? deviceTall
       ? "portrait"
       : "landscape"
-    : landscape
-      ? "landscape"
-      : "portrait";
+    : "portrait";
 
   return (
     <div
-      className={`flex min-h-dvh flex-col items-center justify-center gap-6 overflow-x-hidden p-6 ${
-        isRealPhone ? "bg-canvas p-0" : "bg-[#cfcfcf]"
-      }`}
+      className={
+        isRealPhone
+          ? "speak-phone-root--device"
+          : "flex min-h-dvh flex-col items-center justify-center overflow-x-hidden bg-[#cfcfcf] p-6"
+      }
     >
       <div className={shellClass}>
         {!isRealPhone ? (
           <div
-            className={`pointer-events-none absolute z-50 rounded-full bg-black ${
-              landscape
-                ? "left-2 top-1/2 h-[120px] w-7 -translate-y-1/2"
-                : "left-1/2 top-2 h-7 w-[120px] -translate-x-1/2"
-            }`}
+            className="pointer-events-none absolute left-1/2 top-2 z-50 h-7 w-[120px] -translate-x-1/2 rounded-full bg-black"
             aria-hidden
           />
         ) : null}
@@ -80,25 +148,12 @@ export function PhoneFrame({ children }: PhoneFrameProps) {
         <div
           id="speak-phone-stage"
           data-phone-orientation={phoneOrientation}
-          className="group/phone relative flex min-h-0 flex-1 flex-col overflow-x-hidden"
+          data-real-phone={isRealPhone ? "true" : "false"}
+          className="group/phone relative flex h-full min-h-0 w-full flex-1 flex-col overflow-hidden"
         >
           {children}
         </div>
       </div>
-
-      {isIntro && !isRealPhone ? (
-        <button
-          type="button"
-          onClick={() => setLandscape((v) => !v)}
-          aria-label={
-            landscape ? "Switch phone to portrait" : "Switch phone to landscape"
-          }
-          title="Rotate phone"
-          className="mt-1 inline-flex h-10 w-10 items-center justify-center rounded-full bg-white text-black shadow-[0_4px_16px_rgba(0,0,0,0.18)] transition hover:bg-white/92"
-        >
-          <RotateCw className="h-4 w-4" strokeWidth={2.25} />
-        </button>
-      ) : null}
     </div>
   );
 }
