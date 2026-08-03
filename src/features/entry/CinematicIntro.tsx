@@ -149,7 +149,7 @@ const GREETING_CHAR_MS = 55;
 /** Beat after title before body line */
 const GREETING_AFTER_TITLE_MS = 520;
 /** Pause after “product demo,” before “we invite…” */
-const GREETING_BEFORE_INVITE_MS = 1500;
+const GREETING_BEFORE_INVITE_MS = 800;
 /** Next appears after typing finishes */
 const GREETING_NEXT_DELAY_MS = 800;
 /** Marker — pause once this prefix has been typed */
