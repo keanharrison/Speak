@@ -73,7 +73,7 @@ export function DashboardView({ data }: DashboardViewProps) {
           paddingTop: "max(0.45rem, calc(var(--speak-page-safe-top) + 0.2rem))",
         }}
       >
-        <div className="mt-8 mb-4">
+        <div className="mt-14 mb-4">
           {firstName ? (
             <h1 className="page-title">Hi, {firstName}</h1>
           ) : (

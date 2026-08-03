@@ -486,10 +486,13 @@ body {
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
   user-select: none;
+  transition: background-color 40ms linear, transform 40ms linear;
+  will-change: transform;
 }
 
 .speak-soft-key:active {
   background: #adb3bc;
+  transform: scale(0.96);
 }
 
 .speak-soft-key--action {
@@ -499,6 +502,7 @@ body {
 
 .speak-soft-key--action:active {
   background: #ffffff;
+  transform: scale(0.96);
 }
 
 .speak-soft-key--active {

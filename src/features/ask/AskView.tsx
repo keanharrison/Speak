@@ -260,7 +260,7 @@ export function AskView({ data }: AskViewProps) {
       {!voiceNoteOpen ? (
         <div
           className={`relative z-30 shrink-0 bg-transparent pt-1 ${
-            showKeyboard ? "pb-2" : "pb-[4.25rem]"
+            showKeyboard ? "pb-2" : "pb-[6.25rem]"
           }`}
           onClick={(event) => event.stopPropagation()}
         >
