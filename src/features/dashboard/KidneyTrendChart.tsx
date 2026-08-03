@@ -41,7 +41,7 @@ export function KidneyTrendChart({
   const refBottomY = toY(chart.referenceMin);
 
   return (
-    <section className={`glass-panel mt-5 ${compact ? "p-3.5" : "p-4"}`}>
+    <section className={`glass-panel mt-6 ${compact ? "p-3.5" : "p-4"}`}>
       <h2 className="text-[15px] font-semibold tracking-tight text-[#0A0A0A]">
         {chart.title}
       </h2>

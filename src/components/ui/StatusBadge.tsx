@@ -13,10 +13,16 @@ export function StatusBadge({ status, onGlass = false }: StatusBadgeProps) {
 
   if (onGlass) {
     return (
-      <span className="inline-flex items-center gap-1.5 rounded-full bg-black/10 px-2.5 py-1 text-[11px] font-medium text-[#0A0A0A]">
+      <span
+        className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-medium ${
+          isChanged
+            ? "bg-[#C62828]/15 text-[#C62828]"
+            : "bg-[#2A8A5A]/15 text-[#2A8A5A]"
+        }`}
+      >
         <span
           className={`h-1.5 w-1.5 rounded-full ${
-            isChanged ? "bg-[#0A0A0A]" : "bg-[#2A8A5A]"
+            isChanged ? "bg-[#C62828]" : "bg-[#2A8A5A]"
           }`}
           aria-hidden
         />
@@ -29,13 +35,13 @@ export function StatusBadge({ status, onGlass = false }: StatusBadgeProps) {
     <span
       className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-medium ${
         isChanged
-          ? "bg-black/10 text-[#0A0A0A]"
-          : "bg-[#2A8A5A]/10 text-success"
+          ? "bg-[#C62828]/12 text-[#C62828]"
+          : "bg-[#2A8A5A]/12 text-[#2A8A5A]"
       }`}
     >
       <span
         className={`h-1.5 w-1.5 rounded-full ${
-          isChanged ? "bg-[#0A0A0A]" : "bg-success"
+          isChanged ? "bg-[#C62828]" : "bg-[#2A8A5A]"
         }`}
         aria-hidden
       />

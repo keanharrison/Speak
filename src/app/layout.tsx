@@ -29,7 +29,10 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
+  maximumScale: 1,
   viewportFit: "cover",
+  /** Cream under the iOS status bar; Safari bottom chrome stays system black */
+  themeColor: "#f5f0e8",
   /** Prefer resizing the layout when Safari chrome / keyboard shows */
   interactiveWidget: "resizes-content",
 };

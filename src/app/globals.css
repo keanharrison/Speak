@@ -10,6 +10,8 @@
   --speak-page-safe-bottom: env(safe-area-inset-bottom, 0px);
   --speak-app-height: 100svh;
   --speak-app-top: 0px;
+  --speak-app-left: 0px;
+  --speak-app-width: 100%;
   --speak-app-bottom-gap: 0px;
 }
 
@@ -28,13 +30,14 @@ html.speak-device body {
 
 .speak-phone-root--device {
   position: fixed;
-  left: 0;
-  right: 0;
+  left: var(--speak-app-left, 0px);
+  width: var(--speak-app-width, 100%);
+  max-width: 100%;
   top: var(--speak-app-top, 0px);
   height: var(--speak-app-height, 100svh);
   max-height: var(--speak-app-height, 100svh);
   overflow: hidden;
-  background: transparent;
+  background: var(--color-canvas);
 }
 
 .speak-phone-shell--device {
@@ -88,7 +91,8 @@ html.speak-device body {
 
 html,
 body {
-  max-width: 100vw;
+  max-width: 100%;
+  overflow-x: hidden;
   background: var(--color-canvas);
   color: var(--color-ink);
 }

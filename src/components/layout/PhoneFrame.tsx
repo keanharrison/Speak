@@ -23,6 +23,8 @@ function useSpeakViewport(enabled: boolean) {
       root.classList.remove("speak-device");
       root.style.removeProperty("--speak-app-height");
       root.style.removeProperty("--speak-app-top");
+      root.style.removeProperty("--speak-app-left");
+      root.style.removeProperty("--speak-app-width");
       root.style.removeProperty("--speak-app-bottom-gap");
       body.style.removeProperty("overflow");
       body.style.removeProperty("position");
@@ -41,16 +43,23 @@ function useSpeakViewport(enabled: boolean) {
       if (!vv) {
         root.style.setProperty("--speak-app-height", "100svh");
         root.style.setProperty("--speak-app-top", "0px");
+        root.style.setProperty("--speak-app-left", "0px");
+        root.style.setProperty("--speak-app-width", "100%");
         root.style.setProperty("--speak-app-bottom-gap", "0px");
         return;
       }
 
       const height = Math.max(1, Math.round(vv.height));
-      const top = Math.max(0, Math.round(vv.offsetTop));
-      const bottomGap = Math.max(0, Math.round(layoutH - height - top));
+      // Keep cream canvas under the status bar — don't inset from offsetTop
+      const top = 0;
+      const left = Math.max(0, Math.round(vv.offsetLeft));
+      const width = Math.max(1, Math.round(vv.width));
+      const bottomGap = Math.max(0, Math.round(layoutH - height - vv.offsetTop));
 
-      root.style.setProperty("--speak-app-height", `${height}px`);
+      root.style.setProperty("--speak-app-height", `${height + Math.round(vv.offsetTop)}px`);
       root.style.setProperty("--speak-app-top", `${top}px`);
+      root.style.setProperty("--speak-app-left", `${left}px`);
+      root.style.setProperty("--speak-app-width", `${width}px`);
       root.style.setProperty("--speak-app-bottom-gap", `${bottomGap}px`);
     };
 
@@ -80,6 +89,8 @@ function useSpeakViewport(enabled: boolean) {
       root.classList.remove("speak-device");
       root.style.removeProperty("--speak-app-height");
       root.style.removeProperty("--speak-app-top");
+      root.style.removeProperty("--speak-app-left");
+      root.style.removeProperty("--speak-app-width");
       root.style.removeProperty("--speak-app-bottom-gap");
       body.style.removeProperty("overflow");
       body.style.removeProperty("position");

@@ -19,7 +19,7 @@ type DashboardViewProps = {
 };
 
 /**
- * Home — latest report summary, resume chats, past screenings.
+ * Home — latest report card, trend graph, resume chats.
  */
 export function DashboardView({ data }: DashboardViewProps) {
   const router = useRouter();
@@ -65,10 +65,10 @@ export function DashboardView({ data }: DashboardViewProps) {
   }
 
   return (
-    <div className="relative min-h-full overflow-x-hidden">
+    <div className="relative min-h-full max-w-full overflow-x-hidden">
       <DemoBackArrow href="/explore" />
       <main
-        className="relative z-10 w-full flex-1 px-5 pb-6"
+        className="relative z-10 w-full max-w-full flex-1 px-5 pb-6"
         style={{
           paddingTop: "max(2.25rem, calc(var(--speak-page-safe-top) + 0.65rem))",
         }}
@@ -83,47 +83,24 @@ export function DashboardView({ data }: DashboardViewProps) {
           )}
         </div>
 
-          <HomeLatestSummary
-            eyebrow={data.latestSummary.eyebrow}
-            quarter={latest.quarter}
-            dateLabel={latest.dateLabel}
-            bluf={latest.bluf}
-            status={latest.status}
-            detailsLabel={data.latestSummary.detailsLabel}
-            onOpenDetails={() => openTest(latest.id)}
-            speakTopic={latest.speakTopic}
-          />
+        <HomeLatestSummary
+          eyebrow={data.latestSummary.eyebrow}
+          quarter={latest.quarter}
+          dateLabel={latest.dateLabel}
+          status={latest.status}
+          markers={latest.markers}
+          detailsLabel={data.latestSummary.detailsLabel}
+          onOpenDetails={() => openTest(latest.id)}
+          speakTopic={latest.speakTopic}
+        />
 
-          <HomeRecentChats
-            heading={data.recentChatsHeading}
-            ctaLabel={data.recentChatsCtaLabel}
-            chats={data.recentChats}
-          />
+        <KidneyTrendChart chart={data.trendChart} compact />
 
-          <section className="mt-6" aria-label="Past screenings">
-            <h2 className="section-title">{data.testsHeading}</h2>
-            <ul className="mt-3 flex flex-col gap-2.5">
-              {data.tests.map((test) => (
-                <li key={test.id}>
-                  <button
-                    type="button"
-                    onClick={() => openTest(test.id)}
-                    className="glass-panel flex min-h-[52px] w-full items-center justify-between gap-3 px-4 py-3 text-left"
-                  >
-                    <div className="min-w-0">
-                      <p className="text-[15px] font-semibold text-[#0A0A0A]">
-                        {test.quarter}
-                      </p>
-                      <p className="mt-0.5 text-[12px] text-[#6b6b6b]">
-                        {test.dateLabel}
-                      </p>
-                    </div>
-                    <StatusBadge status={test.status} />
-                  </button>
-                </li>
-              ))}
-            </ul>
-          </section>
+        <HomeRecentChats
+          heading={data.recentChatsHeading}
+          ctaLabel={data.recentChatsCtaLabel}
+          chats={data.recentChats}
+        />
       </main>
     </div>
   );
@@ -149,8 +126,8 @@ function TestDetailView({
   const isFlagged = test.status === "changed";
 
   return (
-    <div className="relative min-h-full overflow-x-hidden">
-      <main className="relative z-10 w-full flex-1 px-5 pb-6 pt-6">
+    <div className="relative min-h-full max-w-full overflow-x-hidden">
+      <main className="relative z-10 w-full max-w-full flex-1 px-5 pb-6 pt-6">
         <button
           type="button"
           onClick={onBack}

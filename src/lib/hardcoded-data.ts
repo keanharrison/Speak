@@ -193,7 +193,7 @@ function allClearMarkers(usg: string) {
 export const dashboardPage: DashboardPageContent = {
   greetingSubtitle: `${pet.name} · ${pet.breed} · ${pet.ageYears} years`,
   storyLine: "Screen · plain English · prep for your vet",
-  testsHeading: "Past screenings",
+  testsHeading: "Trends",
   latestSummary: {
     eyebrow: "Latest results",
     detailsLabel: "View details",

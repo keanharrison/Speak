@@ -219,7 +219,7 @@ export function ExploreNameForm() {
                   setFirstName(event.target.value.slice(0, 40));
                   setError("");
                 }}
-                className="h-full w-full bg-transparent text-left text-[14px] font-normal text-white outline-none placeholder:text-white/45"
+                className="h-full w-full bg-transparent text-left text-[16px] font-normal text-white outline-none placeholder:text-white/45"
               />
             </div>
 
