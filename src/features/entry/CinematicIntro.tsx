@@ -88,7 +88,7 @@ const LINES = [
     file: "04-loop.mp4",
     need: "Motion: googling / phone scroll / watching and waiting",
     charMs: 55,
-    /** “So” starts immediately on cut (0.3s sooner than the old lead-in) */
+    /** Already on the cut — experiment’s −200ms floors at 0 */
     typeStartMs: 0,
     pauseAfter: [
       { endsWith: "So,", extraMs: 400 },
@@ -173,10 +173,23 @@ const MUSIC_VOLUME = 0.55;
 /** Caption — white */
 const CAPTION_COLOR = "#FFFFFF";
 /**
- * Typewriter pace — ~18 chars/sec.
- * Aligns with video-caption guidance (17–20 cps) and ~200–225 WPM reading.
+ * VIDEO CAPTION TYPING EXPERIMENT
+ * Flip to false (or `git revert`) to restore prior caption behavior.
+ * Previous: CHAR_MS 32, type lead-in 80ms.
+ * Now: ~18 cps (55ms) + start 200ms earlier than the old 80ms lead
+ * (floors at cut → 0ms lead-in).
  */
-const CHAR_MS = 55;
+const CAPTION_TYPING_EXPERIMENT = true;
+const CHAR_MS_PREV = 32;
+const CHAR_MS_EXPERIMENT = 55;
+const CAPTION_TYPE_LEAD_MS_PREV = 80;
+const CAPTION_START_EARLIER_MS = 200;
+/** Typewriter pace — ~18 chars/sec when experiment on */
+const CHAR_MS = CAPTION_TYPING_EXPERIMENT ? CHAR_MS_EXPERIMENT : CHAR_MS_PREV;
+/** Delay before first caption character after a cut */
+const CAPTION_TYPE_LEAD_MS = CAPTION_TYPING_EXPERIMENT
+  ? Math.max(0, CAPTION_TYPE_LEAD_MS_PREV - CAPTION_START_EARLIER_MS)
+  : CAPTION_TYPE_LEAD_MS_PREV;
 const PUNCT_PAUSE_MS = 160;
 /** Crossfade from last montage frame into blurred endcard */
 const MONTAGE_TO_BLUR_MS = 900;
@@ -511,7 +524,7 @@ export function CinematicIntro() {
       charMs = CHAR_MS,
       pauseAfter: PauseAfter[] = [],
       onComplete?: () => void,
-      startDelayMs = 80,
+      startDelayMs = CAPTION_TYPE_LEAD_MS,
     ) => {
       const typeId = ++typeRunRef.current;
       clearTimers();
@@ -753,8 +766,12 @@ export function CinematicIntro() {
       const typeStartMs =
         "typeStartMs" in next &&
         typeof (next as { typeStartMs?: number }).typeStartMs === "number"
-          ? (next as { typeStartMs: number }).typeStartMs
-          : 80;
+          ? Math.max(
+              0,
+              (next as { typeStartMs: number }).typeStartMs -
+                (CAPTION_TYPING_EXPERIMENT ? CAPTION_START_EARLIER_MS : 0),
+            )
+          : CAPTION_TYPE_LEAD_MS;
 
       const snapText =
         "snapText" in next && Boolean((next as { snapText?: boolean }).snapText);
