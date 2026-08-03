@@ -3,6 +3,7 @@
 import { FormEvent, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { DemoBackArrow } from "@/components/layout/DemoBackArrow";
+import { SoftKeyboard } from "@/features/ask/SoftKeyboard";
 import { saveViewerName } from "@/lib/account";
 
 const TITLE = "What's your first name?";
@@ -12,7 +13,7 @@ const TITLE_CHAR_MS = 62;
 const FORM_REVEAL_DELAY_MS = 500;
 
 /**
- * Name capture — ocean still, typed prompt, then compact field + Tour Demo / Back.
+ * Name capture — ocean still, typed prompt, SoftKeyboard (same as Speak).
  */
 export function ExploreNameForm() {
   const router = useRouter();
@@ -23,7 +24,8 @@ export function ExploreNameForm() {
   const [titleText, setTitleText] = useState("");
   const [titleDone, setTitleDone] = useState(false);
   const [formVisible, setFormVisible] = useState(false);
-  const inputRef = useRef<HTMLInputElement>(null);
+  const [keyboardOpen, setKeyboardOpen] = useState(false);
+  const inputRef = useRef<HTMLDivElement>(null);
 
   async function submitName() {
     const trimmed = firstName.trim();
@@ -35,6 +37,7 @@ export function ExploreNameForm() {
 
     setIsSubmitting(true);
     setError("");
+    setKeyboardOpen(false);
 
     try {
       const response = await fetch("/api/viewer", {
@@ -69,6 +72,25 @@ export function ExploreNameForm() {
     router.push("/intro");
   }
 
+  function dismissKeyboard() {
+    setKeyboardOpen(false);
+    inputRef.current?.blur();
+  }
+
+  function focusComposer() {
+    if (!formVisible) return;
+    setKeyboardOpen(true);
+    inputRef.current?.focus({ preventScroll: true });
+  }
+
+  function appendKey(key: string) {
+    setFirstName((prev) => {
+      if (prev.length >= 40) return prev;
+      return `${prev}${key}`.slice(0, 40);
+    });
+    setError("");
+  }
+
   // Black → page reveal
   useEffect(() => {
     const reveal = window.requestAnimationFrame(() => {
@@ -85,6 +107,7 @@ export function ExploreNameForm() {
     setTitleText("");
     setTitleDone(false);
     setFormVisible(false);
+    setKeyboardOpen(false);
 
     const tick = () => {
       if (cancelled) return;
@@ -108,17 +131,11 @@ export function ExploreNameForm() {
     };
   }, [blackOut]);
 
-  // Focus field as soon as the form appears
-  useEffect(() => {
-    if (!formVisible) return;
-    const id = window.requestAnimationFrame(() => {
-      inputRef.current?.focus();
-    });
-    return () => window.cancelAnimationFrame(id);
-  }, [formVisible]);
-
   return (
-    <main className="relative flex min-h-0 flex-1 flex-col overflow-hidden bg-[#6a7a88]">
+    <main
+      className="absolute inset-0 flex flex-col overflow-hidden bg-[#6a7a88]"
+      onClick={dismissKeyboard}
+    >
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         src={NAME_BG_SRC}
@@ -140,18 +157,23 @@ export function ExploreNameForm() {
         aria-hidden
       />
 
-      <DemoBackArrow tone="light" onClick={goBackToIntro} />
+      <div onClick={(event) => event.stopPropagation()}>
+        <DemoBackArrow tone="light" onClick={goBackToIntro} />
+      </div>
 
       <div
-        className="relative z-10 flex h-[48%] flex-col items-center justify-center px-7"
+        className="relative z-10 flex min-h-0 flex-1 flex-col items-center px-7"
         style={{
-          paddingTop: "max(2.5rem, calc(var(--speak-page-safe-top) + 1.5rem))",
+          paddingTop: "max(0.45rem, calc(var(--speak-page-safe-top) + 0.2rem))",
           paddingLeft: "max(1.25rem, env(safe-area-inset-left))",
           paddingRight: "max(1.25rem, env(safe-area-inset-right))",
         }}
       >
-        {/* Fixed stack so the typed title doesn’t jump when the field appears */}
-        <div className="flex w-full max-w-[19rem] flex-col items-center">
+        <div
+          className={`flex w-full max-w-[19rem] flex-col items-center ${
+            keyboardOpen ? "justify-end pb-4 pt-6" : "justify-center"
+          } min-h-0 flex-1`}
+        >
           <div className="relative w-full">
             <p
               className="invisible whitespace-pre-wrap text-center text-[26px] font-medium leading-snug tracking-[-0.02em] text-white sm:text-[28px]"
@@ -188,9 +210,10 @@ export function ExploreNameForm() {
               transition: "opacity 420ms cubic-bezier(0.22, 1, 0.36, 1)",
             }}
             aria-hidden={!formVisible}
+            onClick={(event) => event.stopPropagation()}
           >
             <div
-              className="relative flex h-9 w-full cursor-text items-center rounded-full px-4"
+              className="relative flex h-11 w-full cursor-text items-center rounded-full px-4"
               style={{
                 border: "0.5px solid rgba(255,255,255,0.55)",
                 background: "rgba(255,255,255,0.22)",
@@ -199,28 +222,41 @@ export function ExploreNameForm() {
                 backdropFilter: "blur(20px) saturate(160%)",
                 WebkitBackdropFilter: "blur(20px) saturate(160%)",
               }}
-              onClick={() => {
-                if (!formVisible) return;
-                inputRef.current?.focus();
-              }}
+              onClick={focusComposer}
             >
-              <input
+              {!firstName ? (
+                <div className="pointer-events-none absolute inset-y-0 left-4 flex items-center">
+                  {keyboardOpen ? (
+                    <span className="typing-caret mr-0.5 bg-white" aria-hidden />
+                  ) : null}
+                  <span className="text-[16px] text-white/45">John</span>
+                </div>
+              ) : null}
+              <div
                 ref={inputRef}
-                type="text"
-                name="firstName"
-                autoComplete="given-name"
-                autoCapitalize="words"
-                maxLength={40}
-                value={firstName}
-                placeholder="John"
-                aria-label="First name"
+                role="textbox"
                 tabIndex={formVisible ? 0 : -1}
-                onChange={(event) => {
-                  setFirstName(event.target.value.slice(0, 40));
-                  setError("");
+                aria-label="First name"
+                aria-multiline="false"
+                onFocus={() => {
+                  if (formVisible) setKeyboardOpen(true);
                 }}
-                className="h-full w-full bg-transparent text-left text-[16px] font-normal text-white outline-none placeholder:text-white/45"
-              />
+                className="flex h-full min-w-0 flex-1 items-center text-left text-[16px] font-normal text-white outline-none"
+              >
+                {firstName ? (
+                  <>
+                    <span className="whitespace-pre-wrap break-words">
+                      {firstName}
+                    </span>
+                    {keyboardOpen ? (
+                      <span
+                        className="typing-caret ml-0.5 shrink-0 bg-white"
+                        aria-hidden
+                      />
+                    ) : null}
+                  </>
+                ) : null}
+              </div>
             </div>
 
             {error ? (
@@ -232,7 +268,6 @@ export function ExploreNameForm() {
               </p>
             ) : null}
 
-            {/* Same gap as title → field */}
             <div className="mt-7 flex items-center justify-center">
               <button
                 type="submit"
@@ -245,6 +280,23 @@ export function ExploreNameForm() {
             </div>
           </form>
         </div>
+      </div>
+
+      <div
+        className="relative z-30"
+        onClick={(event) => event.stopPropagation()}
+      >
+        <SoftKeyboard
+          open={keyboardOpen && formVisible}
+          onKey={appendKey}
+          onBackspace={() => {
+            setFirstName((prev) => prev.slice(0, -1));
+            setError("");
+          }}
+          onReturn={() => {
+            void submitName();
+          }}
+        />
       </div>
     </main>
   );

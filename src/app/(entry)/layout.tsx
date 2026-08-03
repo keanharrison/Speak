@@ -1,8 +1,8 @@
 import { PhoneFrame } from "@/components/layout/PhoneFrame";
 
 /**
- * Pre-app entry flow: splash → welcome → explore name.
- * No bottom nav. Same phone frame as the demo app for laptop demos.
+ * Pre-app entry flow: intro → name.
+ * Full-bleed phone stage (same edge-to-edge canvas as the demo app).
  */
 export default function EntryLayout({
   children,
@@ -11,7 +11,7 @@ export default function EntryLayout({
 }>) {
   return (
     <PhoneFrame>
-      <div className="scrollbar-hide flex h-full min-h-0 flex-1 flex-col overflow-y-auto overscroll-y-contain">
+      <div className="relative h-full min-h-0 w-full flex-1 overflow-hidden">
         {children}
       </div>
     </PhoneFrame>
