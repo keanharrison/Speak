@@ -148,8 +148,12 @@ Before you view our product demo, we invite you to watch a brief video.
 const GREETING_CHAR_MS = 42;
 /** Beat after title before body line */
 const GREETING_AFTER_TITLE_MS = 520;
+/** Pause before “we invite you to watch a brief video” */
+const GREETING_BEFORE_INVITE_MS = 1000;
 /** Next appears after typing finishes */
 const GREETING_NEXT_DELAY_MS = 800;
+/** Marker — pause once this prefix has been typed */
+const GREETING_INVITE_PREFIX = "Before you view our product demo, ";
 
 /** Voiceover — place file in /public/audio/ (served on Vercel as a static asset). */
 const AUDIO_SRC = "/audio/intro-vo.m4a?v=20260731i";
@@ -169,14 +173,14 @@ const CAPTION_COLOR = "#FFFFFF";
 /** Character type pace — spoken feel, not word pops */
 const CHAR_MS = 32;
 const PUNCT_PAUSE_MS = 160;
-/** Black hold before Speak — cut straight to brand */
-const BLACK_BEFORE_SPEAK_MS = 0;
-/** S mark pops first, then the Speak word */
-const SPEAK_S_BEFORE_WORD_MS = 780;
-/** Speak word alone / with mark hold before fade to name */
-const SPEAK_HOLD_MS = 3600;
-/** Full-screen fade to black before name page */
-const FADE_TO_NAME_MS = 1600;
+/** Crossfade from last montage frame into blurred endcard */
+const MONTAGE_TO_BLUR_MS = 900;
+/** Blurred endcard alone before S + Speak */
+const BLUR_HOLD_MS = 2000;
+/** S + Speak hold on blurred endcard */
+const SPEAK_HOLD_MS = 3000;
+/** Slow black fade into the name page */
+const FADE_TO_NAME_MS = 1300;
 /** Music keeps playing and eases out across the name-page handoff */
 export const MUSIC_OUT_MS = 3600;
 /** How long play/pause feedback stays on screen after a tap */
@@ -334,6 +338,8 @@ export function CinematicIntro() {
   const [speakIn, setSpeakIn] = useState(false);
   const [speakLogo, setSpeakLogo] = useState(false);
   const [nameFade, setNameFade] = useState(false);
+  /** Keeps film shell mounted while it fades out into the blur endcard */
+  const [filmFadeOut, setFilmFadeOut] = useState(false);
   const [paused, setPaused] = useState(false);
   const [controlFlash, setControlFlash] = useState<ControlFlash>(null);
   const [audioAvailable, setAudioAvailable] = useState(false);
@@ -662,58 +668,53 @@ export function CinematicIntro() {
         typeRunRef.current += 1;
         clearTimers();
         setLineText("");
-        setRevealed({});
         setClipZoom(false);
         activeFileRef.current = null;
         setSpeakIn(false);
         setSpeakLogo(false);
         setNameFade(false);
-        setPhase("black");
+        setFilmFadeOut(true);
+        setPhase("speak");
+        try {
+          router.prefetch("/explore");
+        } catch {
+          /* ignore */
+        }
+        // Fade montage → blurred still → hold → S+Speak → hold → black → name
         beatTimersRef.current.push(
           window.setTimeout(() => {
             if (runIdRef.current !== runId) return;
-            setPhase("speak");
-            try {
-              router.prefetch("/explore");
-            } catch {
-              /* ignore */
-            }
-            // S mark pops first → Speak word → hold → name page
+            setRevealed({});
             beatTimersRef.current.push(
               window.setTimeout(() => {
                 if (runIdRef.current !== runId) return;
                 setSpeakLogo(true);
+                setSpeakIn(true);
                 beatTimersRef.current.push(
                   window.setTimeout(() => {
                     if (runIdRef.current !== runId) return;
-                    setSpeakIn(true);
-                    beatTimersRef.current.push(
-                      window.setTimeout(() => {
-                        if (runIdRef.current !== runId) return;
-                        clearBeatTimers();
-                        const audio = audioRef.current;
-                        if (audio) {
-                          audio.pause();
-                          audio.currentTime = AUDIO_START_S;
-                        }
-                        fadeMusicOut(MUSIC_OUT_MS);
-                        setPhase("fade");
-                        setNameFade(true);
-                        try {
-                          sessionStorage.setItem("introSeen", "true");
-                        } catch {
-                          /* ignore */
-                        }
-                        window.setTimeout(() => {
-                          router.push("/explore");
-                        }, FADE_TO_NAME_MS);
-                      }, SPEAK_HOLD_MS),
-                    );
-                  }, SPEAK_S_BEFORE_WORD_MS),
+                    clearBeatTimers();
+                    const endAudio = audioRef.current;
+                    if (endAudio) {
+                      endAudio.pause();
+                      endAudio.currentTime = AUDIO_START_S;
+                    }
+                    fadeMusicOut(MUSIC_OUT_MS);
+                    setPhase("fade");
+                    setNameFade(true);
+                    try {
+                      sessionStorage.setItem("introSeen", "true");
+                    } catch {
+                      /* ignore */
+                    }
+                    window.setTimeout(() => {
+                      router.push("/explore");
+                    }, FADE_TO_NAME_MS);
+                  }, SPEAK_HOLD_MS),
                 );
-              }, BLACK_BEFORE_SPEAK_MS),
+              }, BLUR_HOLD_MS),
             );
-          }, BLACK_BEFORE_SPEAK_MS),
+          }, MONTAGE_TO_BLUR_MS),
         );
         return;
       }
@@ -1089,6 +1090,7 @@ export function CinematicIntro() {
     setNameFade(false);
     setSpeakIn(false);
     setSpeakLogo(false);
+    setFilmFadeOut(false);
     setLineText("");
     setLineIndex(0);
     setRevealed({});
@@ -1130,6 +1132,7 @@ export function CinematicIntro() {
     setSpeakIn(false);
     setSpeakLogo(false);
     setNameFade(false);
+    setFilmFadeOut(false);
     setOpenReveal(false);
     setClipZoom(false);
     setControlFlash(null);
@@ -1205,6 +1208,8 @@ export function CinematicIntro() {
       let delay = GREETING_CHAR_MS;
       if (finishedTitle) {
         delay = GREETING_AFTER_TITLE_MS;
+      } else if (next === GREETING_INVITE_PREFIX) {
+        delay = GREETING_BEFORE_INVITE_MS;
       } else if (justTyped === "\n") {
         delay = GREETING_CHAR_MS + 160;
       } else if (/[.!]/.test(justTyped)) {
@@ -1235,7 +1240,7 @@ export function CinematicIntro() {
         "openLead" in active &&
         (active as { openLead?: boolean }).openLead,
     );
-  const showFilmShell = showIdle || showVideo;
+  const showFilmShell = showIdle || showVideo || filmFadeOut;
   const showBlurBg =
     showFilmShell || phase === "speak" || phase === "fade" || phase === "black";
   const showCaptionUnder = showVideo && activeLayout === "caption";
@@ -1247,7 +1252,7 @@ export function CinematicIntro() {
     !hideStageForBeat &&
     (controlFlash === "pause" || controlFlash === "play");
   const showSpeakEnd =
-    phase === "speak" || (phase === "fade" && speakIn && !nameFade);
+    phase === "speak" || phase === "fade";
 
   return (
     <main className="relative flex min-h-0 flex-1 flex-col overflow-hidden bg-black">
@@ -1339,17 +1344,21 @@ export function CinematicIntro() {
         className={`absolute inset-0 z-10 flex flex-col items-center justify-center gap-3 px-3 ${
           showFilmShell && !showGreeting
             ? ""
-            : "pointer-events-none opacity-0"
+            : "pointer-events-none"
         }`}
         style={{
           paddingTop: "max(3.25rem, calc(var(--speak-page-safe-top) + 2.5rem))",
           paddingBottom:
             "max(1.25rem, calc(var(--speak-page-safe-bottom) + 0.75rem))",
+          opacity: showFilmShell && !showGreeting && !filmFadeOut ? 1 : 0,
+          transition: `opacity ${MONTAGE_TO_BLUR_MS}ms cubic-bezier(0.4, 0, 0.2, 1)`,
+          pointerEvents:
+            showFilmShell && !showGreeting && !filmFadeOut ? "auto" : "none",
         }}
       >
         <div
           className={`relative aspect-[16/9] w-full max-w-[40rem] max-h-[min(58vh,28rem)] overflow-hidden rounded-[18px] sm:rounded-[22px] group-data-[phone-orientation=portrait]/phone:max-h-[min(42vh,22rem)] group-data-[phone-orientation=portrait]/phone:w-[calc(100%-0.5rem)] group-data-[phone-orientation=portrait]/phone:max-w-none ${
-            showFilmShell ? "" : "pointer-events-none absolute opacity-0"
+            showFilmShell ? "" : "pointer-events-none absolute"
           }`}
           style={{
             border: "0.5px solid rgba(255,255,255,0.55)",
@@ -1358,6 +1367,7 @@ export function CinematicIntro() {
               "0 20px 50px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.65), inset 0 -1px 0 rgba(255,255,255,0.12)",
             backdropFilter: "blur(28px) saturate(170%)",
             WebkitBackdropFilter: "blur(28px) saturate(170%)",
+            opacity: showFilmShell ? 1 : 0,
           }}
         >
           <div className="absolute inset-[1px] overflow-hidden rounded-[17px] sm:rounded-[21px] bg-black/80">
@@ -1373,7 +1383,7 @@ export function CinematicIntro() {
               {VIDEO_FILES.map((file) => {
                 const z = stackZ[file] ?? 0;
                 const show =
-                  showVideo &&
+                  (showVideo || filmFadeOut) &&
                   !hideStageForBeat &&
                   Boolean(revealed[file]) &&
                   !missing[file];
