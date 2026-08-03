@@ -276,27 +276,25 @@ function ForwardArrowGlyph() {
 const INTRO_ARROW_TOP =
   "max(2.15rem, calc(var(--speak-page-safe-top) + 1.85rem))";
 
-/** App icon mark — white S on black squircle, no bark lines */
-function SpeakMark({ className = "" }: { className?: string }) {
+/** Speak app icon — logo asset in an iOS-style squircle mask */
+function SpeakAppIcon({ className = "" }: { className?: string }) {
   return (
-    <svg
-      viewBox="0 0 100 100"
-      className={className}
+    <div
+      className={`relative overflow-hidden bg-black shadow-[0_18px_50px_rgba(0,0,0,0.4)] ${className}`}
+      style={{
+        // Continuous-corner approx used for iOS app icons (~22.37% of side)
+        borderRadius: "22.37%",
+      }}
       aria-hidden
     >
-      <rect width="100" height="100" rx="22" fill="#0A0A0A" />
-      <text
-        x="50"
-        y="68"
-        textAnchor="middle"
-        fill="#FFFFFF"
-        fontFamily="ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', sans-serif"
-        fontSize="64"
-        fontWeight="700"
-      >
-        S
-      </text>
-    </svg>
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src="/images/speak-app-icon.png"
+        alt=""
+        className="h-full w-full object-cover"
+        draggable={false}
+      />
+    </div>
   );
 }
 
@@ -1628,28 +1626,17 @@ export function CinematicIntro() {
             <div
               className="flex items-center justify-center"
               style={{
-                opacity: speakLogo ? 1 : 0,
-                transform: speakLogo
-                  ? "translateY(0) scale(1)"
-                  : "translateY(14px) scale(0.86)",
-                transition:
-                  "opacity 650ms cubic-bezier(0.22, 1, 0.36, 1), transform 650ms cubic-bezier(0.22, 1, 0.36, 1)",
-                marginBottom: "1.15rem",
-              }}
-            >
-              <SpeakMark className="h-[5.25rem] w-[5.25rem] sm:h-[6.25rem] sm:w-[6.25rem]" />
-            </div>
-            <p
-              className="text-[64px] font-bold leading-none tracking-tight text-white sm:text-[84px]"
-              style={{
-                opacity: speakIn ? 1 : 0,
-                transform: speakIn ? "translateY(0)" : "translateY(10px)",
+                opacity: speakLogo || speakIn ? 1 : 0,
+                transform:
+                  speakLogo || speakIn
+                    ? "translateY(0) scale(1)"
+                    : "translateY(14px) scale(0.86)",
                 transition:
                   "opacity 700ms cubic-bezier(0.22, 1, 0.36, 1), transform 700ms cubic-bezier(0.22, 1, 0.36, 1)",
               }}
             >
-              Speak
-            </p>
+              <SpeakAppIcon className="h-[8.25rem] w-[8.25rem] sm:h-[10rem] sm:w-[10rem]" />
+            </div>
           </div>
         </div>
       ) : null}
