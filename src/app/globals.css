@@ -5,7 +5,7 @@
 @tailwind utilities;
 
 :root {
-  /* Page-level safe insets — zeroed on real phones where PhoneFrame owns them */
+  /* Page content clears notch / home indicator; shell stays edge-to-edge */
   --speak-page-safe-top: env(safe-area-inset-top, 0px);
   --speak-page-safe-bottom: env(safe-area-inset-bottom, 0px);
   --speak-app-height: 100svh;
@@ -13,15 +13,10 @@
   --speak-app-bottom-gap: 0px;
 }
 
-/* Real phone: shell already clears Dynamic Island + Safari chrome */
-#speak-phone-stage[data-real-phone="true"] {
-  --speak-page-safe-top: 0px;
-  --speak-page-safe-bottom: 0px;
-}
-
 /*
  * Device shell — fills the visual viewport only (stops above Safari bar).
  * Body scroll is locked; scrolling happens inside the stage.
+ * No top padding here — page backgrounds extend under the status bar.
  */
 html.speak-device,
 html.speak-device body {
@@ -39,7 +34,7 @@ html.speak-device body {
   height: var(--speak-app-height, 100svh);
   max-height: var(--speak-app-height, 100svh);
   overflow: hidden;
-  background: var(--color-canvas);
+  background: transparent;
 }
 
 .speak-phone-shell--device {
@@ -49,9 +44,7 @@ html.speak-device body {
   width: 100%;
   height: 100%;
   overflow: hidden;
-  background: var(--color-canvas);
-  /* Clear Dynamic Island / notch inside the visible frame */
-  padding-top: env(safe-area-inset-top, 0px);
+  background: transparent;
   box-sizing: border-box;
 }
 
@@ -68,7 +61,7 @@ html.speak-device body {
     height: 100svh;
     max-height: 100svh;
     overflow: hidden;
-    background: var(--color-canvas);
+    background: transparent;
     padding: 0 !important;
   }
 
@@ -84,8 +77,7 @@ html.speak-device body {
     border: 0 !important;
     border-radius: 0 !important;
     box-shadow: none !important;
-    background: var(--color-canvas);
-    padding-top: env(safe-area-inset-top, 0px);
+    background: transparent;
     box-sizing: border-box;
   }
 
@@ -257,7 +249,7 @@ body {
   overflow: hidden;
   height: 100%;
   min-height: 0;
-  background: #2a3540;
+  background: #3d4a57;
 }
 
 .glass-light-page--ocean .page-title,
@@ -266,7 +258,60 @@ body {
 }
 
 .glass-light-page--ocean .section-eyebrow {
-  color: rgba(255, 255, 255, 0.72);
+  color: rgba(255, 255, 255, 0.78);
+}
+
+/*
+ * Home experiment — brighter frost so dark gray / green accents stay readable
+ * on the ocean backdrop (previous ~16% white read as dark glass).
+ */
+.glass-light-page--ocean .glass-light-card {
+  background: rgba(255, 255, 255, 0.72);
+  border-color: rgba(255, 255, 255, 0.85);
+  box-shadow:
+    0 18px 44px rgba(0, 0, 0, 0.14),
+    0 4px 14px rgba(0, 0, 0, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.95),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.35);
+}
+
+.glass-light-page--ocean .glass-light-card::before {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.7) 0%,
+    rgba(255, 255, 255, 0.25) 42%,
+    rgba(255, 255, 255, 0.12) 100%
+  );
+}
+
+.glass-light-page--ocean .glass-panel {
+  background: rgba(255, 255, 255, 0.66);
+  border-color: rgba(255, 255, 255, 0.8);
+  box-shadow:
+    0 12px 30px rgba(0, 0, 0, 0.1),
+    0 2px 8px rgba(0, 0, 0, 0.04),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.28);
+}
+
+.glass-light-page--ocean .glass-panel::before {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.62) 0%,
+    rgba(255, 255, 255, 0.18) 45%,
+    rgba(255, 255, 255, 0.2) 100%
+  );
+}
+
+.glass-light-page--ocean .glass-light-button-secondary {
+  background: rgba(255, 255, 255, 0.78);
+  border-color: rgba(255, 255, 255, 0.9);
+  color: #0a0a0a;
+}
+
+.glass-light-page--ocean .glass-tab-bar {
+  background: rgba(255, 255, 255, 0.55);
+  border-color: rgba(255, 255, 255, 0.7);
 }
 
 /* Soft graph-paper grid (cream onboarding feel) — slightly stronger */

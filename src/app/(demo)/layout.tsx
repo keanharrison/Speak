@@ -31,7 +31,7 @@ function DemoChrome({ children }: { children: React.ReactNode }) {
             aria-hidden
           />
           <div
-            className="pointer-events-none absolute inset-0 z-0 bg-black/40"
+            className="pointer-events-none absolute inset-0 z-0 bg-black/18"
             aria-hidden
           />
         </>
