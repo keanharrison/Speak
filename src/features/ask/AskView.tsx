@@ -42,7 +42,8 @@ function chatTitleForId(data: AskPageContent, chatId: string | null) {
 }
 
 /**
- * Speak chat — permanent soft keyboard, quarter sidebar, marquee prompts.
+ * Speak chat — soft keyboard on composer focus; nav bar when keyboard is closed.
+ * Prompt cards float just above the composer / keyboard.
  */
 export function AskView({ data }: AskViewProps) {
   const router = useRouter();
@@ -57,6 +58,7 @@ export function AskView({ data }: AskViewProps) {
   const [threadTitle, setThreadTitle] = useState<string | null>(() =>
     chatTitleForId(data, chatId),
   );
+  const [keyboardOpen, setKeyboardOpen] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [voiceNoteOpen, setVoiceNoteOpen] = useState(false);
   const inputRef = useRef<HTMLDivElement>(null);
@@ -66,6 +68,7 @@ export function AskView({ data }: AskViewProps) {
   const lastChatRef = useRef<string | null>(chatId);
 
   const emptyState = messages.length === 0;
+  const showKeyboard = keyboardOpen && !voiceNoteOpen;
 
   const quarterChats = useMemo(() => {
     const seen = new Set<string>();
@@ -104,17 +107,22 @@ export function AskView({ data }: AskViewProps) {
     }
   }, [aboutTopic, chatId, data.aboutGreeting]);
 
-  // Keyboard is permanent on Speak — keep the floating tab bar hidden
   useEffect(() => {
-    setTabBarVisible(false);
+    setTabBarVisible(!showKeyboard && !voiceNoteOpen);
     return () => setTabBarVisible(true);
-  }, [setTabBarVisible]);
+  }, [showKeyboard, voiceNoteOpen, setTabBarVisible]);
 
   useEffect(() => {
     threadEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
+  }, [messages, showKeyboard]);
+
+  function dismissKeyboard() {
+    setKeyboardOpen(false);
+    inputRef.current?.blur();
+  }
 
   function focusComposer() {
+    setKeyboardOpen(true);
     inputRef.current?.focus({ preventScroll: true });
   }
 
@@ -136,6 +144,7 @@ export function AskView({ data }: AskViewProps) {
       { role: "speak", body: replyForQuestion(trimmed) },
     ]);
     setDraft("");
+    dismissKeyboard();
   }
 
   function handleReturn() {
@@ -156,6 +165,7 @@ export function AskView({ data }: AskViewProps) {
     setDraft("");
     setThreadTitle(null);
     setSidebarOpen(false);
+    dismissKeyboard();
     router.replace("/ask", { scroll: false });
   }
 
@@ -165,6 +175,7 @@ export function AskView({ data }: AskViewProps) {
     setMessages(chat.messages.map((message) => ({ ...message })));
     setThreadTitle(chat.title);
     setSidebarOpen(false);
+    dismissKeyboard();
     router.replace(`/ask?chat=${encodeURIComponent(id)}`, { scroll: false });
   }
 
@@ -174,8 +185,12 @@ export function AskView({ data }: AskViewProps) {
       style={{
         paddingTop: "max(0.45rem, calc(var(--speak-page-safe-top) + 0.2rem))",
       }}
+      onClick={dismissKeyboard}
     >
-      <div className="relative mx-5 mb-3 mt-1 shrink-0">
+      <div
+        className="relative mx-5 mb-3 mt-1 shrink-0"
+        onClick={(event) => event.stopPropagation()}
+      >
         <h1 className="page-title text-center text-[24px]">Speak</h1>
         {threadTitle ? (
           <p className="mt-0.5 text-center text-[11px] text-[#6b6b6b]">
@@ -202,20 +217,17 @@ export function AskView({ data }: AskViewProps) {
 
       <div className="scrollbar-hide min-h-0 flex-1 overflow-y-auto">
         {emptyState ? (
-          <div className="flex min-h-full flex-col px-0 pb-3 pt-1">
-            <PromptMarquee
-              suggestions={data.suggestions}
-              onSelect={selectSuggestion}
-            />
-            <div className="flex flex-1 flex-col items-center justify-center px-5 pb-4 pt-6 text-center">
-              <BaileyAvatar size="lg" className="mb-3" />
-              <p className="text-[15px] font-medium text-[#0A0A0A]">
-                Ask about Bailey&apos;s results
-              </p>
-            </div>
+          <div className="flex min-h-full flex-col items-center justify-center px-5 pb-4 pt-2 text-center">
+            <BaileyAvatar size="lg" className="mb-3" />
+            <p className="text-[15px] font-medium text-[#0A0A0A]">
+              Ask about Bailey&apos;s results
+            </p>
           </div>
         ) : (
-          <div className="flex flex-col gap-4 px-5 pb-4 pt-2">
+          <div
+            className="flex flex-col gap-4 px-5 pb-4 pt-2"
+            onClick={(event) => event.stopPropagation()}
+          >
             {messages.map((message, index) => {
               const isUser = message.role === "user";
               return (
@@ -246,15 +258,31 @@ export function AskView({ data }: AskViewProps) {
       </div>
 
       {!voiceNoteOpen ? (
-        <div className="relative z-30 shrink-0 bg-transparent px-5 pb-2 pt-1">
-          <form onSubmit={handleSubmit}>
+        <div
+          className={`relative z-30 shrink-0 bg-transparent pt-1 ${
+            showKeyboard ? "pb-2" : "pb-[4.25rem]"
+          }`}
+          onClick={(event) => event.stopPropagation()}
+        >
+          {emptyState ? (
+            <div className="mb-2">
+              <PromptMarquee
+                suggestions={data.suggestions}
+                onSelect={selectSuggestion}
+              />
+            </div>
+          ) : null}
+
+          <form onSubmit={handleSubmit} className="px-5">
             <div
               className="glass-panel relative flex min-h-[48px] cursor-text items-center gap-2 px-3 py-2"
               onClick={focusComposer}
             >
               {!draft ? (
                 <div className="pointer-events-none absolute inset-y-0 left-4 flex items-center">
-                  <span className="typing-caret" aria-hidden />
+                  {showKeyboard ? (
+                    <span className="typing-caret" aria-hidden />
+                  ) : null}
                   <span className="text-[15px] text-[#6b6b6b]">
                     {data.inputPlaceholder}
                   </span>
@@ -266,12 +294,15 @@ export function AskView({ data }: AskViewProps) {
                 tabIndex={0}
                 aria-label={data.inputPlaceholder}
                 aria-multiline="false"
+                onFocus={() => setKeyboardOpen(true)}
                 className="flex h-full min-w-0 flex-1 items-center pl-1 text-left text-[16px] text-[#0A0A0A] outline-none"
               >
                 {draft ? (
                   <>
                     <span className="whitespace-pre-wrap break-words">{draft}</span>
-                    <span className="typing-caret ml-0.5 shrink-0" aria-hidden />
+                    {showKeyboard ? (
+                      <span className="typing-caret ml-0.5 shrink-0" aria-hidden />
+                    ) : null}
                   </>
                 ) : null}
               </div>
@@ -280,6 +311,7 @@ export function AskView({ data }: AskViewProps) {
                 aria-label="Voice note"
                 onClick={(event) => {
                   event.stopPropagation();
+                  dismissKeyboard();
                   setVoiceNoteOpen(true);
                 }}
                 className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#0A0A0A] text-white"
@@ -291,12 +323,14 @@ export function AskView({ data }: AskViewProps) {
         </div>
       ) : null}
 
-      <SoftKeyboard
-        open={!voiceNoteOpen}
-        onKey={(key) => setDraft((prev) => `${prev}${key}`)}
-        onBackspace={() => setDraft((prev) => prev.slice(0, -1))}
-        onReturn={handleReturn}
-      />
+      <div onClick={(event) => event.stopPropagation()}>
+        <SoftKeyboard
+          open={showKeyboard}
+          onKey={(key) => setDraft((prev) => `${prev}${key}`)}
+          onBackspace={() => setDraft((prev) => prev.slice(0, -1))}
+          onReturn={handleReturn}
+        />
+      </div>
 
       <VoiceNotePanel
         open={voiceNoteOpen}
@@ -314,7 +348,10 @@ export function AskView({ data }: AskViewProps) {
       />
 
       {sidebarOpen ? (
-        <div className="absolute inset-0 z-50">
+        <div
+          className="absolute inset-0 z-50"
+          onClick={(event) => event.stopPropagation()}
+        >
           <button
             type="button"
             aria-label="Dismiss sidebar"
