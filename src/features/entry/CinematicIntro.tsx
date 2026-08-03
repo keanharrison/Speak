@@ -10,6 +10,8 @@ import {
   clearIntroMusicFade,
 } from "@/features/entry/introMusic";
 
+import { SpeakAppIcon } from "@/components/ui/SpeakAppIcon";
+
 /**
  * Speak cinematic intro — greeting → play → captions → Speak → name.
  *
@@ -275,37 +277,6 @@ function ForwardArrowGlyph() {
 /** Shared top inset for intro nav chevrons (below status / notch) */
 const INTRO_ARROW_TOP =
   "max(2.15rem, calc(var(--speak-page-safe-top) + 1.85rem))";
-
-/**
- * Speak app icon — square 1024 master under an iOS squircle mask.
- * Master has square corners (system-style); mask applies continuous curvature.
- */
-function SpeakAppIcon({ className = "" }: { className?: string }) {
-  return (
-    <div
-      className={`relative overflow-hidden bg-black shadow-[0_18px_50px_rgba(0,0,0,0.45)] ${className}`}
-      style={{
-        WebkitMaskImage: "url(/images/ios-squircle-mask.png)",
-        maskImage: "url(/images/ios-squircle-mask.png)",
-        WebkitMaskSize: "100% 100%",
-        maskSize: "100% 100%",
-        WebkitMaskRepeat: "no-repeat",
-        maskRepeat: "no-repeat",
-        WebkitMaskPosition: "center",
-        maskPosition: "center",
-      }}
-      aria-hidden
-    >
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        src="/images/speak-app-icon-square.png"
-        alt=""
-        className="h-full w-full object-cover"
-        draggable={false}
-      />
-    </div>
-  );
-}
 
 function waitRaf(times = 2) {
   return new Promise<void>((resolve) => {

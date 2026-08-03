@@ -2,7 +2,7 @@
 
 import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { BaileyAvatar } from "@/components/ui/BaileyAvatar";
+import { SpeakAppIcon } from "@/components/ui/SpeakAppIcon";
 import { Menu, Mic, SquarePen, X } from "lucide-react";
 import { useTabBarVisibility } from "@/components/layout/TabBarVisibility";
 import { PromptMarquee } from "@/features/ask/PromptMarquee";
@@ -218,7 +218,7 @@ export function AskView({ data }: AskViewProps) {
       <div className="scrollbar-hide min-h-0 flex-1 overflow-y-auto">
         {emptyState ? (
           <div className="flex min-h-full flex-col items-center justify-center px-5 pb-4 pt-2 text-center">
-            <BaileyAvatar size="lg" className="mb-3" />
+            <SpeakAppIcon className="mb-4 h-[4.5rem] w-[4.5rem]" />
             <p className="text-[15px] font-medium text-[#0A0A0A]">
               Ask about Bailey&apos;s results
             </p>
