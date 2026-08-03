@@ -149,7 +149,7 @@ const GREETING_CHAR_MS = 42;
 /** Beat after title before body line */
 const GREETING_AFTER_TITLE_MS = 520;
 /** Pause before “we invite you to watch a brief video” */
-const GREETING_BEFORE_INVITE_MS = 1000;
+const GREETING_BEFORE_INVITE_MS = 1500;
 /** Next appears after typing finishes */
 const GREETING_NEXT_DELAY_MS = 800;
 /** Marker — pause once this prefix has been typed */
@@ -163,8 +163,10 @@ const GREETING_BG_SRC = "/images/intro/greeting-bg-front.jpg";
 /** Shared type for greeting + captions (system / SF stack) */
 const INTRO_MESSAGE_TYPE =
   "font-medium leading-relaxed tracking-[-0.01em] text-white";
-/** Skip lead-in on VO (0 = play from start) */
-const AUDIO_START_S = 0;
+/** Skip lead-in on VO — slip track forward so later beats land earlier vs picture */
+const AUDIO_START_S = 1.5;
+/** Same slip on music so VO + bed stay locked (beat aims at final clip) */
+const MUSIC_START_S = 1.5;
 /** Music — steady under VO for the whole intro (no swell) */
 const MUSIC_VOLUME = 0.55;
 
@@ -447,7 +449,7 @@ export function CinematicIntro() {
     musicRef.current = music;
     if (music) {
       music.pause();
-      music.currentTime = 0;
+      music.currentTime = MUSIC_START_S;
       music.volume = MUSIC_VOLUME;
     }
   }, [clearMusicFade, setMusicGain]);
@@ -458,7 +460,7 @@ export function CinematicIntro() {
     if (!music) return;
     setMusicGain(1);
     setMusicVolumeNow(MUSIC_VOLUME);
-    music.currentTime = 0;
+    music.currentTime = MUSIC_START_S;
     void music.play().catch(() => {
       /* ignore */
     });
