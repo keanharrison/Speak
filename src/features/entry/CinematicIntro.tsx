@@ -272,9 +272,9 @@ function ForwardArrowGlyph() {
   );
 }
 
-/** Shared top inset for intro nav chevrons — matches Home / DemoBackArrow */
+/** Shared top inset for intro nav chevrons (below status / notch) */
 const INTRO_ARROW_TOP =
-  "max(0.35rem, calc(var(--speak-page-safe-top) + 0.2rem))";
+  "max(2.15rem, calc(var(--speak-page-safe-top) + 1.85rem))";
 
 /**
  * Speak app icon — square 1024 master under an iOS squircle mask.
@@ -1305,10 +1305,10 @@ export function CinematicIntro() {
     phase === "speak" || phase === "fade";
 
   return (
-    <main className="absolute inset-0 flex min-h-0 flex-col overflow-hidden bg-black">
+    <main className="relative flex min-h-0 flex-1 flex-col overflow-hidden bg-black">
       <audio ref={audioRef} src={AUDIO_SRC} preload="auto" />
 
-      {/* Blurred ocean still behind the glass film stage / Speak endcard — edge-to-edge */}
+      {/* Blurred ocean still behind the glass film stage / Speak endcard */}
       {showBlurBg ? (
         <>
           {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -1343,8 +1343,7 @@ export function CinematicIntro() {
           <div
             className="relative z-10 flex h-[48%] flex-col items-center justify-center px-7"
             style={{
-              paddingTop:
-                "max(0.45rem, calc(var(--speak-page-safe-top) + 0.2rem))",
+              paddingTop: "max(2.5rem, calc(var(--speak-page-safe-top) + 1.5rem))",
               paddingLeft: "max(1.25rem, env(safe-area-inset-left))",
               paddingRight: "max(1.25rem, env(safe-area-inset-right))",
             }}
@@ -1398,8 +1397,7 @@ export function CinematicIntro() {
             : "pointer-events-none"
         }`}
         style={{
-          paddingTop:
-            "max(0.55rem, calc(var(--speak-page-safe-top) + 0.35rem))",
+          paddingTop: "max(3.25rem, calc(var(--speak-page-safe-top) + 2.5rem))",
           paddingBottom:
             "max(1.25rem, calc(var(--speak-page-safe-bottom) + 0.75rem))",
           opacity: showFilmShell && !showGreeting && !filmFadeOut ? 1 : 0,
