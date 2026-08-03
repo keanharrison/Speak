@@ -175,8 +175,6 @@ const BLACK_BEFORE_SPEAK_MS = 0;
 const SPEAK_S_BEFORE_WORD_MS = 780;
 /** Speak word alone / with mark hold before fade to name */
 const SPEAK_HOLD_MS = 3600;
-/** Speak opacity transition */
-const SPEAK_FADE_MS = 900;
 /** Full-screen fade to black before name page */
 const FADE_TO_NAME_MS = 1600;
 /** Music keeps playing and eases out across the name-page handoff */
