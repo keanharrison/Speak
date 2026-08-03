@@ -77,7 +77,7 @@ export function AskView({ data }: AskViewProps) {
       list.push(chat);
     }
     return list;
-  }, [data.pastChats]);
+  }, [data]);
 
   useEffect(() => {
     if (chatId === lastChatRef.current) return;
