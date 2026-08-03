@@ -145,10 +145,10 @@ const GREETING_COPY = `Welcome to Speak!
 Before you view our product demo, we invite you to watch a brief video.
 
 - Kean & McCoy`;
-const GREETING_CHAR_MS = 42;
+const GREETING_CHAR_MS = 50;
 /** Beat after title before body line */
 const GREETING_AFTER_TITLE_MS = 520;
-/** Pause before “we invite you to watch a brief video” */
+/** Pause after “product demo,” before “we invite…” */
 const GREETING_BEFORE_INVITE_MS = 1500;
 /** Next appears after typing finishes */
 const GREETING_NEXT_DELAY_MS = 800;
@@ -1210,7 +1210,7 @@ export function CinematicIntro() {
       let delay = GREETING_CHAR_MS;
       if (finishedTitle) {
         delay = GREETING_AFTER_TITLE_MS;
-      } else if (next === GREETING_INVITE_PREFIX) {
+      } else if (next.endsWith(GREETING_INVITE_PREFIX)) {
         delay = GREETING_BEFORE_INVITE_MS;
       } else if (justTyped === "\n") {
         delay = GREETING_CHAR_MS + 160;
