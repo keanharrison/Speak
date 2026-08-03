@@ -1,10 +1,11 @@
 "use client";
 
-import { FormEvent, useEffect, useRef, useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { BaileyAvatar } from "@/components/ui/BaileyAvatar";
 import { Menu, Mic, SquarePen, X } from "lucide-react";
 import { useTabBarVisibility } from "@/components/layout/TabBarVisibility";
+import { SoftKeyboard } from "@/features/ask/SoftKeyboard";
 import { VoiceNotePanel } from "@/features/ask/VoiceNotePanel";
 import type { AskMessage, AskPageContent, AskSuggestion } from "@/types";
 
@@ -40,10 +41,10 @@ function chatTitleForId(data: AskPageContent, chatId: string | null) {
 }
 
 /**
- * Speak chat — suggested questions + thread.
- * Composer pinned to bottom; native mobile keyboard (no custom SoftKeyboard).
+ * Speak chat — quarter sidebar + in-app soft keyboard (no native iOS keyboard).
  */
 export function AskView({ data }: AskViewProps) {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const aboutTopic = searchParams.get("about")?.trim() || null;
   const chatId = searchParams.get("chat")?.trim() || null;
@@ -58,13 +59,25 @@ export function AskView({ data }: AskViewProps) {
   const [composerFocused, setComposerFocused] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [voiceNoteOpen, setVoiceNoteOpen] = useState(false);
-  const inputRef = useRef<HTMLInputElement>(null);
+  const inputRef = useRef<HTMLDivElement>(null);
   const threadEndRef = useRef<HTMLDivElement>(null);
   const { setTabBarVisible } = useTabBarVisibility();
   const lastAboutRef = useRef<string | null>(aboutTopic);
   const lastChatRef = useRef<string | null>(chatId);
 
   const showSuggestions = messages.length === 0 && !composerFocused;
+
+  /** One entry per quarter for the sidebar (newest first). */
+  const quarterChats = useMemo(() => {
+    const seen = new Set<string>();
+    const list: typeof data.pastChats = [];
+    for (const chat of data.pastChats) {
+      if (seen.has(chat.quarter)) continue;
+      seen.add(chat.quarter);
+      list.push(chat);
+    }
+    return list;
+  }, [data.pastChats]);
 
   useEffect(() => {
     if (chatId === lastChatRef.current) return;
@@ -99,16 +112,17 @@ export function AskView({ data }: AskViewProps) {
 
   useEffect(() => {
     threadEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
+  }, [messages, composerFocused]);
 
   function blurComposer() {
-    inputRef.current?.blur();
     setComposerFocused(false);
+    inputRef.current?.blur();
   }
 
   function focusComposer() {
-    inputRef.current?.focus();
     setComposerFocused(true);
+    // Keep a focus target for a11y without summoning the OS keyboard
+    inputRef.current?.focus({ preventScroll: true });
   }
 
   function replyForQuestion(question: string): string {
@@ -151,6 +165,7 @@ export function AskView({ data }: AskViewProps) {
     setThreadTitle(null);
     setSidebarOpen(false);
     blurComposer();
+    router.replace("/ask", { scroll: false });
   }
 
   function openPastChat(id: string) {
@@ -160,6 +175,7 @@ export function AskView({ data }: AskViewProps) {
     setThreadTitle(chat.title);
     setSidebarOpen(false);
     blurComposer();
+    router.replace(`/ask?chat=${encodeURIComponent(id)}`, { scroll: false });
   }
 
   return (
@@ -169,18 +185,17 @@ export function AskView({ data }: AskViewProps) {
         paddingTop: "max(2.25rem, calc(var(--speak-page-safe-top) + 0.65rem))",
       }}
     >
-      {/* Spacer matches Home “← Back” row so titles share one plane */}
       <div className="min-h-[44px] shrink-0 px-5" aria-hidden />
       <div className="relative mx-5 mb-5 shrink-0">
         <h1 className="page-title mt-2 text-center">Speak</h1>
         {threadTitle ? (
           <p className="mt-0.5 text-center text-[11px] text-[#6b6b6b]">
-            Continuing
+            {threadTitle}
           </p>
         ) : null}
         <button
           type="button"
-          aria-label="Open previous chats"
+          aria-label="Open screening quarters"
           onClick={() => setSidebarOpen(true)}
           className="absolute left-0 top-2 flex size-7 items-center justify-center text-[#0A0A0A]"
         >
@@ -254,9 +269,12 @@ export function AskView({ data }: AskViewProps) {
         ) : null}
       </div>
 
-      {/* Composer — pinned to bottom; OS keyboard on real devices */}
       {!voiceNoteOpen ? (
-        <div className="relative z-30 shrink-0 bg-transparent px-5 pb-[4.25rem] pt-1">
+        <div
+          className={`relative z-30 shrink-0 bg-transparent px-5 pt-1 ${
+            composerFocused ? "pb-2" : "pb-[4.25rem]"
+          }`}
+        >
           <form onSubmit={handleSubmit}>
             <div
               className="glass-panel relative flex min-h-[48px] cursor-text items-center gap-2 px-3 py-2"
@@ -267,43 +285,27 @@ export function AskView({ data }: AskViewProps) {
                   {composerFocused ? (
                     <span className="typing-caret" aria-hidden />
                   ) : null}
-                  <span className="text-[15px] text-[#A3A3A3]">
+                  <span className="text-[15px] text-[#6b6b6b]">
                     {data.inputPlaceholder}
                   </span>
                 </div>
               ) : null}
-              <input
+              <div
                 ref={inputRef}
-                type="text"
-                value={draft}
+                role="textbox"
+                tabIndex={0}
                 aria-label={data.inputPlaceholder}
-                autoComplete="off"
-                enterKeyHint="send"
-                onFocus={() => {
-                  setComposerFocused(true);
-                }}
-                onBlur={() => {
-                  window.setTimeout(() => {
-                    if (document.activeElement !== inputRef.current) {
-                      setComposerFocused(false);
-                    }
-                  }, 0);
-                }}
-                onChange={(event) => setDraft(event.target.value)}
-                onKeyDown={(event) => {
-                  if (event.key === "Enter") {
-                    event.preventDefault();
-                    handleReturn();
-                  }
-                  if (event.key === "Escape") {
-                    event.preventDefault();
-                    blurComposer();
-                  }
-                }}
-                className={`h-full min-w-0 flex-1 bg-transparent pl-1 text-left text-[15px] text-[#0A0A0A] outline-none ${
-                  draft ? "" : "caret-transparent"
-                }`}
-              />
+                aria-multiline="false"
+                onFocus={() => setComposerFocused(true)}
+                className="flex h-full min-w-0 flex-1 items-center pl-1 text-left text-[16px] text-[#0A0A0A] outline-none"
+              >
+                {draft ? (
+                  <>
+                    <span className="whitespace-pre-wrap break-words">{draft}</span>
+                    <span className="typing-caret ml-0.5 shrink-0" aria-hidden />
+                  </>
+                ) : null}
+              </div>
               <button
                 type="button"
                 aria-label="Voice note"
@@ -320,6 +322,14 @@ export function AskView({ data }: AskViewProps) {
           </form>
         </div>
       ) : null}
+
+      <SoftKeyboard
+        open={composerFocused && !voiceNoteOpen}
+        onKey={(key) => setDraft((prev) => `${prev}${key}`)}
+        onBackspace={() => setDraft((prev) => prev.slice(0, -1))}
+        onReturn={handleReturn}
+        onHide={blurComposer}
+      />
 
       <VoiceNotePanel
         open={voiceNoteOpen}
@@ -369,21 +379,27 @@ export function AskView({ data }: AskViewProps) {
             </button>
 
             <ul className="scrollbar-hide flex-1 overflow-y-auto px-2 pb-6">
-              {data.pastChats.map((chat) => (
-                <li key={chat.id}>
-                  <button
-                    type="button"
-                    onClick={() => openPastChat(chat.id)}
-                    className="w-full rounded-[12px] px-3 py-3.5 text-left hover:bg-black/[0.04]"
-                  >
-                    <p className="text-[13px] font-semibold text-[#0A0A0A]">
-                      <span className="text-[#6b6b6b]">{chat.quarter}</span>
-                      <span className="mx-1.5 text-[#6b6b6b]">·</span>
-                      {chat.title}
-                    </p>
-                  </button>
-                </li>
-              ))}
+              {quarterChats.map((chat) => {
+                const active = chatId === chat.id;
+                return (
+                  <li key={chat.id}>
+                    <button
+                      type="button"
+                      onClick={() => openPastChat(chat.id)}
+                      className={`w-full rounded-[12px] px-3 py-3.5 text-left ${
+                        active ? "bg-black/[0.06]" : "hover:bg-black/[0.04]"
+                      }`}
+                    >
+                      <p className="text-[15px] font-semibold text-[#0A0A0A]">
+                        {chat.quarter}
+                      </p>
+                      <p className="mt-0.5 text-[12px] text-[#6b6b6b]">
+                        {chat.preview}
+                      </p>
+                    </button>
+                  </li>
+                );
+              })}
             </ul>
           </aside>
         </div>

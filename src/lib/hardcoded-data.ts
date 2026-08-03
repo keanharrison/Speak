@@ -109,8 +109,8 @@ const q3MetricCards = [
   {
     id: "blood_sugar",
     plainLabel: "Blood sugar",
-    plainValue: "Negative",
-    technicalLabel: "Glucose · Negative",
+    plainValue: "0 mg/dL",
+    technicalLabel: "Glucose · 0 mg/dL",
     referenceRange: "Normal range: not detected",
     explanation:
       "Glucose in urine can be an early sign of blood sugar issues. None was detected in Bailey's sample — a reassuring result.",
@@ -121,8 +121,8 @@ const q3MetricCards = [
   {
     id: "protein_leakage",
     plainLabel: "Protein leakage",
-    plainValue: "Negative",
-    technicalLabel: "Protein · Negative",
+    plainValue: "<10 mg/dL",
+    technicalLabel: "Protein · <10 mg/dL",
     referenceRange: "Normal range: not detected",
     explanation:
       "Protein in urine can indicate early kidney stress. None was found in Bailey's sample.",
@@ -133,8 +133,8 @@ const q3MetricCards = [
   {
     id: "fat_breakdown",
     plainLabel: "Fat breakdown",
-    plainValue: "Negative",
-    technicalLabel: "Ketones · Negative",
+    plainValue: "0 mmol/L",
+    technicalLabel: "Ketones · 0 mmol/L",
     referenceRange: "Normal range: not detected",
     explanation:
       "Ketones appear when the body breaks down fat for energy. None were detected — Bailey's metabolism looks stable.",
@@ -145,8 +145,8 @@ const q3MetricCards = [
   {
     id: "liver_stress",
     plainLabel: "Liver stress",
-    plainValue: "Negative",
-    technicalLabel: "Bilirubin · Negative",
+    plainValue: "0.0 mg/dL",
+    technicalLabel: "Bilirubin · 0.0 mg/dL",
     referenceRange: "Normal range: not detected",
     explanation:
       "Bilirubin in urine can signal liver or bile duct stress. None was detected in Bailey's sample.",
@@ -157,8 +157,8 @@ const q3MetricCards = [
   {
     id: "blood_in_urine",
     plainLabel: "Blood in urine",
-    plainValue: "Negative",
-    technicalLabel: "Blood / RBC · Negative",
+    plainValue: "0 /HPF",
+    technicalLabel: "Blood / RBC · 0 /HPF",
     referenceRange: "Normal range: not detected",
     explanation:
       "Blood cells in urine can indicate infection, inflammation, or other urinary tract issues. None were found.",
@@ -202,16 +202,46 @@ export const dashboardPage: DashboardPageContent = {
   recentChatsCtaLabel: "Continue",
   recentChats: [
     {
-      id: "q3-kidney",
-      title: "Kidney trend check",
-      preview: "Q3 2026",
-      href: "/ask?chat=q3-kidney",
+      id: "q3-2026",
+      title: "Q3 2026",
+      preview: "Kidney concentration flagged",
+      href: "/ask?chat=q3-2026",
     },
     {
-      id: "q2-all-clear",
-      title: "All-clear check-in",
-      preview: "Q2 2026",
-      href: "/ask?chat=q2-all-clear",
+      id: "q2-2026",
+      title: "Q2 2026",
+      preview: "All markers within baseline",
+      href: "/ask?chat=q2-2026",
+    },
+    {
+      id: "q1-2026",
+      title: "Q1 2026",
+      preview: "Baseline panel set",
+      href: "/ask?chat=q1-2026",
+    },
+    {
+      id: "q4-2025",
+      title: "Q4 2025",
+      preview: "Year-end check-in",
+      href: "/ask?chat=q4-2025",
+    },
+    {
+      id: "q3-2025",
+      title: "Q3 2025",
+      preview: "Steady vs prior quarter",
+      href: "/ask?chat=q3-2025",
+    },
+    {
+      id: "q2-2025",
+      title: "Q2 2025",
+      preview: "Routine screening",
+      href: "/ask?chat=q2-2025",
+    },
+    {
+      id: "q1-2025",
+      title: "Q1 2025",
+      preview: "First Speak panel",
+      href: "/ask?chat=q1-2025",
     },
   ],
   kitStatus: {
@@ -257,7 +287,7 @@ export const dashboardPage: DashboardPageContent = {
       id: "q3",
       quarter: "Q3 2026",
       dateLabel: "July 15, 2026",
-      bluf: "One value changed from Bailey's baseline — kidney concentration. Worth a vet conversation.",
+      bluf: "One value changed from Bailey's baseline — kidney concentration (1.022).",
       status: "changed",
       markers: q3MetricCards,
       speakTopic: "Q3 2026 results",
@@ -283,11 +313,15 @@ export const dashboardPage: DashboardPageContent = {
   ],
   trendChart: {
     title: "Kidney concentration",
-    subtitle: "The marker Speak is watching",
+    subtitle: "Tap a quarter to inspect the reading",
     referenceRangeLabel: "Reference range: 1.015 — 1.050",
     referenceMin: 1.015,
     referenceMax: 1.05,
     points: [
+      { quarter: "Q1'25", periodLabel: "Q1'25", value: 1.049 },
+      { quarter: "Q2'25", periodLabel: "Q2'25", value: 1.047 },
+      { quarter: "Q3'25", periodLabel: "Q3'25", value: 1.046 },
+      { quarter: "Q4'25", periodLabel: "Q4'25", value: 1.048 },
       { quarter: "Q1", periodLabel: "Q1", value: 1.048 },
       { quarter: "Q2", periodLabel: "Q2", value: 1.045 },
       { quarter: "Q3", periodLabel: "Q3", value: 1.022 },
@@ -516,109 +550,117 @@ export const askPage: AskPageContent = {
   ],
   defaultReply:
     "I can explain Bailey's Speak results in plain English — what's steady, what changed from her baseline, and what a sensible next step looks like. I won't diagnose. For symptoms or care changes, your vet is the right call. Try a suggested question, or ask about this quarter's results.",
-  pastChatsHeading: "Previous chats",
+  pastChatsHeading: "Screening quarters",
   pastChats: [
     {
-      id: "q3-kidney",
-      title: "Kidney trend check",
-      preview: "Kidney trend check",
+      id: "q3-2026",
+      title: "Q3 2026",
+      preview: "Kidney concentration flagged",
       quarter: "Q3 2026",
       messages: [
         {
           role: "user",
-          body: "What does Bailey's trend show?",
+          body: "What changed in Q3 2026?",
         },
         {
           role: "speak",
-          body: "Across Q1–Q3, Bailey's kidney concentration eased downward versus her own starting point. Trends help you see change early; they aren't a diagnosis. Your vet can say whether this pattern needs a closer look.",
-        },
-        {
-          role: "user",
-          body: "What should I bring to the vet?",
-        },
-        {
-          role: "speak",
-          body: "Bring Bailey's Q3 summary and the kidney concentration trend. Mention any day-to-day notes — appetite, water, energy, bathroom habits. On Care, you can preview a share-with-vet packet and send or print it yourself — Speak never books or sends without you.",
+          body: "Kidney concentration moved to 1.022 from Bailey's earlier readings near 1.045–1.048. Other markers on this panel stayed within her baseline. One change from baseline is the story this quarter.",
         },
       ],
     },
     {
-      id: "q2-all-clear",
-      title: "All-clear check-in",
-      preview: "All-clear check-in",
+      id: "q2-2026",
+      title: "Q2 2026",
+      preview: "All markers within baseline",
       quarter: "Q2 2026",
       messages: [
         {
           role: "user",
-          body: "How do the other markers look?",
+          body: "How did Q2 2026 look?",
         },
         {
           role: "speak",
-          body: "In Q2, Bailey's full panel stayed consistent with her baseline — no Speak flags. That quarter was an all-clear check-in against her own history.",
+          body: "Q2 was an all-clear check-in — Bailey's full panel stayed consistent with her baseline, including kidney concentration at 1.045.",
         },
       ],
     },
     {
-      id: "q3-vet-prep",
-      title: "Vet visit prep",
-      preview: "Vet visit prep",
-      quarter: "Q3 2026",
-      messages: [
-        {
-          role: "user",
-          body: "What should I bring to the vet?",
-        },
-        {
-          role: "speak",
-          body: "Bring Bailey's Q3 summary and the kidney concentration trend. Mention any day-to-day notes — appetite, water, energy, bathroom habits. On Care, you can preview a share-with-vet packet and send or print it yourself — Speak never books or sends without you.",
-        },
-      ],
-    },
-    {
-      id: "q1-baseline",
-      title: "Baseline explained",
-      preview: "Baseline explained",
+      id: "q1-2026",
+      title: "Q1 2026",
+      preview: "Baseline panel set",
       quarter: "Q1 2026",
       messages: [
         {
           role: "user",
-          body: "What do Bailey's results mean?",
+          body: "What do Bailey's Q1 2026 results mean?",
         },
         {
           role: "speak",
-          body: "Q1 set Bailey's personal baseline — the reference Speak uses later. Nothing here is a diagnosis; it's a starting point for her own history. Worth a vet conversation if anything about her day-to-day care feels off.",
+          body: "Q1 set Bailey's personal baseline — kidney concentration was 1.048 with the rest of the panel steady. Speak uses that history to spot later change.",
         },
       ],
     },
     {
-      id: "q2-water",
-      title: "Water & appetite",
-      preview: "Water & appetite",
-      quarter: "Q2 2026",
+      id: "q4-2025",
+      title: "Q4 2025",
+      preview: "Year-end check-in",
+      quarter: "Q4 2025",
       messages: [
         {
           role: "user",
-          body: "Should I change Bailey's water or food?",
+          body: "Anything notable in Q4 2025?",
         },
         {
           role: "speak",
-          body: "Speak won't tell you to change diet or treatment. Keep her usual routine unless your vet says otherwise. Note drinking, appetite, and energy so you have concrete details for a visit — worth a vet conversation if something new stands out.",
+          body: "Q4 2025 was a clean year-end check-in. Kidney concentration held near 1.048 with no Speak flags versus her then-recent history.",
         },
       ],
     },
     {
-      id: "q3-next-steps",
-      title: "Sensible next steps",
-      preview: "Sensible next steps",
-      quarter: "Q3 2026",
+      id: "q3-2025",
+      title: "Q3 2025",
+      preview: "Steady vs prior quarter",
+      quarter: "Q3 2025",
       messages: [
         {
           role: "user",
-          body: "What should I do next?",
+          body: "Summarize Q3 2025 for me.",
         },
         {
           role: "speak",
-          body: "Keep Bailey's usual routine, note anything new you notice at home, and book a visit with your own vet to review the flagged marker. When you're ready, open Care → Share with vet for a short packet you control — Speak explains the change; your vet decides what it means for Bailey.",
+          body: "Q3 2025 stayed within Bailey's pattern — kidney concentration around 1.046 and no markers flagged from baseline.",
+        },
+      ],
+    },
+    {
+      id: "q2-2025",
+      title: "Q2 2025",
+      preview: "Routine screening",
+      quarter: "Q2 2025",
+      messages: [
+        {
+          role: "user",
+          body: "Was Q2 2025 routine?",
+        },
+        {
+          role: "speak",
+          body: "Yes — Q2 2025 was a routine screening. Readings tracked with Bailey's usual range, including kidney concentration near 1.047.",
+        },
+      ],
+    },
+    {
+      id: "q1-2025",
+      title: "Q1 2025",
+      preview: "First Speak panel",
+      quarter: "Q1 2025",
+      messages: [
+        {
+          role: "user",
+          body: "What started in Q1 2025?",
+        },
+        {
+          role: "speak",
+          body: "Q1 2025 was Bailey's first Speak panel — the opening point in her quarterly history. Kidney concentration started near 1.049 with a clean panel overall.",
         },
       ],
     },

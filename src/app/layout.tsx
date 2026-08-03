@@ -24,6 +24,11 @@ export const metadata: Metadata = {
     icon: "/images/speak-app-icon.png",
     apple: "/images/speak-app-icon.png",
   },
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "Speak",
+  },
 };
 
 export const viewport: Viewport = {
@@ -31,7 +36,7 @@ export const viewport: Viewport = {
   initialScale: 1,
   maximumScale: 1,
   viewportFit: "cover",
-  /** Cream under the iOS status bar; Safari bottom chrome stays system black */
+  /** Match canvas so iOS doesn't paint a black status strip */
   themeColor: "#f5f0e8",
   /** Prefer resizing the layout when Safari chrome / keyboard shows */
   interactiveWidget: "resizes-content",

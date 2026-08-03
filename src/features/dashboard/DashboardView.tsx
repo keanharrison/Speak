@@ -19,7 +19,7 @@ type DashboardViewProps = {
 };
 
 /**
- * Home — latest report card, trend graph, resume chats.
+ * Home — latest report card, resume chats, trend graph.
  */
 export function DashboardView({ data }: DashboardViewProps) {
   const router = useRouter();
@@ -94,13 +94,13 @@ export function DashboardView({ data }: DashboardViewProps) {
           speakTopic={latest.speakTopic}
         />
 
-        <KidneyTrendChart chart={data.trendChart} compact />
-
         <HomeRecentChats
           heading={data.recentChatsHeading}
           ctaLabel={data.recentChatsCtaLabel}
           chats={data.recentChats}
         />
+
+        <KidneyTrendChart chart={data.trendChart} />
       </main>
     </div>
   );

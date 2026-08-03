@@ -30,7 +30,6 @@ export function HomeLatestSummary({
 }: HomeLatestSummaryProps) {
   const [activeId, setActiveId] = useState(markers[0]?.id ?? "");
   const active = markers.find((m) => m.id === activeId) ?? markers[0];
-  /** Glanceable stats — lead with flagged markers, then the rest (cap at 4). */
   const highlightStats = [
     ...markers.filter((m) => m.status === "changed"),
     ...markers.filter((m) => m.status !== "changed"),
@@ -80,11 +79,17 @@ export function HomeLatestSummary({
             </div>
 
             {active ? (
-              <div className="mt-3 flex items-end justify-between gap-3">
+              <div key={active.id} className="mt-3 flex items-end justify-between gap-3">
                 <div className="min-w-0">
                   <p className="text-[12px] text-[#6b6b6b]">{active.plainLabel}</p>
                   <p className="mt-0.5 text-[28px] font-semibold tracking-tight text-[#0A0A0A]">
                     {active.plainValue}
+                  </p>
+                  <p className="mt-1 text-[11px] leading-snug text-[#6b6b6b]">
+                    {active.technicalLabel}
+                  </p>
+                  <p className="mt-0.5 text-[11px] leading-snug text-[#6b6b6b]">
+                    {active.referenceRange}
                   </p>
                 </div>
                 <StatusBadge status={active.status} />
@@ -93,7 +98,6 @@ export function HomeLatestSummary({
 
             <div className="mt-3 grid grid-cols-2 gap-2">
               {highlightStats.map((marker) => {
-                const isChanged = marker.status === "changed";
                 const selected = marker.id === active?.id;
                 return (
                   <button
@@ -107,11 +111,7 @@ export function HomeLatestSummary({
                     <p className="truncate text-[11px] text-[#6b6b6b]">
                       {marker.plainLabel}
                     </p>
-                    <p
-                      className={`mt-0.5 text-[15px] font-semibold tracking-tight ${
-                        isChanged ? "text-[#C62828]" : "text-[#0A0A0A]"
-                      }`}
-                    >
+                    <p className="mt-0.5 text-[15px] font-semibold tracking-tight text-[#0A0A0A]">
                       {marker.plainValue}
                     </p>
                   </button>

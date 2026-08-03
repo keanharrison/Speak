@@ -164,7 +164,7 @@ export function PhoneFrame({ children }: PhoneFrameProps) {
           id="speak-phone-stage"
           data-phone-orientation={phoneOrientation}
           data-real-phone={isRealPhone ? "true" : "false"}
-          className="group/phone relative flex h-full min-h-0 w-full flex-1 flex-col overflow-hidden"
+          className="group/phone relative flex h-full min-h-0 w-full flex-1 flex-col overflow-hidden bg-[var(--color-canvas)]"
         >
           {children}
         </div>
