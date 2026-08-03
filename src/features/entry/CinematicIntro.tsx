@@ -191,14 +191,18 @@ const CAPTION_TYPE_LEAD_MS = CAPTION_TYPING_EXPERIMENT
   ? Math.max(0, CAPTION_TYPE_LEAD_MS_PREV - CAPTION_START_EARLIER_MS)
   : CAPTION_TYPE_LEAD_MS_PREV;
 const PUNCT_PAUSE_MS = 160;
-/** Crossfade from last montage frame into blurred endcard */
+/** Crossfade from last montage frame into blurred endcard — unused while full-screen end fade is on */
 const MONTAGE_TO_BLUR_MS = 900;
+/** Full-screen fade off the frozen final clip into the Speak endcard */
+const END_SCREEN_FADE_MS = 1100;
 /** Blurred endcard alone before S + Speak */
 const BLUR_HOLD_MS = 2000;
 /** S + Speak hold on blurred endcard */
 const SPEAK_HOLD_MS = 3000;
 /** Slow black fade into the name page */
 const FADE_TO_NAME_MS = 1300;
+/** Silent opening — music + VO wait this long after play / first clip */
+const AUDIO_BED_DELAY_MS = 3000;
 /** Music keeps playing and eases out across the name-page handoff */
 export const MUSIC_OUT_MS = 3600;
 /** How long play/pause feedback stays on screen after a tap */
@@ -358,6 +362,8 @@ export function CinematicIntro() {
   const [nameFade, setNameFade] = useState(false);
   /** Keeps film shell mounted while it fades out into the blur endcard */
   const [filmFadeOut, setFilmFadeOut] = useState(false);
+  /** Full-screen black over frozen final frame → Speak endcard */
+  const [endScreenFade, setEndScreenFade] = useState(false);
   const [paused, setPaused] = useState(false);
   const [controlFlash, setControlFlash] = useState<ControlFlash>(null);
   const [audioAvailable, setAudioAvailable] = useState(false);
@@ -691,18 +697,20 @@ export function CinematicIntro() {
         setSpeakIn(false);
         setSpeakLogo(false);
         setNameFade(false);
-        setFilmFadeOut(true);
-        setPhase("speak");
+        setFilmFadeOut(false);
+        // Freeze last frame, then full-screen fade into Speak endcard → name
+        setEndScreenFade(true);
         try {
           router.prefetch("/explore");
         } catch {
           /* ignore */
         }
-        // Fade montage → blurred still → hold → S+Speak → hold → black → name
         beatTimersRef.current.push(
           window.setTimeout(() => {
             if (runIdRef.current !== runId) return;
             setRevealed({});
+            setPhase("speak");
+            setEndScreenFade(false);
             beatTimersRef.current.push(
               window.setTimeout(() => {
                 if (runIdRef.current !== runId) return;
@@ -732,7 +740,7 @@ export function CinematicIntro() {
                 );
               }, BLUR_HOLD_MS),
             );
-          }, MONTAGE_TO_BLUR_MS),
+          }, END_SCREEN_FADE_MS),
         );
         return;
       }
@@ -812,9 +820,14 @@ export function CinematicIntro() {
         typeBeatLine(next.text, 0, charMs, pauses, undefined, typeStartMs);
       }
 
-      // After black hold: VO + video start; fade lifts a beat later
+      // After black hold: video starts; VO waits (silent opening experiment)
       if (leavingOpenLead) {
-        playVoiceOnly();
+        beatTimersRef.current.push(
+          window.setTimeout(() => {
+            if (runIdRef.current !== runId || pausedRef.current) return;
+            playVoiceOnly();
+          }, AUDIO_BED_DELAY_MS),
+        );
         beatTimersRef.current.push(
           window.setTimeout(() => {
             if (runIdRef.current !== runId) return;
@@ -1113,6 +1126,7 @@ export function CinematicIntro() {
     setSpeakIn(false);
     setSpeakLogo(false);
     setFilmFadeOut(false);
+    setEndScreenFade(false);
     setLineText("");
     setLineIndex(0);
     setRevealed({});
@@ -1122,9 +1136,15 @@ export function CinematicIntro() {
     setPhase("playing");
     setPaused(false);
     pausedRef.current = false;
-    // Music starts on black; VO + first clip begin after open-lead beat
-    playMusicFromStart();
+    // Silent opening — music enters after AUDIO_BED_DELAY_MS
     runLine(0);
+    const runId = runIdRef.current;
+    beatTimersRef.current.push(
+      window.setTimeout(() => {
+        if (runIdRef.current !== runId || pausedRef.current) return;
+        playMusicFromStart();
+      }, AUDIO_BED_DELAY_MS),
+    );
   }, [phase, ready, clearBeatTimers, playMusicFromStart, runLine]);
 
   const goToPlayScreen = useCallback(() => {
@@ -1155,6 +1175,7 @@ export function CinematicIntro() {
     setSpeakLogo(false);
     setNameFade(false);
     setFilmFadeOut(false);
+    setEndScreenFade(false);
     setOpenReveal(false);
     setClipZoom(false);
     setControlFlash(null);
@@ -1637,8 +1658,10 @@ export function CinematicIntro() {
         className="pointer-events-none absolute inset-0 z-50"
         style={{
           background: "#000000",
-          opacity: nameFade ? 1 : 0,
-          transition: `opacity ${FADE_TO_NAME_MS}ms cubic-bezier(0.4, 0, 0.2, 1)`,
+          opacity: nameFade || endScreenFade ? 1 : 0,
+          transition: `opacity ${
+            nameFade ? FADE_TO_NAME_MS : END_SCREEN_FADE_MS
+          }ms cubic-bezier(0.4, 0, 0.2, 1)`,
         }}
         aria-hidden
       />
