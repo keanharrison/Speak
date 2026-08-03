@@ -102,12 +102,16 @@ export function PhoneFrame({ children }: PhoneFrameProps) {
 
   useEffect(() => {
     const sync = () => {
-      const coarse = window.matchMedia("(pointer: coarse)").matches;
+      // Touch-first + no-hover covers phones; 548px catches Pro Max (~440)
+      // and still excludes typical laptop/demo widths.
+      const touchPrimary =
+        window.matchMedia("(pointer: coarse)").matches ||
+        window.matchMedia("(hover: none)").matches;
       const phoneSized =
-        window.matchMedia("(max-width: 430px)").matches ||
+        window.matchMedia("(max-width: 548px)").matches ||
         window.matchMedia("(max-height: 500px)").matches;
       const tall = window.matchMedia("(orientation: portrait)").matches;
-      setIsRealPhone(coarse && phoneSized);
+      setIsRealPhone(touchPrimary && phoneSized);
       setDeviceTall(tall);
     };
     sync();
@@ -121,7 +125,7 @@ export function PhoneFrame({ children }: PhoneFrameProps) {
 
   const shellClass = isRealPhone
     ? "speak-phone-shell--device"
-    : "relative flex h-[844px] max-h-[calc(100dvh-3rem)] w-[390px] max-w-full flex-col overflow-hidden rounded-[54px] border-[10px] border-black bg-[#e8e8e8] shadow-[0_25px_50px_-12px_rgba(0,0,0,0.35)]";
+    : "speak-phone-shell--pending relative flex h-[844px] max-h-[calc(100dvh-3rem)] w-[390px] max-w-full flex-col overflow-hidden rounded-[54px] border-[10px] border-black bg-[#e8e8e8] shadow-[0_25px_50px_-12px_rgba(0,0,0,0.35)]";
 
   const phoneOrientation = isRealPhone
     ? deviceTall
@@ -134,13 +138,13 @@ export function PhoneFrame({ children }: PhoneFrameProps) {
       className={
         isRealPhone
           ? "speak-phone-root--device"
-          : "flex min-h-dvh flex-col items-center justify-center overflow-x-hidden bg-[#cfcfcf] p-6"
+          : "speak-phone-root--pending flex min-h-dvh flex-col items-center justify-center overflow-x-hidden bg-[#cfcfcf] p-6"
       }
     >
       <div className={shellClass}>
         {!isRealPhone ? (
           <div
-            className="pointer-events-none absolute left-1/2 top-2 z-50 h-7 w-[120px] -translate-x-1/2 rounded-full bg-black"
+            className="speak-phone-notch pointer-events-none absolute left-1/2 top-2 z-50 h-7 w-[120px] -translate-x-1/2 rounded-full bg-black"
             aria-hidden
           />
         ) : null}

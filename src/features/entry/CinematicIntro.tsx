@@ -1297,13 +1297,13 @@ export function CinematicIntro() {
           >
             <div className="relative w-full max-w-md">
               <p
-                className={`invisible whitespace-pre-wrap text-center text-[16px] sm:text-[17px] ${INTRO_MESSAGE_TYPE}`}
+                className={`invisible whitespace-pre-wrap text-center text-[18px] sm:text-[19px] ${INTRO_MESSAGE_TYPE}`}
                 aria-hidden
               >
                 {GREETING_COPY}
               </p>
               <p
-                className={`absolute inset-0 whitespace-pre-wrap text-center text-[16px] sm:text-[17px] ${INTRO_MESSAGE_TYPE}`}
+                className={`absolute inset-0 whitespace-pre-wrap text-center text-[18px] sm:text-[19px] ${INTRO_MESSAGE_TYPE}`}
                 style={{ textShadow: "0 1px 14px rgba(0,0,0,0.4)" }}
               >
                 {greetingText}
