@@ -151,16 +151,16 @@ export function ExploreNameForm() {
         }}
       >
         {/* Fixed stack so the typed title doesn’t jump when the field appears */}
-        <div className="flex w-full max-w-[16.5rem] flex-col items-center">
+        <div className="flex w-full max-w-[19rem] flex-col items-center">
           <div className="relative w-full">
             <p
-              className="invisible whitespace-pre-wrap text-center text-[22px] font-medium leading-snug tracking-[-0.02em] text-white sm:text-[24px]"
+              className="invisible whitespace-pre-wrap text-center text-[26px] font-medium leading-snug tracking-[-0.02em] text-white sm:text-[28px]"
               aria-hidden
             >
               {TITLE}
             </p>
             <p
-              className="absolute inset-0 whitespace-pre-wrap text-center text-[22px] font-medium leading-snug tracking-[-0.02em] text-white sm:text-[24px]"
+              className="absolute inset-0 whitespace-pre-wrap text-center text-[26px] font-medium leading-snug tracking-[-0.02em] text-white sm:text-[28px]"
               style={{ textShadow: "0 1px 14px rgba(0,0,0,0.4)" }}
             >
               {titleText}

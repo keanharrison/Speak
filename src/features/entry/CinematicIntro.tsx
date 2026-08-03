@@ -171,10 +171,10 @@ const CHAR_MS = 32;
 const PUNCT_PAUSE_MS = 160;
 /** Black hold before Speak — cut straight to brand */
 const BLACK_BEFORE_SPEAK_MS = 0;
-/** Speak word alone on blurred ocean (was 2.2s; +2s) */
-const SPEAK_HOLD_MS = 4200;
-/** Logo + Speak wordmark hold after logo appears */
-const SPEAK_LOGO_HOLD_MS = 2000;
+/** S mark pops first, then the Speak word */
+const SPEAK_S_BEFORE_WORD_MS = 780;
+/** Speak word alone / with mark hold before fade to name */
+const SPEAK_HOLD_MS = 3600;
 /** Speak opacity transition */
 const SPEAK_FADE_MS = 900;
 /** Full-screen fade to black before name page */
@@ -675,18 +675,12 @@ export function CinematicIntro() {
           window.setTimeout(() => {
             if (runIdRef.current !== runId) return;
             setPhase("speak");
-            requestAnimationFrame(() => {
-              requestAnimationFrame(() => {
-                if (runIdRef.current !== runId) return;
-                setSpeakIn(true);
-              });
-            });
             try {
               router.prefetch("/explore");
             } catch {
               /* ignore */
             }
-            // Speak word → logo+word → full black → name page
+            // S mark pops first → Speak word → hold → name page
             beatTimersRef.current.push(
               window.setTimeout(() => {
                 if (runIdRef.current !== runId) return;
@@ -694,26 +688,32 @@ export function CinematicIntro() {
                 beatTimersRef.current.push(
                   window.setTimeout(() => {
                     if (runIdRef.current !== runId) return;
-                    clearBeatTimers();
-                    const audio = audioRef.current;
-                    if (audio) {
-                      audio.pause();
-                      audio.currentTime = AUDIO_START_S;
-                    }
-                    fadeMusicOut(MUSIC_OUT_MS);
-                    setPhase("fade");
-                    setNameFade(true);
-                    try {
-                      sessionStorage.setItem("introSeen", "true");
-                    } catch {
-                      /* ignore */
-                    }
-                    window.setTimeout(() => {
-                      router.push("/explore");
-                    }, FADE_TO_NAME_MS);
-                  }, SPEAK_LOGO_HOLD_MS),
+                    setSpeakIn(true);
+                    beatTimersRef.current.push(
+                      window.setTimeout(() => {
+                        if (runIdRef.current !== runId) return;
+                        clearBeatTimers();
+                        const audio = audioRef.current;
+                        if (audio) {
+                          audio.pause();
+                          audio.currentTime = AUDIO_START_S;
+                        }
+                        fadeMusicOut(MUSIC_OUT_MS);
+                        setPhase("fade");
+                        setNameFade(true);
+                        try {
+                          sessionStorage.setItem("introSeen", "true");
+                        } catch {
+                          /* ignore */
+                        }
+                        window.setTimeout(() => {
+                          router.push("/explore");
+                        }, FADE_TO_NAME_MS);
+                      }, SPEAK_HOLD_MS),
+                    );
+                  }, SPEAK_S_BEFORE_WORD_MS),
                 );
-              }, SPEAK_HOLD_MS),
+              }, BLACK_BEFORE_SPEAK_MS),
             );
           }, BLACK_BEFORE_SPEAK_MS),
         );
@@ -1297,13 +1297,13 @@ export function CinematicIntro() {
           >
             <div className="relative w-full max-w-md">
               <p
-                className={`invisible whitespace-pre-wrap text-center text-[18px] sm:text-[19px] ${INTRO_MESSAGE_TYPE}`}
+                className={`invisible whitespace-pre-wrap text-center text-[20px] sm:text-[21px] ${INTRO_MESSAGE_TYPE}`}
                 aria-hidden
               >
                 {GREETING_COPY}
               </p>
               <p
-                className={`absolute inset-0 whitespace-pre-wrap text-center text-[18px] sm:text-[19px] ${INTRO_MESSAGE_TYPE}`}
+                className={`absolute inset-0 whitespace-pre-wrap text-center text-[20px] sm:text-[21px] ${INTRO_MESSAGE_TYPE}`}
                 style={{ textShadow: "0 1px 14px rgba(0,0,0,0.4)" }}
               >
                 {greetingText}
@@ -1573,27 +1573,30 @@ export function CinematicIntro() {
           >
             <BackArrowGlyph />
           </button>
-          <div
-            className="flex flex-col items-center"
-            style={{
-              opacity: speakIn ? 1 : 0,
-              transition: `opacity ${SPEAK_FADE_MS}ms ease-in-out`,
-            }}
-          >
+          <div className="flex flex-col items-center justify-center text-center">
             <div
+              className="flex items-center justify-center"
               style={{
                 opacity: speakLogo ? 1 : 0,
-                transform: speakLogo ? "translateY(0)" : "translateY(8px)",
+                transform: speakLogo
+                  ? "translateY(0) scale(1)"
+                  : "translateY(14px) scale(0.86)",
                 transition:
-                  "opacity 700ms cubic-bezier(0.22, 1, 0.36, 1), transform 700ms cubic-bezier(0.22, 1, 0.36, 1)",
-                marginBottom: speakLogo ? "1.1rem" : 0,
-                height: speakLogo ? undefined : 0,
-                overflow: "hidden",
+                  "opacity 650ms cubic-bezier(0.22, 1, 0.36, 1), transform 650ms cubic-bezier(0.22, 1, 0.36, 1)",
+                marginBottom: "1.15rem",
               }}
             >
-              <SpeakMark className="h-[4.5rem] w-[4.5rem] sm:h-[5.5rem] sm:w-[5.5rem]" />
+              <SpeakMark className="h-[5.25rem] w-[5.25rem] sm:h-[6.25rem] sm:w-[6.25rem]" />
             </div>
-            <p className="text-[48px] font-bold tracking-tight text-white sm:text-[72px]">
+            <p
+              className="text-[64px] font-bold leading-none tracking-tight text-white sm:text-[84px]"
+              style={{
+                opacity: speakIn ? 1 : 0,
+                transform: speakIn ? "translateY(0)" : "translateY(10px)",
+                transition:
+                  "opacity 700ms cubic-bezier(0.22, 1, 0.36, 1), transform 700ms cubic-bezier(0.22, 1, 0.36, 1)",
+              }}
+            >
               Speak
             </p>
           </div>
