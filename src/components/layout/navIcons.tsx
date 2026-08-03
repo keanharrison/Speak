@@ -169,3 +169,32 @@ export function ContactsIcon({ active = false }: NavIconProps) {
     </svg>
   );
 }
+
+/** Insurance claim — clipboard / form */
+export function ClaimIcon({ active = false }: NavIconProps) {
+  const board =
+    "M8 4.5h8a2 2 0 0 1 2 2v13a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2v-13a2 2 0 0 1 2-2Z";
+  const clip =
+    "M9.5 3.5h5a1.5 1.5 0 0 1 0 3h-5a1.5 1.5 0 0 1 0-3Z";
+
+  if (active) {
+    return (
+      <svg {...svgProps}>
+        <path fill="currentColor" d={board} />
+        <path fill="#0A0A0A" d={clip} />
+        <path
+          fill="#0A0A0A"
+          d="M8.5 11h7v1.6h-7V11Zm0 3.2h7v1.6h-7v-1.6Zm0 3.2h5v1.6h-5v-1.6Z"
+        />
+      </svg>
+    );
+  }
+
+  return (
+    <svg {...svgProps} fill="none">
+      <path d={board} {...stroke} />
+      <path d={clip} {...stroke} />
+      <path d="M8.5 11.5h7M8.5 14.5h7M8.5 17.5h5" {...stroke} />
+    </svg>
+  );
+}

@@ -43,8 +43,8 @@ export const mobileNav = {
     { href: "/dashboard", label: "Home", icon: "home" },
     { href: "/ask", label: "Speak", icon: "messageCircle" },
     { href: "/vet", label: "Care", icon: "vet" },
+    { href: "/insurance", label: "Claim", icon: "claim" },
     { href: "/profile", label: "Profile", icon: "user" },
-    { href: "/contacts", label: "Contacts", icon: "contacts" },
   ] satisfies SidebarNavItem[],
 } as const;
 

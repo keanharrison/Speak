@@ -66,7 +66,7 @@ export function DashboardView({ data }: DashboardViewProps) {
 
   return (
     <div className="relative min-h-full overflow-x-hidden">
-      <DemoBackArrow href="/explore" tone="light" />
+      <DemoBackArrow href="/explore" />
       <main
         className="relative z-10 w-full flex-1 px-5 pb-6"
         style={{

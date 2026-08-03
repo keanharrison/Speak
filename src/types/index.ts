@@ -181,7 +181,8 @@ export interface SidebarNavItem {
     | "user"
     | "more"
     | "vet"
-    | "contacts";
+    | "contacts"
+    | "claim";
 }
 
 export interface DashboardContent {

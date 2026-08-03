@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import {
   AskIcon,
   CarePlusIcon,
-  ContactsIcon,
+  ClaimIcon,
   HomeIcon,
   YouIcon,
 } from "@/components/layout/navIcons";
@@ -15,8 +15,8 @@ const iconMap = {
   home: HomeIcon,
   messageCircle: AskIcon,
   vet: CarePlusIcon,
+  claim: ClaimIcon,
   user: YouIcon,
-  contacts: ContactsIcon,
 } as const;
 
 /**
