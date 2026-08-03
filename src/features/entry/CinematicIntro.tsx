@@ -77,7 +77,7 @@ const LINES = [
     duration: 2.0,
     file: "03-hinge.mp4",
     need: "Motion: almost-communication — night worry, eye contact",
-    charMs: 44,
+    charMs: 55,
     /** Caption ends → hold (+1s) → googling + “So,” together */
     afterTypeHoldMs: 1500,
   },
@@ -145,7 +145,7 @@ const GREETING_COPY = `Welcome to Speak!
 Before you view our product demo, we invite you to watch a brief video.
 
 - Kean & McCoy`;
-const GREETING_CHAR_MS = 50;
+const GREETING_CHAR_MS = 55;
 /** Beat after title before body line */
 const GREETING_AFTER_TITLE_MS = 520;
 /** Pause after “product demo,” before “we invite…” */
@@ -172,8 +172,11 @@ const MUSIC_VOLUME = 0.55;
 
 /** Caption — white */
 const CAPTION_COLOR = "#FFFFFF";
-/** Character type pace — spoken feel, not word pops */
-const CHAR_MS = 32;
+/**
+ * Typewriter pace — ~18 chars/sec.
+ * Aligns with video-caption guidance (17–20 cps) and ~200–225 WPM reading.
+ */
+const CHAR_MS = 55;
 const PUNCT_PAUSE_MS = 160;
 /** Crossfade from last montage frame into blurred endcard */
 const MONTAGE_TO_BLUR_MS = 900;
