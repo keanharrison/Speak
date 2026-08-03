@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { BaileyAvatar } from "@/components/ui/BaileyAvatar";
 import { Menu, Mic, SquarePen, X } from "lucide-react";
 import { useTabBarVisibility } from "@/components/layout/TabBarVisibility";
+import { PromptMarquee } from "@/features/ask/PromptMarquee";
 import { SoftKeyboard } from "@/features/ask/SoftKeyboard";
 import { VoiceNotePanel } from "@/features/ask/VoiceNotePanel";
 import type { AskMessage, AskPageContent, AskSuggestion } from "@/types";
@@ -41,7 +42,7 @@ function chatTitleForId(data: AskPageContent, chatId: string | null) {
 }
 
 /**
- * Speak chat — quarter sidebar + in-app soft keyboard (no native iOS keyboard).
+ * Speak chat — permanent soft keyboard, quarter sidebar, marquee prompts.
  */
 export function AskView({ data }: AskViewProps) {
   const router = useRouter();
@@ -56,7 +57,6 @@ export function AskView({ data }: AskViewProps) {
   const [threadTitle, setThreadTitle] = useState<string | null>(() =>
     chatTitleForId(data, chatId),
   );
-  const [composerFocused, setComposerFocused] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [voiceNoteOpen, setVoiceNoteOpen] = useState(false);
   const inputRef = useRef<HTMLDivElement>(null);
@@ -65,9 +65,8 @@ export function AskView({ data }: AskViewProps) {
   const lastAboutRef = useRef<string | null>(aboutTopic);
   const lastChatRef = useRef<string | null>(chatId);
 
-  const showSuggestions = messages.length === 0 && !composerFocused;
+  const emptyState = messages.length === 0;
 
-  /** One entry per quarter for the sidebar (newest first). */
   const quarterChats = useMemo(() => {
     const seen = new Set<string>();
     const list: typeof data.pastChats = [];
@@ -105,23 +104,17 @@ export function AskView({ data }: AskViewProps) {
     }
   }, [aboutTopic, chatId, data.aboutGreeting]);
 
+  // Keyboard is permanent on Speak — keep the floating tab bar hidden
   useEffect(() => {
-    setTabBarVisible(!composerFocused && !voiceNoteOpen);
+    setTabBarVisible(false);
     return () => setTabBarVisible(true);
-  }, [composerFocused, voiceNoteOpen, setTabBarVisible]);
+  }, [setTabBarVisible]);
 
   useEffect(() => {
     threadEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages, composerFocused]);
-
-  function blurComposer() {
-    setComposerFocused(false);
-    inputRef.current?.blur();
-  }
+  }, [messages]);
 
   function focusComposer() {
-    setComposerFocused(true);
-    // Keep a focus target for a11y without summoning the OS keyboard
     inputRef.current?.focus({ preventScroll: true });
   }
 
@@ -143,7 +136,6 @@ export function AskView({ data }: AskViewProps) {
       { role: "speak", body: replyForQuestion(trimmed) },
     ]);
     setDraft("");
-    blurComposer();
   }
 
   function handleReturn() {
@@ -164,7 +156,6 @@ export function AskView({ data }: AskViewProps) {
     setDraft("");
     setThreadTitle(null);
     setSidebarOpen(false);
-    blurComposer();
     router.replace("/ask", { scroll: false });
   }
 
@@ -174,7 +165,6 @@ export function AskView({ data }: AskViewProps) {
     setMessages(chat.messages.map((message) => ({ ...message })));
     setThreadTitle(chat.title);
     setSidebarOpen(false);
-    blurComposer();
     router.replace(`/ask?chat=${encodeURIComponent(id)}`, { scroll: false });
   }
 
@@ -182,12 +172,11 @@ export function AskView({ data }: AskViewProps) {
     <main
       className="absolute inset-0 z-10 flex flex-col overflow-hidden bg-transparent"
       style={{
-        paddingTop: "max(2.25rem, calc(var(--speak-page-safe-top) + 0.65rem))",
+        paddingTop: "max(0.45rem, calc(var(--speak-page-safe-top) + 0.2rem))",
       }}
     >
-      <div className="min-h-[44px] shrink-0 px-5" aria-hidden />
-      <div className="relative mx-5 mb-5 shrink-0">
-        <h1 className="page-title mt-2 text-center">Speak</h1>
+      <div className="relative mx-5 mb-3 mt-1 shrink-0">
+        <h1 className="page-title text-center text-[24px]">Speak</h1>
         {threadTitle ? (
           <p className="mt-0.5 text-center text-[11px] text-[#6b6b6b]">
             {threadTitle}
@@ -197,7 +186,7 @@ export function AskView({ data }: AskViewProps) {
           type="button"
           aria-label="Open screening quarters"
           onClick={() => setSidebarOpen(true)}
-          className="absolute left-0 top-2 flex size-7 items-center justify-center text-[#0A0A0A]"
+          className="absolute left-0 top-0.5 flex size-7 items-center justify-center text-[#0A0A0A]"
         >
           <Menu className="h-5 w-5" strokeWidth={1.75} />
         </button>
@@ -205,22 +194,28 @@ export function AskView({ data }: AskViewProps) {
           type="button"
           aria-label="New chat"
           onClick={startNewChat}
-          className="absolute right-0 top-2 flex size-7 items-center justify-center text-[#0A0A0A]"
+          className="absolute right-0 top-0.5 flex size-7 items-center justify-center text-[#0A0A0A]"
         >
           <SquarePen className="h-5 w-5" strokeWidth={1.75} />
         </button>
       </div>
 
-      <div className="scrollbar-hide min-h-0 flex-1 overflow-y-auto px-5">
-        {messages.length === 0 ? (
-          <div className="flex h-full min-h-[120px] flex-col items-center justify-center px-4 text-center">
-            <BaileyAvatar size="lg" className="mb-4" />
-            <p className="text-[15px] font-medium text-[#0A0A0A]">
-              Ask about Bailey&apos;s results
-            </p>
+      <div className="scrollbar-hide min-h-0 flex-1 overflow-y-auto">
+        {emptyState ? (
+          <div className="flex min-h-full flex-col px-0 pb-3 pt-1">
+            <PromptMarquee
+              suggestions={data.suggestions}
+              onSelect={selectSuggestion}
+            />
+            <div className="flex flex-1 flex-col items-center justify-center px-5 pb-4 pt-6 text-center">
+              <BaileyAvatar size="lg" className="mb-3" />
+              <p className="text-[15px] font-medium text-[#0A0A0A]">
+                Ask about Bailey&apos;s results
+              </p>
+            </div>
           </div>
         ) : (
-          <div className="flex flex-col gap-4 pb-4 pt-2">
+          <div className="flex flex-col gap-4 px-5 pb-4 pt-2">
             {messages.map((message, index) => {
               const isUser = message.role === "user";
               return (
@@ -248,33 +243,10 @@ export function AskView({ data }: AskViewProps) {
             <div ref={threadEndRef} />
           </div>
         )}
-
-        {showSuggestions ? (
-          <div className="pb-3 pt-2">
-            <div className="grid grid-cols-2 gap-2">
-              {data.suggestions.map((suggestion) => (
-                <button
-                  key={suggestion.id}
-                  type="button"
-                  onClick={() => selectSuggestion(suggestion)}
-                  className="glass-panel flex min-h-[56px] items-center justify-center px-3 py-3 text-center"
-                >
-                  <p className="text-[13px] font-semibold leading-snug text-[#0A0A0A]">
-                    {suggestion.title}
-                  </p>
-                </button>
-              ))}
-            </div>
-          </div>
-        ) : null}
       </div>
 
       {!voiceNoteOpen ? (
-        <div
-          className={`relative z-30 shrink-0 bg-transparent px-5 pt-1 ${
-            composerFocused ? "pb-2" : "pb-[4.25rem]"
-          }`}
-        >
+        <div className="relative z-30 shrink-0 bg-transparent px-5 pb-2 pt-1">
           <form onSubmit={handleSubmit}>
             <div
               className="glass-panel relative flex min-h-[48px] cursor-text items-center gap-2 px-3 py-2"
@@ -282,9 +254,7 @@ export function AskView({ data }: AskViewProps) {
             >
               {!draft ? (
                 <div className="pointer-events-none absolute inset-y-0 left-4 flex items-center">
-                  {composerFocused ? (
-                    <span className="typing-caret" aria-hidden />
-                  ) : null}
+                  <span className="typing-caret" aria-hidden />
                   <span className="text-[15px] text-[#6b6b6b]">
                     {data.inputPlaceholder}
                   </span>
@@ -296,7 +266,6 @@ export function AskView({ data }: AskViewProps) {
                 tabIndex={0}
                 aria-label={data.inputPlaceholder}
                 aria-multiline="false"
-                onFocus={() => setComposerFocused(true)}
                 className="flex h-full min-w-0 flex-1 items-center pl-1 text-left text-[16px] text-[#0A0A0A] outline-none"
               >
                 {draft ? (
@@ -311,7 +280,6 @@ export function AskView({ data }: AskViewProps) {
                 aria-label="Voice note"
                 onClick={(event) => {
                   event.stopPropagation();
-                  blurComposer();
                   setVoiceNoteOpen(true);
                 }}
                 className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#0A0A0A] text-white"
@@ -324,11 +292,10 @@ export function AskView({ data }: AskViewProps) {
       ) : null}
 
       <SoftKeyboard
-        open={composerFocused && !voiceNoteOpen}
+        open={!voiceNoteOpen}
         onKey={(key) => setDraft((prev) => `${prev}${key}`)}
         onBackspace={() => setDraft((prev) => prev.slice(0, -1))}
         onReturn={handleReturn}
-        onHide={blurComposer}
       />
 
       <VoiceNotePanel

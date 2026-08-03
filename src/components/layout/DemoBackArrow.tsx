@@ -43,8 +43,8 @@ export function DemoBackArrow({
       : "text-[#0A0A0A]/85 hover:bg-black/5";
 
   const style = {
-    top: "max(2.15rem, calc(var(--speak-page-safe-top) + 1.85rem))",
-    left: "max(0.65rem, env(safe-area-inset-left))",
+    top: "max(0.35rem, calc(var(--speak-page-safe-top) + 0.2rem))",
+    left: "max(0.5rem, env(safe-area-inset-left))",
   } as const;
 
   const classes = `absolute z-40 flex h-10 w-10 items-center justify-center rounded-full transition ${color} ${className}`;

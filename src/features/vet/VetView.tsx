@@ -26,13 +26,10 @@ export function VetView({ data }: VetViewProps) {
     <main
       className="relative z-10 mx-auto w-full flex-1 overflow-x-hidden px-5 pb-6"
       style={{
-        paddingTop: "max(2.25rem, calc(var(--speak-page-safe-top) + 0.65rem))",
+        paddingTop: "max(0.45rem, calc(var(--speak-page-safe-top) + 0.2rem))",
       }}
     >
-      {/* Spacer matches Home “← Back” row so titles share one plane */}
-      <div className="min-h-[44px]" aria-hidden />
-      <h1 className="page-title mt-2">{data.title}</h1>
-      <p className="section-eyebrow mt-1">{data.subtitle}</p>
+      <h1 className="page-title mt-1">{data.title}</h1>
 
       <div className="mt-6">
         <ShareWithVetCard packet={data.sharePacket} featured />

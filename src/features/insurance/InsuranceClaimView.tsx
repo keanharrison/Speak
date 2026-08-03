@@ -32,14 +32,10 @@ export function InsuranceClaimView() {
     <main
       className="relative z-10 mx-auto w-full flex-1 overflow-x-hidden px-5 pb-6"
       style={{
-        paddingTop: "max(2.25rem, calc(var(--speak-page-safe-top) + 0.65rem))",
+        paddingTop: "max(0.45rem, calc(var(--speak-page-safe-top) + 0.2rem))",
       }}
     >
-      <div className="min-h-[44px]" aria-hidden />
-      <h1 className="page-title mt-2">Insurance</h1>
-      <p className="section-eyebrow mt-1">
-        File a claim with Bailey&apos;s Speak screening as evidence
-      </p>
+      <h1 className="page-title mt-1">Insurance</h1>
 
       {submitted ? (
         <section className="glass-panel mt-6 px-4 py-5">

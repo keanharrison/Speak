@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { BaileyAvatar } from "@/components/ui/BaileyAvatar";
 import { PersonAvatar } from "@/components/ui/PersonAvatar";
 import { StatusBadge } from "@/components/ui/StatusBadge";
+import { getAccountFirstName } from "@/lib/account";
 import type { YouPageContent } from "@/types";
 
 type YouViewProps = {
@@ -47,14 +48,30 @@ function AppleSwitch({
 }
 
 /**
- * You tab — Pet | Owner. Vet prep lives on the Vet tab.
+ * You tab — Pet | Owner. Name/email come from the onboarding first name.
  */
 export function YouView({ data }: YouViewProps) {
   const [tab, setTab] = useState<Tab>("pet");
+  const [firstName, setFirstName] = useState<string | null>(null);
   const [notifState, setNotifState] = useState(() =>
     Object.fromEntries(data.notifications.map((n) => [n.id, n.enabled])),
   );
   const { pet, owner } = data;
+
+  useEffect(() => {
+    setFirstName(getAccountFirstName());
+  }, []);
+
+  const displayName = useMemo(() => {
+    const trimmed = firstName?.trim();
+    if (trimmed) return trimmed;
+    return owner.firstName;
+  }, [firstName, owner.firstName]);
+
+  const displayEmail = useMemo(() => {
+    const local = displayName.toLowerCase().replace(/\s+/g, "");
+    return `${local || "member"}@gmail.com`;
+  }, [displayName]);
 
   const petFacts = [
     { label: "Type", value: pet.breedLabel },
@@ -68,11 +85,10 @@ export function YouView({ data }: YouViewProps) {
     <main
       className="relative z-10 mx-auto w-full flex-1 overflow-x-hidden px-5 pb-6"
       style={{
-        paddingTop: "max(2.25rem, calc(var(--speak-page-safe-top) + 0.65rem))",
+        paddingTop: "max(0.45rem, calc(var(--speak-page-safe-top) + 0.2rem))",
       }}
     >
-      <div className="min-h-[44px]" aria-hidden />
-      <h1 className="page-title mt-2">{data.title}</h1>
+      <h1 className="page-title mt-1">{data.title}</h1>
 
       <div
         className="glass-segment-track mt-5 flex rounded-full p-1"
@@ -152,31 +168,21 @@ export function YouView({ data }: YouViewProps) {
             </ul>
           </section>
 
-          <section className="grid grid-cols-1 gap-2.5">
-            <div className="glass-panel px-4 py-3">
-              <p className="text-[12px] text-[#6b6b6b]">{pet.nextKitHeading}</p>
-              <p className="mt-1 text-[14px] font-medium text-[#0A0A0A]">
-                {pet.nextKitBody}
-              </p>
-            </div>
-            <div className="glass-panel px-4 py-3">
-              <p className="text-[12px] text-[#6b6b6b]">
-                {pet.membershipHeading}
-              </p>
-              <p className="mt-1 text-[14px] font-medium text-[#0A0A0A]">
-                {pet.membershipBody}
-              </p>
-            </div>
+          <section className="glass-panel px-4 py-3">
+            <p className="text-[12px] text-[#6b6b6b]">{pet.nextKitHeading}</p>
+            <p className="mt-1 text-[14px] font-medium text-[#0A0A0A]">
+              {pet.nextKitBody}
+            </p>
           </section>
         </div>
       ) : (
         <div className="mt-6 flex flex-col gap-4">
           <section className="glass-panel px-4 py-4">
             <div className="flex items-center gap-3">
-              <PersonAvatar size="md" label="Owner" />
+              <PersonAvatar size="md" label={displayName} />
               <div className="min-w-0">
                 <h2 className="text-[20px] font-semibold tracking-tight text-[#0A0A0A]">
-                  {owner.firstName} {owner.lastName}
+                  {displayName}
                 </h2>
                 <p className="mt-0.5 text-[14px] text-[#6b6b6b]">Owner</p>
               </div>
@@ -185,7 +191,7 @@ export function YouView({ data }: YouViewProps) {
               <div>
                 <dt className="text-[#6b6b6b]">Email</dt>
                 <dd className="mt-0.5 font-medium text-[#0A0A0A]">
-                  {owner.email}
+                  {displayEmail}
                 </dd>
               </div>
               <div>
@@ -234,10 +240,10 @@ export function YouView({ data }: YouViewProps) {
                 </li>
               ))}
             </ul>
-            <p className="px-4 py-3 text-[11px] leading-relaxed text-[#6b6b6b]">
-              {data.notificationsFootnote}
-            </p>
           </section>
+          <p className="px-1 text-[12px] leading-relaxed text-[#6b6b6b]">
+            {data.notificationsFootnote}
+          </p>
         </div>
       )}
     </main>

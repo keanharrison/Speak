@@ -201,8 +201,8 @@ const BLUR_HOLD_MS = 2000;
 const SPEAK_HOLD_MS = 3000;
 /** Slow black fade into the name page */
 const FADE_TO_NAME_MS = 1300;
-/** Music + VO start with play (0 = restore bed under the open) */
-const AUDIO_BED_DELAY_MS = 0;
+/** Music bed slides in ~5s after the open video starts (VO stays with picture) */
+const AUDIO_BED_DELAY_MS = 5000;
 /** Music keeps playing and eases out across the name-page handoff */
 export const MUSIC_OUT_MS = 3600;
 /** How long play/pause feedback stays on screen after a tap */
@@ -827,13 +827,13 @@ export function CinematicIntro() {
         typeBeatLine(next.text, 0, charMs, pauses, undefined, typeStartMs);
       }
 
-      // After black hold: video starts; VO enters with the bed
+      // After black hold: video + VO start; music waits AUDIO_BED_DELAY_MS
       if (leavingOpenLead) {
         beatTimersRef.current.push(
           window.setTimeout(() => {
             if (runIdRef.current !== runId || pausedRef.current) return;
             playVoiceOnly();
-          }, AUDIO_BED_DELAY_MS),
+          }, 0),
         );
         beatTimersRef.current.push(
           window.setTimeout(() => {
@@ -1143,7 +1143,7 @@ export function CinematicIntro() {
     setPhase("playing");
     setPaused(false);
     pausedRef.current = false;
-    // Music bed under the open (AUDIO_BED_DELAY_MS = 0 → immediate)
+    // Music enters ~5s after play (slide the bed later than picture)
     runLine(0);
     const runId = runIdRef.current;
     beatTimersRef.current.push(

@@ -70,12 +70,10 @@ export function DashboardView({ data }: DashboardViewProps) {
       <main
         className="relative z-10 w-full max-w-full flex-1 px-5 pb-6"
         style={{
-          paddingTop: "max(2.25rem, calc(var(--speak-page-safe-top) + 0.65rem))",
+          paddingTop: "max(0.45rem, calc(var(--speak-page-safe-top) + 0.2rem))",
         }}
       >
-        <div className="min-h-[44px]" aria-hidden />
-
-        <div className="mt-2 mb-5">
+        <div className="mt-8 mb-4">
           {firstName ? (
             <h1 className="page-title">Hi, {firstName}</h1>
           ) : (
@@ -84,7 +82,6 @@ export function DashboardView({ data }: DashboardViewProps) {
         </div>
 
         <HomeLatestSummary
-          eyebrow={data.latestSummary.eyebrow}
           quarter={latest.quarter}
           dateLabel={latest.dateLabel}
           status={latest.status}

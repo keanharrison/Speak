@@ -7,6 +7,7 @@ type StatusBadgeProps = {
   onGlass?: boolean;
 };
 
+/** Changed = black/grey · Within baseline = green (no red). */
 export function StatusBadge({ status, onGlass = false }: StatusBadgeProps) {
   const isChanged = status === "changed";
   const label = markerStatusLabel[status];
@@ -16,13 +17,13 @@ export function StatusBadge({ status, onGlass = false }: StatusBadgeProps) {
       <span
         className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-medium ${
           isChanged
-            ? "bg-[#C62828]/15 text-[#C62828]"
+            ? "bg-black/10 text-[#0A0A0A]"
             : "bg-[#2A8A5A]/15 text-[#2A8A5A]"
         }`}
       >
         <span
           className={`h-1.5 w-1.5 rounded-full ${
-            isChanged ? "bg-[#C62828]" : "bg-[#2A8A5A]"
+            isChanged ? "bg-[#6b6b6b]" : "bg-[#2A8A5A]"
           }`}
           aria-hidden
         />
@@ -35,13 +36,13 @@ export function StatusBadge({ status, onGlass = false }: StatusBadgeProps) {
     <span
       className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-medium ${
         isChanged
-          ? "bg-[#C62828]/12 text-[#C62828]"
+          ? "bg-black/10 text-[#0A0A0A]"
           : "bg-[#2A8A5A]/12 text-[#2A8A5A]"
       }`}
     >
       <span
         className={`h-1.5 w-1.5 rounded-full ${
-          isChanged ? "bg-[#C62828]" : "bg-[#2A8A5A]"
+          isChanged ? "bg-[#6b6b6b]" : "bg-[#2A8A5A]"
         }`}
         aria-hidden
       />

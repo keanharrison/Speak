@@ -504,3 +504,40 @@ body {
 .speak-soft-key--active {
   background: #ffffff;
 }
+
+/* Prompt marquee — slow scroll with edge fades */
+.speak-prompt-marquee {
+  mask-image: linear-gradient(
+    90deg,
+    transparent 0%,
+    #000 12%,
+    #000 88%,
+    transparent 100%
+  );
+  -webkit-mask-image: linear-gradient(
+    90deg,
+    transparent 0%,
+    #000 12%,
+    #000 88%,
+    transparent 100%
+  );
+}
+
+.speak-prompt-marquee__track {
+  animation: speak-prompt-marquee 28s linear infinite;
+}
+
+@keyframes speak-prompt-marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .speak-prompt-marquee__track {
+    animation: none;
+  }
+}

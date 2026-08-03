@@ -1,13 +1,12 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 
 type SoftKeyboardProps = {
-  open: boolean;
+  open?: boolean;
   onKey: (key: string) => void;
   onBackspace: () => void;
   onReturn: () => void;
-  onHide: () => void;
 };
 
 const LETTERS_LOWER = [
@@ -37,25 +36,16 @@ const SYMBOLS = [
 type Layout = "letters" | "numbers" | "symbols";
 
 /**
- * In-app keyboard — blocks the native iOS keyboard so the demo
- * behaves like a real app (layout shifts inside the phone stage).
+ * Permanent in-app keyboard — never summons the native iOS keyboard.
  */
 export function SoftKeyboard({
-  open,
+  open = true,
   onKey,
   onBackspace,
   onReturn,
-  onHide,
 }: SoftKeyboardProps) {
   const [layout, setLayout] = useState<Layout>("letters");
   const [shifted, setShifted] = useState(true);
-
-  useEffect(() => {
-    if (!open) {
-      setLayout("letters");
-      setShifted(true);
-    }
-  }, [open]);
 
   const pressLetter = useCallback(
     (key: string) => {
@@ -82,25 +72,7 @@ export function SoftKeyboard({
       aria-label="Keyboard"
       onMouseDown={(event) => event.preventDefault()}
     >
-      <div className="flex items-center justify-between gap-2 px-3 pb-1.5 pt-2">
-        <button
-          type="button"
-          className="speak-soft-key speak-soft-key--action min-w-[4.5rem] px-3 text-[13px] font-semibold text-[#0A0A0A]"
-          onClick={onHide}
-        >
-          Hide
-        </button>
-        <p className="text-[12px] font-medium text-[#6b6b6b]">Speak keyboard</p>
-        <button
-          type="button"
-          className="speak-soft-key speak-soft-key--action min-w-[4.5rem] px-3 text-[13px] font-semibold text-[#0A0A0A]"
-          onClick={onReturn}
-        >
-          Send
-        </button>
-      </div>
-
-      <div className="flex flex-col gap-[6px] px-1.5 pb-2">
+      <div className="flex flex-col gap-[6px] px-1.5 pb-2 pt-2">
         {rows.map((row, rowIndex) => (
           <div key={`row-${rowIndex}`} className="flex justify-center gap-[5px]">
             {layout === "letters" && rowIndex === 2 ? (
@@ -184,7 +156,7 @@ export function SoftKeyboard({
       </div>
 
       <div
-        className="h-[max(0.35rem,env(safe-area-inset-bottom,0px))]"
+        className="h-[max(0.25rem,env(safe-area-inset-bottom,0px))]"
         aria-hidden
       />
     </div>

@@ -177,16 +177,12 @@ export function ContactsView() {
     <main
       className="relative z-10 mx-auto w-full flex-1 overflow-x-hidden px-5 pb-6"
       style={{
-        paddingTop: "max(2.25rem, calc(var(--speak-page-safe-top) + 0.65rem))",
+        paddingTop: "max(0.45rem, calc(var(--speak-page-safe-top) + 0.2rem))",
       }}
     >
-      <div className="min-h-[44px]" aria-hidden />
-      <h1 className="page-title mt-2">{data.title}</h1>
-      <p className="section-eyebrow mt-3 max-w-sm leading-relaxed">
-        {data.intro}
-      </p>
+      <h1 className="page-title mt-1">{data.title}</h1>
 
-      <section className="mt-7" aria-label="Founders">
+      <section className="mt-6" aria-label="Founders">
         <h2 className="section-title">{data.foundersHeading}</h2>
         <ul className="mt-3 flex flex-col gap-3">
           {data.people.map((person) => (

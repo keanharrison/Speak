@@ -7,7 +7,6 @@ import { StatusBadge } from "@/components/ui/StatusBadge";
 import type { DashboardMetricCard, MarkerStatus } from "@/types";
 
 type HomeLatestSummaryProps = {
-  eyebrow: string;
   quarter: string;
   dateLabel: string;
   status: MarkerStatus;
@@ -19,7 +18,6 @@ type HomeLatestSummaryProps = {
 
 /** First thing on Home — latest screening with marker tabs, stats, and actions. */
 export function HomeLatestSummary({
-  eyebrow,
   quarter,
   dateLabel,
   status,
@@ -36,9 +34,8 @@ export function HomeLatestSummary({
   ].slice(0, 4);
 
   return (
-    <section aria-label={eyebrow}>
-      <p className="section-eyebrow relative z-10">{eyebrow}</p>
-      <div className="glass-light-card relative z-10 mt-2 max-w-full overflow-hidden px-4 py-4">
+    <section aria-label="Latest results">
+      <div className="glass-light-card relative z-10 max-w-full overflow-hidden px-4 py-4">
         <div className="flex items-start justify-between gap-3">
           <div className="flex min-w-0 items-start gap-3">
             <BaileyAvatar size="xl" className="mt-0.5" />
