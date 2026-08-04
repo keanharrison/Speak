@@ -205,7 +205,7 @@ const SPEAK_HOLD_MS = 3000;
 /** Slow black fade into the name page */
 const FADE_TO_NAME_MS = 1300;
 /** Music bed slides in ~5s after the open video starts (VO stays with picture) */
-const AUDIO_BED_DELAY_MS = 5000;
+const AUDIO_BED_DELAY_MS = 8000;
 /** Music keeps playing and eases out across the name-page handoff */
 export const MUSIC_OUT_MS = 3600;
 /** How long play/pause feedback stays on screen after a tap */

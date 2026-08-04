@@ -1,6 +1,6 @@
 type SpeakAppIconProps = {
   className?: string;
-  /** bark = white S + speak rays (endcard); plain = S only */
+  /** bark = user Speak logo with rays (endcard); plain = S only */
   variant?: "plain" | "bark";
 };
 
@@ -11,7 +11,7 @@ export function SpeakAppIcon({
 }: SpeakAppIconProps) {
   const src =
     variant === "bark"
-      ? "/images/speak-app-icon-bark.png?v=20260804s"
+      ? "/images/speak-app-icon-bark.png?v=20260804u"
       : "/images/speak-app-icon-v2.png?v=20260804s";
 
   return (
