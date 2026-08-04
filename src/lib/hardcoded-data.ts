@@ -665,7 +665,7 @@ export const askPage: AskPageContent = {
       ],
     },
   ],
-  inputPlaceholder: "Message",
+  inputPlaceholder: "Type something…",
 };
 
 export const baileyPage: BaileyPageContent = {

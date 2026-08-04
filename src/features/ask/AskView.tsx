@@ -199,7 +199,8 @@ export function AskView({ data }: AskViewProps) {
     <main
       className="absolute inset-0 z-10 flex flex-col overflow-hidden bg-transparent"
       style={{
-        paddingTop: "max(0.45rem, calc(var(--speak-page-safe-top) + 0.2rem))",
+        paddingTop:
+          "max(1.35rem, calc(var(--speak-page-safe-top) + 0.85rem))",
       }}
       onClick={dismissKeyboard}
     >
@@ -222,7 +223,7 @@ export function AskView({ data }: AskViewProps) {
             event.stopPropagation();
             setSidebarOpen(true);
           }}
-          className="absolute left-0 top-0.5 flex size-7 items-center justify-center text-white"
+          className="absolute left-0 top-1 flex size-8 items-center justify-center text-white"
         >
           <Menu className="h-5 w-5" strokeWidth={1.75} />
         </button>
@@ -233,7 +234,7 @@ export function AskView({ data }: AskViewProps) {
             event.stopPropagation();
             startNewChat();
           }}
-          className="absolute right-0 top-0.5 flex size-7 items-center justify-center text-white"
+          className="absolute right-0 top-1 flex size-8 items-center justify-center text-white"
         >
           <SquarePen className="h-5 w-5" strokeWidth={1.75} />
         </button>
@@ -281,18 +282,14 @@ export function AskView({ data }: AskViewProps) {
         <div
           className={`relative z-30 shrink-0 ${
             showKeyboard
-              ? "bg-[#D1D3D9] px-2.5 pb-1.5 pt-2"
+              ? "bg-transparent px-2.5 pb-1.5 pt-2"
               : "bg-transparent px-5 pb-[6.25rem] pt-1"
           }`}
           onClick={(event) => event.stopPropagation()}
         >
           <form onSubmit={handleSubmit}>
             <div
-              className={`relative flex cursor-text items-center gap-2 ${
-                showKeyboard
-                  ? "glass-light-field min-h-[44px] rounded-full px-2 py-1.5"
-                  : "glass-panel min-h-[48px] px-3 py-2"
-              }`}
+              className="glass-panel relative z-[1] flex min-h-[48px] cursor-text items-center gap-2 rounded-full px-3 py-2"
               onClick={focusComposer}
             >
               {showKeyboard ? (
@@ -300,26 +297,26 @@ export function AskView({ data }: AskViewProps) {
                   <button
                     type="button"
                     aria-label="Add"
-                    className="flex size-8 shrink-0 items-center justify-center rounded-full bg-black/[0.06] text-[#3A3A3C]"
+                    className="relative z-[1] flex size-8 shrink-0 items-center justify-center rounded-full bg-white text-[#0A0A0A]"
                     onClick={(event) => event.stopPropagation()}
                   >
                     <Plus className="h-4 w-4" strokeWidth={2.25} />
                   </button>
                   <button
                     type="button"
-                    className="flex shrink-0 items-center gap-0.5 text-[15px] font-semibold text-[#0A0A0A]"
+                    className="relative z-[1] flex shrink-0 items-center gap-0.5 rounded-full bg-white px-2.5 py-1 text-[13px] font-semibold text-[#0A0A0A]"
                     onClick={(event) => event.stopPropagation()}
                   >
                     Auto
                     <ChevronDown
-                      className="h-3.5 w-3.5 text-[#6b6b6b]"
+                      className="h-3.5 w-3.5 text-[#0A0A0A]"
                       strokeWidth={2.25}
                     />
                   </button>
                 </>
               ) : null}
 
-              <div className="relative min-w-0 flex-1">
+              <div className="relative z-[1] min-w-0 flex-1">
                 {!draft ? (
                   <div
                     className={`pointer-events-none absolute inset-y-0 flex items-center ${
@@ -327,13 +324,12 @@ export function AskView({ data }: AskViewProps) {
                     }`}
                   >
                     {showKeyboard ? (
-                      <span className="typing-caret" aria-hidden />
+                      <span
+                        className="typing-caret mr-0.5 !bg-white"
+                        aria-hidden
+                      />
                     ) : null}
-                    <span
-                      className={`text-[16px] ${
-                        showKeyboard ? "text-[#8E8E93]" : "text-[#6b6b6b]"
-                      }`}
-                    >
+                    <span className="text-[16px] text-white/70">
                       {data.inputPlaceholder}
                     </span>
                   </div>
@@ -345,7 +341,7 @@ export function AskView({ data }: AskViewProps) {
                   aria-label={data.inputPlaceholder}
                   aria-multiline="false"
                   onFocus={() => setKeyboardOpen(true)}
-                  className="flex min-h-[28px] min-w-0 items-center text-left text-[16px] text-[#0A0A0A] outline-none"
+                  className="flex min-h-[28px] min-w-0 items-center text-left text-[16px] text-white outline-none"
                 >
                   {draft ? (
                     <>
@@ -354,7 +350,7 @@ export function AskView({ data }: AskViewProps) {
                       </span>
                       {showKeyboard ? (
                         <span
-                          className="typing-caret ml-0.5 shrink-0"
+                          className="typing-caret ml-0.5 shrink-0 !bg-white"
                           aria-hidden
                         />
                       ) : null}
@@ -367,11 +363,7 @@ export function AskView({ data }: AskViewProps) {
                 type="button"
                 aria-label="Voice note"
                 onClick={openVoiceNote}
-                className={`flex shrink-0 items-center justify-center rounded-full ${
-                  showKeyboard
-                    ? "size-8 bg-black/[0.06] text-[#3A3A3C]"
-                    : "h-9 w-9 bg-black/[0.06] text-[#3A3A3C]"
-                }`}
+                className="relative z-[1] flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white text-[#0A0A0A]"
               >
                 <Mic className="h-4 w-4" strokeWidth={2} />
               </button>
@@ -379,12 +371,8 @@ export function AskView({ data }: AskViewProps) {
                 type="submit"
                 aria-label="Send"
                 disabled={!canSend}
-                className={`flex shrink-0 items-center justify-center rounded-full transition-opacity ${
-                  showKeyboard ? "size-8" : "h-9 w-9"
-                } ${
-                  canSend
-                    ? "bg-[#0A0A0A] text-white"
-                    : "bg-[#0A0A0A]/35 text-white"
+                className={`relative z-[1] flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white text-[#0A0A0A] transition-opacity ${
+                  canSend ? "opacity-100" : "opacity-45"
                 }`}
               >
                 <ArrowUp className="h-4 w-4" strokeWidth={2.5} />

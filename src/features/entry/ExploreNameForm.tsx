@@ -161,7 +161,7 @@ export function ExploreNameForm() {
             onClick={(event) => event.stopPropagation()}
           >
             <div
-              className="relative flex h-11 w-full cursor-text items-center rounded-full border border-[#0A0A0A]/18 bg-[#F4F4F5] px-4"
+              className="glass-panel relative flex h-11 w-full cursor-text items-center rounded-full px-4"
               onClick={focusField}
             >
               <input
@@ -178,7 +178,7 @@ export function ExploreNameForm() {
                 aria-label="First name"
                 tabIndex={formVisible ? 0 : -1}
                 onChange={onChange}
-                className="h-full w-full cursor-text bg-transparent text-left text-[16px] font-normal text-[#0A0A0A] outline-none placeholder:text-[#0A0A0A]/35"
+                className="relative z-[1] h-full w-full cursor-text bg-transparent text-left text-[16px] font-normal text-white outline-none placeholder:text-white/45"
               />
             </div>
 
@@ -191,7 +191,7 @@ export function ExploreNameForm() {
               </p>
             ) : null}
 
-            <div className="mt-8 flex w-full items-center justify-between gap-4">
+            <div className="mt-6 flex items-center justify-center gap-5">
               <button
                 type="button"
                 onClick={(event) => {
@@ -208,9 +208,9 @@ export function ExploreNameForm() {
                 disabled={isSubmitting || !formVisible}
                 tabIndex={formVisible ? 0 : -1}
                 onClick={(event) => event.stopPropagation()}
-                className="inline-flex h-11 min-w-[10rem] items-center justify-center rounded-full bg-[#0A0A0A] px-6 text-[14px] font-semibold text-white transition hover:bg-black disabled:opacity-60"
+                className="glass-light-button inline-flex h-11 min-w-[5.5rem] items-center justify-center rounded-full px-6 text-[14px] font-semibold disabled:opacity-60"
               >
-                {isSubmitting ? "…" : "Continue to demo"}
+                {isSubmitting ? "…" : "Demo"}
               </button>
             </div>
           </form>

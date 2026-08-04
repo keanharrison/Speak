@@ -418,16 +418,32 @@ export function CinematicIntro() {
     }
   }, [clearMusicFade, setMusicGain]);
 
+  /** Start muted during the user gesture so the delayed bed isn't blocked by autoplay. */
+  const armMusicBed = useCallback(() => {
+    const music = getIntroMusic();
+    musicRef.current = music;
+    if (!music) return;
+    setMusicGain(1);
+    clearMusicFade();
+    music.volume = 0;
+    music.currentTime = MUSIC_START_S;
+    void music.play().catch(() => {
+      /* ignore */
+    });
+  }, [clearMusicFade, setMusicGain]);
+
   const playMusicFromStart = useCallback(() => {
     const music = getIntroMusic();
     musicRef.current = music;
     if (!music) return;
     setMusicGain(1);
     setMusicVolumeNow(MUSIC_VOLUME);
-    music.currentTime = MUSIC_START_S;
-    void music.play().catch(() => {
-      /* ignore */
-    });
+    if (music.paused) {
+      music.currentTime = MUSIC_START_S;
+      void music.play().catch(() => {
+        /* ignore */
+      });
+    }
   }, [setMusicGain, setMusicVolumeNow]);
 
   const playVoiceOnly = useCallback(() => {
@@ -1078,8 +1094,9 @@ export function CinematicIntro() {
     setPhase("playing");
     setPaused(false);
     pausedRef.current = false;
-    // Music enters ~5s after play (slide the bed later than picture)
+    // Unlock music on the tap, then raise volume ~5s later (autoplay-safe)
     runLine(0);
+    armMusicBed();
     const runId = runIdRef.current;
     beatTimersRef.current.push(
       window.setTimeout(() => {
@@ -1087,7 +1104,7 @@ export function CinematicIntro() {
         playMusicFromStart();
       }, AUDIO_BED_DELAY_MS),
     );
-  }, [phase, ready, clearBeatTimers, playMusicFromStart, runLine]);
+  }, [phase, ready, clearBeatTimers, armMusicBed, playMusicFromStart, runLine]);
 
   const goToPlayScreen = useCallback(() => {
     if (phase !== "greeting" || !greetingNextVisible) return;
