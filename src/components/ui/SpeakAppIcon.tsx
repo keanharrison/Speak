@@ -3,7 +3,7 @@ type SpeakAppIconProps = {
 };
 
 /**
- * Speak app icon — square master under an iOS squircle mask.
+ * Speak app icon — square master (teal rays) under an iOS squircle mask.
  */
 export function SpeakAppIcon({ className = "" }: SpeakAppIconProps) {
   return (
@@ -23,7 +23,7 @@ export function SpeakAppIcon({ className = "" }: SpeakAppIconProps) {
     >
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
-        src="/images/speak-app-icon-square.png"
+        src="/images/speak-app-icon-teal.png"
         alt=""
         className="h-full w-full object-cover"
         draggable={false}
