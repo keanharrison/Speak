@@ -7,7 +7,7 @@ export function SpeakAppIcon({ className = "" }: SpeakAppIconProps) {
   return (
     // eslint-disable-next-line @next/next/no-img-element
     <img
-      src="/images/speak-chat-icon.png"
+      src="/images/speak-empty-icon.png"
       alt=""
       className={`object-contain ${className}`}
       draggable={false}
