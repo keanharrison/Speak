@@ -181,7 +181,11 @@ export function AskView({ data }: AskViewProps) {
       { role: "speak", body: replyForQuestion(trimmed) },
     ]);
     setDraft("");
-    dismissKeyboard();
+    // Keep the field focused so the next message can be typed immediately
+    setKeyboardOpen(true);
+    window.requestAnimationFrame(() => {
+      inputRef.current?.focus({ preventScroll: true });
+    });
   }
 
   function handleSubmit(event: FormEvent) {
@@ -325,13 +329,24 @@ export function AskView({ data }: AskViewProps) {
                 aria-label={data.inputPlaceholder}
                 onChange={(event) => setDraft(event.target.value)}
                 onFocus={() => setKeyboardOpen(true)}
-                onBlur={() => setKeyboardOpen(false)}
+                onBlur={(event) => {
+                  // Keep composing when the send/mic controls take focus briefly
+                  const next = event.relatedTarget;
+                  if (
+                    next instanceof HTMLElement &&
+                    event.currentTarget.parentElement?.contains(next)
+                  ) {
+                    return;
+                  }
+                  setKeyboardOpen(false);
+                }}
                 className="relative z-[1] min-h-[28px] min-w-0 flex-1 bg-transparent text-left text-[16px] text-white outline-none placeholder:text-white/70"
               />
 
               <button
                 type="button"
                 aria-label="Voice note"
+                onMouseDown={(event) => event.preventDefault()}
                 onClick={openVoiceNote}
                 className="relative z-[1] flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white text-[#0A0A0A]"
               >
@@ -341,6 +356,7 @@ export function AskView({ data }: AskViewProps) {
                 type="submit"
                 aria-label="Send"
                 disabled={!canSend}
+                onMouseDown={(event) => event.preventDefault()}
                 className={`relative z-[1] flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white text-[#0A0A0A] transition-opacity ${
                   canSend ? "opacity-100" : "opacity-45"
                 }`}

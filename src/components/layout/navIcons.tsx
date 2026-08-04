@@ -121,19 +121,16 @@ export function ContactsIcon({ active = false }: NavIconProps) {
   );
 }
 
-/** Insurance claim — clipboard / form */
+/** Insurance claim — simple page with lines (no clipboard clip) */
 export function ClaimIcon({ active = false }: NavIconProps) {
-  const board =
-    "M8 4.5h8a2 2 0 0 1 2 2v13a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2v-13a2 2 0 0 1 2-2Z";
-  const clip =
-    "M9.5 3.5h5a1.5 1.5 0 0 1 0 3h-5a1.5 1.5 0 0 1 0-3Z";
+  const page =
+    "M7 3.5h10a1.5 1.5 0 0 1 1.5 1.5v14a1.5 1.5 0 0 1-1.5 1.5H7A1.5 1.5 0 0 1 5.5 19V5A1.5 1.5 0 0 1 7 3.5Z";
   const s = active ? strokeActive : stroke;
 
   return (
     <svg {...svgProps} fill="none">
-      <path d={board} {...s} />
-      <path d={clip} {...s} />
-      <path d="M8.5 11.5h7M8.5 14.5h7M8.5 17.5h5" {...s} />
+      <path d={page} {...s} />
+      <path d="M8.5 9h7M8.5 12.5h7M8.5 16h5" {...s} />
     </svg>
   );
 }
