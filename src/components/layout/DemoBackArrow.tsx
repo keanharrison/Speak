@@ -30,7 +30,7 @@ function ArrowGlyph() {
 }
 
 /**
- * Demo back control — clear of the notch / Dynamic Island.
+ * Demo back control — cleared well below the notch / Dynamic Island.
  */
 export function DemoBackArrow({
   href,
@@ -45,7 +45,7 @@ export function DemoBackArrow({
       : "text-[#0A0A0A]/85 hover:bg-black/5";
 
   const style = {
-    top: "max(1.35rem, calc(var(--speak-page-safe-top) + 0.85rem))",
+    top: "max(2.35rem, calc(var(--speak-page-safe-top) + 1.65rem))",
     left: "max(0.85rem, calc(env(safe-area-inset-left) + 0.35rem))",
   } as const;
 

@@ -15,9 +15,9 @@ export function BaileyAvatar({ size = "md", className = "" }: BaileyAvatarProps)
   return (
     // eslint-disable-next-line @next/next/no-img-element
     <img
-      src="/images/reference/labrador-smile.png"
+      src="/images/reference/bailey-avatar.jpg"
       alt="Bailey"
-      className={`${sizeClass[size]} shrink-0 rounded-full object-cover [filter:saturate(1.25)_contrast(1.08)_brightness(1.04)] ${className}`}
+      className={`${sizeClass[size]} shrink-0 rounded-full object-cover object-top ${className}`}
     />
   );
 }

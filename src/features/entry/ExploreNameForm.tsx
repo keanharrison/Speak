@@ -8,9 +8,11 @@ import { saveViewerName } from "@/lib/account";
 const TITLE = "What's your first name?";
 const TITLE_CHAR_MS = 62;
 const FORM_REVEAL_DELAY_MS = 500;
+const NAME_TYPED_KEY = "exploreNameTyped";
 
 /**
- * Name capture — bright white onboarding canvas + native iOS keyboard.
+ * Name capture — bright white onboarding + glass field matching demo cards.
+ * Typing runs on first forward visit; revisits show the full prompt instantly.
  */
 export function ExploreNameForm() {
   const router = useRouter();
@@ -81,9 +83,23 @@ export function ExploreNameForm() {
     setError("");
   }
 
-  // Type the prompt, then reveal field + actions
+  // Type the prompt on first visit; skip animation when returning
   useEffect(() => {
     let cancelled = false;
+    let alreadyTyped = false;
+    try {
+      alreadyTyped = sessionStorage.getItem(NAME_TYPED_KEY) === "1";
+    } catch {
+      /* ignore */
+    }
+
+    if (alreadyTyped) {
+      setTitleText(TITLE);
+      setTitleDone(true);
+      setFormVisible(true);
+      return;
+    }
+
     let i = 0;
     setTitleText("");
     setTitleDone(false);
@@ -93,6 +109,11 @@ export function ExploreNameForm() {
       if (cancelled) return;
       if (i >= TITLE.length) {
         setTitleDone(true);
+        try {
+          sessionStorage.setItem(NAME_TYPED_KEY, "1");
+        } catch {
+          /* ignore */
+        }
         window.setTimeout(() => {
           if (cancelled) return;
           setFormVisible(true);
@@ -162,7 +183,7 @@ export function ExploreNameForm() {
             onClick={(event) => event.stopPropagation()}
           >
             <div
-              className="relative flex h-11 w-full cursor-text items-center rounded-full border border-[#0A0A0A]/14 bg-[#F4F4F5] px-4"
+              className="glass-panel relative flex h-11 w-full cursor-text items-center rounded-full px-4"
               onClick={focusField}
             >
               <input
@@ -179,7 +200,7 @@ export function ExploreNameForm() {
                 aria-label="First name"
                 tabIndex={formVisible ? 0 : -1}
                 onChange={onChange}
-                className="relative z-[1] h-full w-full cursor-text bg-transparent text-left text-[16px] font-normal text-[#0A0A0A] outline-none placeholder:text-[#0A0A0A]/35"
+                className="relative z-[1] h-full w-full cursor-text bg-transparent text-left text-[16px] font-normal text-white outline-none placeholder:text-white/45"
               />
             </div>
 

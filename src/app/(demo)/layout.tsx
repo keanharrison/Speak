@@ -33,9 +33,10 @@ function DemoChrome({ children }: { children: React.ReactNode }) {
         <div
           className="flex min-h-0 flex-1 flex-col"
           style={{
+            // Flush to the nav — only enough pad so last content clears the bar
             paddingBottom: tabBarVisible
-              ? "max(5.25rem, calc(var(--speak-page-safe-bottom) + 4.25rem))"
-              : "0.75rem",
+              ? "max(3.85rem, calc(var(--speak-page-safe-bottom) + 3.1rem))"
+              : "0.5rem",
           }}
         >
           {children}

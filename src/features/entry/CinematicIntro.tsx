@@ -1174,10 +1174,24 @@ export function CinematicIntro() {
     router,
   ]);
 
-  // Greeting typewriter — Next appears when typing finishes
+  // Greeting typewriter — skip animation when returning via Back
   useEffect(() => {
     if (phase !== "greeting") return;
     let cancelled = false;
+    let alreadyTyped = false;
+    try {
+      alreadyTyped = sessionStorage.getItem("introGreetingTyped") === "1";
+    } catch {
+      /* ignore */
+    }
+
+    if (alreadyTyped) {
+      setGreetingText(GREETING_COPY);
+      setGreetingDone(true);
+      setGreetingNextVisible(true);
+      return;
+    }
+
     let i = 0;
     setGreetingText("");
     setGreetingDone(false);
@@ -1186,6 +1200,11 @@ export function CinematicIntro() {
       if (cancelled) return;
       if (i >= GREETING_COPY.length) {
         setGreetingDone(true);
+        try {
+          sessionStorage.setItem("introGreetingTyped", "1");
+        } catch {
+          /* ignore */
+        }
         window.setTimeout(() => {
           if (!cancelled) setGreetingNextVisible(true);
         }, GREETING_NEXT_DELAY_MS);

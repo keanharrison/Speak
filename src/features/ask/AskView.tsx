@@ -219,7 +219,7 @@ export function AskView({ data }: AskViewProps) {
       className="absolute inset-0 z-10 flex flex-col overflow-hidden bg-transparent"
       style={{
         paddingTop:
-          "max(1.5rem, calc(var(--speak-page-safe-top) + 1rem))",
+          "max(2.1rem, calc(var(--speak-page-safe-top) + 1.5rem))",
       }}
       onClick={dismissKeyboard}
     >
@@ -300,7 +300,7 @@ export function AskView({ data }: AskViewProps) {
       {!voiceNoteOpen ? (
         <div
           className={`relative z-30 shrink-0 px-5 pt-1 transition-[padding] duration-150 ${
-            keyboardOpen ? "pb-2" : "pb-[5.75rem]"
+            keyboardOpen ? "pb-2" : "pb-[4.5rem]"
           }`}
           style={{
             transform:

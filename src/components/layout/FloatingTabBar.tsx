@@ -20,7 +20,8 @@ const iconMap = {
 } as const;
 
 /**
- * Full-width rectangular bottom icon bar (not a floating pill).
+ * Full-width rectangular bottom icon bar — flush to the screen bottom.
+ * Active tab = solid white icon (no circle / outline chrome).
  */
 export function FloatingTabBar() {
   const pathname = usePathname();
@@ -31,10 +32,10 @@ export function FloatingTabBar() {
       aria-label="Primary"
     >
       <ul
-        className="glass-tab-bar pointer-events-auto flex w-full items-center justify-around rounded-none border-x-0 border-b-0 px-1 pt-2.5"
+        className="glass-tab-bar pointer-events-auto flex w-full items-center justify-around rounded-none border-x-0 border-b-0 px-1 pt-2"
         style={{
           paddingBottom:
-            "max(0.55rem, calc(var(--speak-page-safe-bottom) + 0.2rem))",
+            "max(0.45rem, calc(var(--speak-page-safe-bottom) + 0.15rem))",
         }}
       >
         {mobileNav.tabs.map((tab) => {
@@ -50,10 +51,8 @@ export function FloatingTabBar() {
                 href={tab.href}
                 aria-label={tab.label}
                 aria-current={isActive ? "page" : undefined}
-                className={`flex h-11 w-11 items-center justify-center rounded-full transition-colors [&_svg]:h-[26px] [&_svg]:w-[26px] ${
-                  isActive
-                    ? "bg-white text-[#0A0A0A]"
-                    : "text-white/55"
+                className={`flex h-11 w-11 items-center justify-center transition-colors [&_svg]:h-[26px] [&_svg]:w-[26px] ${
+                  isActive ? "text-white" : "text-white/45"
                 }`}
               >
                 <Icon active={isActive} />

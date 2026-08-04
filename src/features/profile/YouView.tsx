@@ -86,7 +86,7 @@ export function YouView({ data }: YouViewProps) {
       className="relative z-10 mx-auto w-full flex-1 overflow-x-hidden px-5 pb-6"
       style={{
         paddingTop:
-          "max(1.5rem, calc(var(--speak-page-safe-top) + 1rem))",
+          "max(2.75rem, calc(var(--speak-page-safe-top) + 2rem))",
       }}
     >
       <h1 className="page-title mt-1">{data.title}</h1>
@@ -181,12 +181,9 @@ export function YouView({ data }: YouViewProps) {
           <section className="glass-panel glass-panel--opaque px-4 py-4">
             <div className="flex items-center gap-3">
               <PersonAvatar size="md" label={displayName} />
-              <div className="min-w-0">
-                <h2 className="text-[20px] font-semibold tracking-tight text-white">
-                  {displayName}
-                </h2>
-                <p className="mt-0.5 text-[14px] text-white/65">Owner</p>
-              </div>
+              <h2 className="text-[20px] font-semibold tracking-tight text-white">
+                {displayName}
+              </h2>
             </div>
             <dl className="mt-4 flex flex-col gap-3 text-[13px]">
               <div>

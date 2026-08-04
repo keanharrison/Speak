@@ -13,8 +13,8 @@ type IntroBottomBarProps = {
 };
 
 /**
- * Shared onboarding footer — Back middle-left, primary CTA middle-right.
- * Inset from the screen edges so controls aren’t in the corners.
+ * Shared onboarding footer — Back + primary CTA closer together at bottom center.
+ * Primary = black / white text · Back = white outline / black text.
  */
 export function IntroBottomBar({
   onBack,
@@ -30,36 +30,32 @@ export function IntroBottomBar({
     <div
       className={`${
         relative ? "relative z-20 mt-auto" : "absolute inset-x-0 bottom-0 z-[60]"
-      } flex justify-center px-8`}
+      } flex justify-center px-6`}
       style={{
         paddingBottom:
           "max(1.75rem, calc(var(--speak-page-safe-bottom) + 1.15rem))",
       }}
     >
-      <div className="flex w-full max-w-[19.5rem] items-center justify-between">
+      <div className="flex items-center justify-center gap-3">
         {showBack ? (
           <button
             type="button"
             onClick={onBack}
-            className="min-h-[44px] min-w-[4.5rem] text-left text-[15px] font-medium text-[#0A0A0A] transition hover:opacity-70"
+            className="inline-flex h-11 min-w-[5.5rem] items-center justify-center rounded-full border border-[#0A0A0A] bg-white px-5 text-[14px] font-semibold text-[#0A0A0A] transition hover:bg-black/[0.04]"
           >
             Back
           </button>
-        ) : (
-          <span className="min-w-[4.5rem]" aria-hidden />
-        )}
+        ) : null}
         {showNext ? (
           <button
             type={nextType}
             onClick={onNext}
             disabled={nextDisabled}
-            className="inline-flex h-11 min-w-[7.5rem] items-center justify-center rounded-full bg-[#0A0A0A] px-8 text-[14px] font-semibold text-white transition hover:bg-black disabled:opacity-60"
+            className="inline-flex h-11 min-w-[5.5rem] items-center justify-center rounded-full bg-[#0A0A0A] px-5 text-[14px] font-semibold text-white transition hover:bg-black disabled:opacity-60"
           >
             {nextLabel}
           </button>
-        ) : (
-          <span className="min-w-[7.5rem]" aria-hidden />
-        )}
+        ) : null}
       </div>
     </div>
   );

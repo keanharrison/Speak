@@ -72,10 +72,10 @@ export function DashboardView({ data }: DashboardViewProps) {
         className="relative z-10 w-full max-w-full flex-1 px-5 pb-8"
         style={{
           paddingTop:
-            "max(3.25rem, calc(var(--speak-page-safe-top) + 2.5rem))",
+            "max(5.25rem, calc(var(--speak-page-safe-top) + 4.25rem))",
         }}
       >
-        <div className="mb-4">
+        <div className="mb-5">
           {firstName ? (
             <h1 className="page-title">Hi, {firstName}</h1>
           ) : (

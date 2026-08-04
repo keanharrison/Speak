@@ -33,7 +33,7 @@ export function InsuranceClaimView() {
       className="relative z-10 mx-auto w-full flex-1 overflow-x-hidden px-5 pb-6"
       style={{
         paddingTop:
-          "max(1.5rem, calc(var(--speak-page-safe-top) + 1rem))",
+          "max(2.75rem, calc(var(--speak-page-safe-top) + 2rem))",
       }}
     >
       <h1 className="page-title mt-1">Insurance</h1>
