@@ -11,7 +11,7 @@ import {
 } from "@/features/entry/introMusic";
 
 import { SpeakAppIcon } from "@/components/ui/SpeakAppIcon";
-import { SpeakWordmark } from "@/components/ui/SpeakWordmark";
+import { IntroBottomBar } from "@/features/entry/IntroBottomBar";
 
 /**
  * Speak cinematic intro — greeting → play → captions → Speak → name.
@@ -778,13 +778,13 @@ export function CinematicIntro() {
         typeBeatLine(next.text, 0, charMs, pauses, undefined, typeStartMs);
       }
 
-      // After black hold: video + VO start; music waits AUDIO_BED_DELAY_MS
+      // After black hold: video starts; VO joins 1s later
       if (leavingOpenLead) {
         beatTimersRef.current.push(
           window.setTimeout(() => {
             if (runIdRef.current !== runId || pausedRef.current) return;
             playVoiceOnly();
-          }, 0),
+          }, 1000),
         );
         beatTimersRef.current.push(
           window.setTimeout(() => {
@@ -1257,16 +1257,16 @@ export function CinematicIntro() {
     phase === "speak" || phase === "fade";
 
   return (
-    <main className="relative flex min-h-0 flex-1 flex-col overflow-hidden bg-white">
+    <main className="relative flex min-h-0 flex-1 flex-col overflow-hidden bg-[#ffffff]">
       <audio ref={audioRef} src={AUDIO_SRC} preload="auto" />
 
-      {/* Blurred still behind film — only while video chrome needs depth */}
+      {/* Bright white canvas behind film / endcard */}
       {showBlurBg ? (
-        <div className="pointer-events-none absolute inset-0 bg-white" aria-hidden />
+        <div className="pointer-events-none absolute inset-0 bg-[#ffffff]" aria-hidden />
       ) : null}
 
       {showGreeting ? (
-        <div className="absolute inset-0 z-40 flex flex-col overflow-hidden bg-white">
+        <div className="absolute inset-0 z-40 flex flex-col overflow-hidden bg-[#ffffff]">
           <div
             className="relative z-10 flex flex-1 flex-col items-center justify-center px-7"
             style={{
@@ -1300,28 +1300,19 @@ export function CinematicIntro() {
           </div>
 
           {greetingNextVisible ? (
-            <div
-              className="relative z-20 flex w-full justify-center px-7 pb-8"
-              style={{
-                paddingBottom:
-                  "max(2rem, calc(var(--speak-page-safe-bottom) + 1.25rem))",
-              }}
-            >
-              <button
-                type="button"
-                onClick={goToPlayScreen}
-                className="inline-flex h-11 min-w-[7.5rem] items-center justify-center rounded-full bg-[#0A0A0A] px-8 text-[14px] font-semibold text-white transition hover:bg-black"
-              >
-                Next
-              </button>
-            </div>
+            <IntroBottomBar
+              relative
+              showBack={false}
+              onNext={goToPlayScreen}
+              nextLabel="Next"
+            />
           ) : null}
         </div>
       ) : null}
 
       {/* Film stage on white canvas */}
       <div
-        className={`absolute inset-0 z-10 flex flex-col items-center justify-center gap-4 bg-white px-4 ${
+        className={`absolute inset-0 z-10 flex flex-col items-center justify-center gap-4 bg-[#ffffff] px-4 ${
           showFilmShell && !showGreeting
             ? ""
             : "pointer-events-none"
@@ -1467,28 +1458,7 @@ export function CinematicIntro() {
         ) : null}
 
         {(showIdle || showVideo) && !showGreeting ? (
-          <div
-            className="absolute inset-x-0 bottom-0 z-[60] flex items-center justify-between gap-4 px-6"
-            style={{
-              paddingBottom:
-                "max(1.5rem, calc(var(--speak-page-safe-bottom) + 1rem))",
-            }}
-          >
-            <button
-              type="button"
-              onClick={goBack}
-              className="text-[15px] font-medium text-[#0A0A0A] transition hover:opacity-70"
-            >
-              Back
-            </button>
-            <button
-              type="button"
-              onClick={goForward}
-              className="inline-flex h-11 min-w-[7.5rem] items-center justify-center rounded-full bg-[#0A0A0A] px-8 text-[14px] font-semibold text-white transition hover:bg-black"
-            >
-              Next
-            </button>
-          </div>
+          <IntroBottomBar onBack={goBack} onNext={goForward} nextLabel="Next" />
         ) : null}
       </div>
 
@@ -1530,7 +1500,7 @@ export function CinematicIntro() {
 
       {showSpeakEnd ? (
         <div
-          className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-white"
+          className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-[#ffffff]"
           style={{
             paddingTop: "max(1rem, var(--speak-page-safe-top))",
             paddingBottom: "max(1rem, var(--speak-page-safe-bottom))",
@@ -1538,9 +1508,8 @@ export function CinematicIntro() {
             paddingRight: "max(1.25rem, env(safe-area-inset-right))",
           }}
         >
-          <div className="flex flex-col items-center justify-center gap-6 text-center">
+          <div className="flex flex-col items-center justify-center text-center">
             <div
-              className="flex flex-col items-center justify-center gap-5"
               style={{
                 opacity: speakLogo || speakIn ? 1 : 0,
                 transform:
@@ -1551,8 +1520,10 @@ export function CinematicIntro() {
                   "opacity 700ms cubic-bezier(0.22, 1, 0.36, 1), transform 700ms cubic-bezier(0.22, 1, 0.36, 1)",
               }}
             >
-              <SpeakAppIcon className="h-[7.5rem] w-[7.5rem] sm:h-[9rem] sm:w-[9rem]" />
-              <SpeakWordmark className="text-[42px] sm:text-[48px]" />
+              <SpeakAppIcon
+                variant="bark"
+                className="h-[7.5rem] w-[7.5rem] sm:h-[9rem] sm:w-[9rem]"
+              />
             </div>
           </div>
         </div>

@@ -25,28 +25,47 @@ const ibmPlexMono = IBM_Plex_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Speak — At-home pet health screening",
+  title: "Speak",
+  applicationName: "Speak",
   description:
     "Quarterly at-home screening that catches change early — and helps you show up prepared for your vet.",
   icons: {
     icon: [
-      { url: "/images/favicon-32.png", type: "image/png", sizes: "32x32" },
-      { url: "/images/speak-app-icon-192.png", type: "image/png", sizes: "192x192" },
-      { url: "/images/speak-app-icon-v2.png", type: "image/png", sizes: "1024x1024" },
+      {
+        url: "/images/favicon-32.png?v=20260804s",
+        type: "image/png",
+        sizes: "32x32",
+      },
+      {
+        url: "/images/speak-app-icon-192.png?v=20260804s",
+        type: "image/png",
+        sizes: "192x192",
+      },
     ],
     apple: [
-      { url: "/images/apple-touch-icon.png", sizes: "180x180", type: "image/png" },
+      {
+        url: "/images/apple-touch-icon.png?v=20260804s",
+        sizes: "180x180",
+        type: "image/png",
+      },
     ],
   },
   openGraph: {
-    title: "Speak — At-home pet health screening",
+    title: "Speak",
     description:
       "Quarterly at-home screening that catches change early — and helps you show up prepared for your vet.",
-    images: [{ url: "/images/speak-app-icon-v2.png", width: 1024, height: 1024 }],
+    images: [
+      {
+        url: "/images/speak-app-icon-v2.png?v=20260804s",
+        width: 1024,
+        height: 1024,
+      },
+    ],
   },
   twitter: {
     card: "summary",
-    images: ["/images/speak-app-icon-v2.png"],
+    title: "Speak",
+    images: ["/images/speak-app-icon-v2.png?v=20260804s"],
   },
   appleWebApp: {
     capable: true,

@@ -2,6 +2,7 @@
 
 import { ChangeEvent, FormEvent, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import { IntroBottomBar } from "@/features/entry/IntroBottomBar";
 import { saveViewerName } from "@/lib/account";
 
 const TITLE = "What's your first name?";
@@ -9,7 +10,7 @@ const TITLE_CHAR_MS = 62;
 const FORM_REVEAL_DELAY_MS = 500;
 
 /**
- * Name capture — white onboarding canvas + native iOS keyboard on field focus.
+ * Name capture — bright white onboarding canvas + native iOS keyboard.
  */
 export function ExploreNameForm() {
   const router = useRouter();
@@ -112,7 +113,7 @@ export function ExploreNameForm() {
 
   return (
     <main
-      className="relative flex min-h-0 flex-1 flex-col overflow-hidden bg-white"
+      className="relative flex min-h-0 flex-1 flex-col overflow-hidden bg-[#ffffff]"
       onClick={dismissKeyboard}
     >
       <div
@@ -121,7 +122,7 @@ export function ExploreNameForm() {
           paddingTop: "max(2.5rem, calc(var(--speak-page-safe-top) + 1.5rem))",
           paddingLeft: "max(1.25rem, env(safe-area-inset-left))",
           paddingRight: "max(1.25rem, env(safe-area-inset-right))",
-          paddingBottom: "max(1.5rem, calc(var(--speak-page-safe-bottom) + 1rem))",
+          paddingBottom: "max(6.5rem, calc(var(--speak-page-safe-bottom) + 5.5rem))",
         }}
       >
         <div className="flex w-full max-w-[19rem] flex-col items-center">
@@ -161,7 +162,7 @@ export function ExploreNameForm() {
             onClick={(event) => event.stopPropagation()}
           >
             <div
-              className="glass-panel relative flex h-11 w-full cursor-text items-center rounded-full px-4"
+              className="relative flex h-11 w-full cursor-text items-center rounded-full border border-[#0A0A0A]/14 bg-[#F4F4F5] px-4"
               onClick={focusField}
             >
               <input
@@ -178,7 +179,7 @@ export function ExploreNameForm() {
                 aria-label="First name"
                 tabIndex={formVisible ? 0 : -1}
                 onChange={onChange}
-                className="relative z-[1] h-full w-full cursor-text bg-transparent text-left text-[16px] font-normal text-white outline-none placeholder:text-white/45"
+                className="relative z-[1] h-full w-full cursor-text bg-transparent text-left text-[16px] font-normal text-[#0A0A0A] outline-none placeholder:text-[#0A0A0A]/35"
               />
             </div>
 
@@ -190,32 +191,23 @@ export function ExploreNameForm() {
                 {error}
               </p>
             ) : null}
-
-            <div className="mt-6 flex items-center justify-center gap-5">
-              <button
-                type="button"
-                onClick={(event) => {
-                  event.stopPropagation();
-                  goBackToIntro();
-                }}
-                tabIndex={formVisible ? 0 : -1}
-                className="text-[15px] font-medium text-[#0A0A0A] transition hover:opacity-70"
-              >
-                Back
-              </button>
-              <button
-                type="submit"
-                disabled={isSubmitting || !formVisible}
-                tabIndex={formVisible ? 0 : -1}
-                onClick={(event) => event.stopPropagation()}
-                className="glass-light-button inline-flex h-11 min-w-[5.5rem] items-center justify-center rounded-full px-6 text-[14px] font-semibold disabled:opacity-60"
-              >
-                {isSubmitting ? "…" : "Demo"}
-              </button>
-            </div>
           </form>
         </div>
       </div>
+
+      {formVisible ? (
+        <div onClick={(event) => event.stopPropagation()}>
+          <IntroBottomBar
+            onBack={goBackToIntro}
+            nextType="button"
+            nextLabel={isSubmitting ? "…" : "Demo"}
+            nextDisabled={isSubmitting}
+            onNext={() => {
+              void submitName();
+            }}
+          />
+        </div>
+      ) : null}
     </main>
   );
 }

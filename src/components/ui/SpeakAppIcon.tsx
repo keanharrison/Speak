@@ -1,13 +1,23 @@
 type SpeakAppIconProps = {
   className?: string;
+  /** bark = white S + speak rays (endcard); plain = S only */
+  variant?: "plain" | "bark";
 };
 
-/** Speak app icon — black squircle, white S only (no bark rays). */
-export function SpeakAppIcon({ className = "" }: SpeakAppIconProps) {
+/** Speak app icon — black rounded square, white S (± bark rays). */
+export function SpeakAppIcon({
+  className = "",
+  variant = "plain",
+}: SpeakAppIconProps) {
+  const src =
+    variant === "bark"
+      ? "/images/speak-app-icon-bark.png?v=20260804s"
+      : "/images/speak-app-icon-v2.png?v=20260804s";
+
   return (
     // eslint-disable-next-line @next/next/no-img-element
     <img
-      src="/images/speak-app-icon-v2.png"
+      src={src}
       alt=""
       className={`object-contain ${className}`}
       draggable={false}
