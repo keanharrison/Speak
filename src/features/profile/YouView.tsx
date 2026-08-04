@@ -85,7 +85,8 @@ export function YouView({ data }: YouViewProps) {
     <main
       className="relative z-10 mx-auto w-full flex-1 overflow-x-hidden px-5 pb-6"
       style={{
-        paddingTop: "max(0.45rem, calc(var(--speak-page-safe-top) + 0.2rem))",
+        paddingTop:
+          "max(1.5rem, calc(var(--speak-page-safe-top) + 1rem))",
       }}
     >
       <h1 className="page-title mt-1">{data.title}</h1>

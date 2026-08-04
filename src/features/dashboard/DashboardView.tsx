@@ -67,14 +67,15 @@ export function DashboardView({ data }: DashboardViewProps) {
 
   return (
     <div className="relative min-h-full max-w-full overflow-x-hidden">
-      <DemoBackArrow href="/explore" tone="light" />
+      <DemoBackArrow href="/explore" tone="light" label="Back" />
       <main
-        className="relative z-10 w-full max-w-full flex-1 px-5 pb-6"
+        className="relative z-10 w-full max-w-full flex-1 px-5 pb-8"
         style={{
-          paddingTop: "max(0.45rem, calc(var(--speak-page-safe-top) + 0.2rem))",
+          paddingTop:
+            "max(3.25rem, calc(var(--speak-page-safe-top) + 2.5rem))",
         }}
       >
-        <div className="mt-14 mb-4">
+        <div className="mb-4">
           {firstName ? (
             <h1 className="page-title">Hi, {firstName}</h1>
           ) : (
@@ -124,7 +125,13 @@ function TestDetailView({
 
   return (
     <div className="relative min-h-full max-w-full overflow-x-hidden">
-      <main className="relative z-10 w-full max-w-full flex-1 px-5 pb-6 pt-6">
+      <main
+        className="relative z-10 w-full max-w-full flex-1 px-5 pb-8"
+        style={{
+          paddingTop:
+            "max(1.5rem, calc(var(--speak-page-safe-top) + 1rem))",
+        }}
+      >
         <button
           type="button"
           onClick={onBack}
@@ -156,7 +163,7 @@ function TestDetailView({
           <div className="mt-4 flex flex-col gap-2.5">
             <OpenInSpeak
               topic={test.speakTopic}
-              variant="full"
+              variant="solid"
               label="Open in Speak"
             />
             {isFlagged ? (

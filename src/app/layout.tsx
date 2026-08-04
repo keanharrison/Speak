@@ -62,8 +62,8 @@ export const viewport: Viewport = {
   viewportFit: "cover",
   /** Match canvas so iOS doesn't paint a black status strip */
   themeColor: "#ffffff",
-  /** Prefer resizing the layout when Safari chrome / keyboard shows */
-  interactiveWidget: "resizes-content",
+  /** Overlay keyboard so the app canvas doesn't squash/resize */
+  interactiveWidget: "overlays-content",
 };
 
 export default function RootLayout({

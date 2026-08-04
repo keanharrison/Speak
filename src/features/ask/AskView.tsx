@@ -9,18 +9,9 @@ import {
   useState,
 } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import {
-  ArrowUp,
-  ChevronDown,
-  Menu,
-  Mic,
-  Plus,
-  SquarePen,
-  X,
-} from "lucide-react";
+import { ArrowUp, Menu, Mic, SquarePen, X } from "lucide-react";
 import { useTabBarVisibility } from "@/components/layout/TabBarVisibility";
 import { SpeakWordmark } from "@/components/ui/SpeakWordmark";
-import { SoftKeyboard } from "@/features/ask/SoftKeyboard";
 import { VoiceNotePanel } from "@/features/ask/VoiceNotePanel";
 import type { AskMessage, AskPageContent } from "@/types";
 
@@ -56,7 +47,7 @@ function chatTitleForId(data: AskPageContent, chatId: string | null) {
 }
 
 /**
- * Speak chat — soft keyboard on composer focus; dismiss on outside tap.
+ * Speak chat — native iOS keyboard; nav hides while focused; layout does not squash.
  */
 export function AskView({ data }: AskViewProps) {
   const router = useRouter();
@@ -72,16 +63,16 @@ export function AskView({ data }: AskViewProps) {
     chatTitleForId(data, chatId),
   );
   const [keyboardOpen, setKeyboardOpen] = useState(false);
+  const [keyboardLift, setKeyboardLift] = useState(0);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [voiceNoteOpen, setVoiceNoteOpen] = useState(false);
-  const inputRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
   const threadEndRef = useRef<HTMLDivElement>(null);
   const { setTabBarVisible } = useTabBarVisibility();
   const lastAboutRef = useRef<string | null>(aboutTopic);
   const lastChatRef = useRef<string | null>(chatId);
 
   const emptyState = messages.length === 0;
-  const showKeyboard = keyboardOpen && !voiceNoteOpen;
   const canSend = draft.trim().length > 0;
 
   const quarterChats = useMemo(() => {
@@ -122,13 +113,46 @@ export function AskView({ data }: AskViewProps) {
   }, [aboutTopic, chatId, data.aboutGreeting]);
 
   useEffect(() => {
-    setTabBarVisible(!showKeyboard && !voiceNoteOpen);
+    const showNav = !keyboardOpen && !voiceNoteOpen;
+    setTabBarVisible(showNav);
     return () => setTabBarVisible(true);
-  }, [showKeyboard, voiceNoteOpen, setTabBarVisible]);
+  }, [keyboardOpen, voiceNoteOpen, setTabBarVisible]);
+
+  // Lift composer above the native keyboard without resizing the page shell
+  useEffect(() => {
+    if (!keyboardOpen) {
+      setKeyboardLift(0);
+      return;
+    }
+
+    const syncLift = () => {
+      const vv = window.visualViewport;
+      if (!vv) {
+        setKeyboardLift(0);
+        return;
+      }
+      const covered = Math.max(
+        0,
+        Math.round(window.innerHeight - vv.height - vv.offsetTop),
+      );
+      setKeyboardLift(covered);
+    };
+
+    syncLift();
+    const vv = window.visualViewport;
+    vv?.addEventListener("resize", syncLift);
+    vv?.addEventListener("scroll", syncLift);
+    window.addEventListener("resize", syncLift);
+    return () => {
+      vv?.removeEventListener("resize", syncLift);
+      vv?.removeEventListener("scroll", syncLift);
+      window.removeEventListener("resize", syncLift);
+    };
+  }, [keyboardOpen]);
 
   useEffect(() => {
     threadEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages, showKeyboard]);
+  }, [messages, keyboardOpen]);
 
   function dismissKeyboard() {
     setKeyboardOpen(false);
@@ -136,8 +160,7 @@ export function AskView({ data }: AskViewProps) {
   }
 
   function focusComposer() {
-    setKeyboardOpen(true);
-    inputRef.current?.focus({ preventScroll: true });
+    inputRef.current?.focus();
   }
 
   function replyForQuestion(question: string): string {
@@ -159,10 +182,6 @@ export function AskView({ data }: AskViewProps) {
     ]);
     setDraft("");
     dismissKeyboard();
-  }
-
-  function handleReturn() {
-    sendQuestion(draft);
   }
 
   function handleSubmit(event: FormEvent) {
@@ -200,7 +219,7 @@ export function AskView({ data }: AskViewProps) {
       className="absolute inset-0 z-10 flex flex-col overflow-hidden bg-transparent"
       style={{
         paddingTop:
-          "max(1.35rem, calc(var(--speak-page-safe-top) + 0.85rem))",
+          "max(1.5rem, calc(var(--speak-page-safe-top) + 1rem))",
       }}
       onClick={dismissKeyboard}
     >
@@ -280,11 +299,13 @@ export function AskView({ data }: AskViewProps) {
 
       {!voiceNoteOpen ? (
         <div
-          className={`relative z-30 shrink-0 ${
-            showKeyboard
-              ? "bg-transparent px-2.5 pb-1.5 pt-2"
-              : "bg-transparent px-5 pb-[6.25rem] pt-1"
+          className={`relative z-30 shrink-0 px-5 pt-1 transition-[padding] duration-150 ${
+            keyboardOpen ? "pb-2" : "pb-[5.75rem]"
           }`}
+          style={{
+            transform:
+              keyboardLift > 0 ? `translateY(-${keyboardLift}px)` : undefined,
+          }}
           onClick={(event) => event.stopPropagation()}
         >
           <form onSubmit={handleSubmit}>
@@ -292,72 +313,21 @@ export function AskView({ data }: AskViewProps) {
               className="glass-panel relative z-[1] flex min-h-[48px] cursor-text items-center gap-2 rounded-full px-3 py-2"
               onClick={focusComposer}
             >
-              {showKeyboard ? (
-                <>
-                  <button
-                    type="button"
-                    aria-label="Add"
-                    className="relative z-[1] flex size-8 shrink-0 items-center justify-center rounded-full bg-white text-[#0A0A0A]"
-                    onClick={(event) => event.stopPropagation()}
-                  >
-                    <Plus className="h-4 w-4" strokeWidth={2.25} />
-                  </button>
-                  <button
-                    type="button"
-                    className="relative z-[1] flex shrink-0 items-center gap-0.5 rounded-full bg-white px-2.5 py-1 text-[13px] font-semibold text-[#0A0A0A]"
-                    onClick={(event) => event.stopPropagation()}
-                  >
-                    Auto
-                    <ChevronDown
-                      className="h-3.5 w-3.5 text-[#0A0A0A]"
-                      strokeWidth={2.25}
-                    />
-                  </button>
-                </>
-              ) : null}
-
-              <div className="relative z-[1] min-w-0 flex-1">
-                {!draft ? (
-                  <div
-                    className={`pointer-events-none absolute inset-y-0 flex items-center ${
-                      showKeyboard ? "left-0" : "left-1"
-                    }`}
-                  >
-                    {showKeyboard ? (
-                      <span
-                        className="typing-caret mr-0.5 !bg-white"
-                        aria-hidden
-                      />
-                    ) : null}
-                    <span className="text-[16px] text-white/70">
-                      {data.inputPlaceholder}
-                    </span>
-                  </div>
-                ) : null}
-                <div
-                  ref={inputRef}
-                  role="textbox"
-                  tabIndex={0}
-                  aria-label={data.inputPlaceholder}
-                  aria-multiline="false"
-                  onFocus={() => setKeyboardOpen(true)}
-                  className="flex min-h-[28px] min-w-0 items-center text-left text-[16px] text-white outline-none"
-                >
-                  {draft ? (
-                    <>
-                      <span className="whitespace-pre-wrap break-words">
-                        {draft}
-                      </span>
-                      {showKeyboard ? (
-                        <span
-                          className="typing-caret ml-0.5 shrink-0 !bg-white"
-                          aria-hidden
-                        />
-                      ) : null}
-                    </>
-                  ) : null}
-                </div>
-              </div>
+              <input
+                ref={inputRef}
+                type="text"
+                enterKeyHint="send"
+                autoComplete="off"
+                autoCorrect="on"
+                spellCheck
+                value={draft}
+                placeholder={data.inputPlaceholder}
+                aria-label={data.inputPlaceholder}
+                onChange={(event) => setDraft(event.target.value)}
+                onFocus={() => setKeyboardOpen(true)}
+                onBlur={() => setKeyboardOpen(false)}
+                className="relative z-[1] min-h-[28px] min-w-0 flex-1 bg-transparent text-left text-[16px] text-white outline-none placeholder:text-white/70"
+              />
 
               <button
                 type="button"
@@ -381,15 +351,6 @@ export function AskView({ data }: AskViewProps) {
           </form>
         </div>
       ) : null}
-
-      <div onClick={(event) => event.stopPropagation()}>
-        <SoftKeyboard
-          open={showKeyboard}
-          onKey={(key) => setDraft((prev) => `${prev}${key}`)}
-          onBackspace={() => setDraft((prev) => prev.slice(0, -1))}
-          onReturn={handleReturn}
-        />
-      </div>
 
       <VoiceNotePanel
         open={voiceNoteOpen}
@@ -419,14 +380,14 @@ export function AskView({ data }: AskViewProps) {
           />
           <aside className="glass-panel absolute inset-y-0 left-0 flex w-[78%] max-w-[300px] flex-col overflow-hidden !rounded-l-none !rounded-r-[24px] pt-10">
             <div className="flex items-center justify-between px-4 pb-3 pt-1">
-              <p className="text-[15px] font-semibold text-[#0A0A0A]">
+              <p className="text-[15px] font-semibold text-white">
                 {data.pastChatsHeading}
               </p>
               <button
                 type="button"
                 aria-label="Close sidebar"
                 onClick={() => setSidebarOpen(false)}
-                className="flex h-11 w-11 items-center justify-center text-[#0A0A0A]"
+                className="flex h-11 w-11 items-center justify-center text-white"
               >
                 <X className="h-5 w-5" strokeWidth={1.75} />
               </button>
@@ -450,13 +411,13 @@ export function AskView({ data }: AskViewProps) {
                       type="button"
                       onClick={() => openPastChat(chat.id)}
                       className={`w-full rounded-[12px] px-3 py-3.5 text-left ${
-                        active ? "bg-black/[0.06]" : "hover:bg-black/[0.04]"
+                        active ? "bg-white/12" : "hover:bg-white/8"
                       }`}
                     >
-                      <p className="text-[15px] font-semibold text-[#0A0A0A]">
+                      <p className="text-[15px] font-semibold text-white">
                         {chat.quarter}
                       </p>
-                      <p className="mt-0.5 text-[12px] text-[#6b6b6b]">
+                      <p className="mt-0.5 text-[12px] text-white/65">
                         {chat.preview}
                       </p>
                     </button>

@@ -7,21 +7,8 @@ import {
   useTabBarVisibility,
 } from "@/components/layout/TabBarVisibility";
 
-function DemoChrome({ children }: { children: React.ReactNode }) {
-  const { tabBarVisible } = useTabBarVisibility();
-
-  return (
-    <div className="glass-light-page relative flex h-full min-h-0 flex-1 flex-col overflow-hidden">
-      <div className="scrollbar-hide relative z-10 flex min-h-0 flex-1 flex-col overflow-x-hidden overflow-y-auto overscroll-y-contain">
-        <div className="flex min-h-0 flex-1 flex-col pb-[4.25rem]">{children}</div>
-      </div>
-      {tabBarVisible ? <FloatingTabBar /> : null}
-    </div>
-  );
-}
-
 /**
- * Authenticated demo app chrome: phone frame + floating pill nav.
+ * Authenticated demo app chrome: phone frame + full-width icon bar.
  */
 export default function DemoAppLayout({
   children,
@@ -34,5 +21,27 @@ export default function DemoAppLayout({
         <DemoChrome>{children}</DemoChrome>
       </TabBarVisibilityProvider>
     </PhoneFrame>
+  );
+}
+
+function DemoChrome({ children }: { children: React.ReactNode }) {
+  const { tabBarVisible } = useTabBarVisibility();
+
+  return (
+    <div className="glass-light-page relative flex h-full min-h-0 flex-1 flex-col overflow-hidden">
+      <div className="scrollbar-hide relative z-10 flex min-h-0 flex-1 flex-col overflow-x-hidden overflow-y-auto overscroll-y-contain">
+        <div
+          className="flex min-h-0 flex-1 flex-col"
+          style={{
+            paddingBottom: tabBarVisible
+              ? "max(5.25rem, calc(var(--speak-page-safe-bottom) + 4.25rem))"
+              : "0.75rem",
+          }}
+        >
+          {children}
+        </div>
+      </div>
+      {tabBarVisible ? <FloatingTabBar /> : null}
+    </div>
   );
 }

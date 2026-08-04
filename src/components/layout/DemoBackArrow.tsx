@@ -5,8 +5,10 @@ import Link from "next/link";
 type DemoBackArrowProps = {
   href?: string;
   onClick?: () => void;
-  /** Light arrow for dark photo backgrounds */
+  /** Light styles for dark photo backgrounds */
   tone?: "light" | "dark";
+  /** When set, show text instead of the chevron (e.g. "Back") */
+  label?: string;
   className?: string;
 };
 
@@ -28,13 +30,13 @@ function ArrowGlyph() {
 }
 
 /**
- * Small top-left back chevron for demo navigation
- * (intro stages + name + Home only).
+ * Demo back control — clear of the notch / Dynamic Island.
  */
 export function DemoBackArrow({
   href,
   onClick,
   tone = "dark",
+  label,
   className = "",
 }: DemoBackArrowProps) {
   const color =
@@ -43,16 +45,23 @@ export function DemoBackArrow({
       : "text-[#0A0A0A]/85 hover:bg-black/5";
 
   const style = {
-    top: "max(0.35rem, calc(var(--speak-page-safe-top) + 0.2rem))",
-    left: "max(0.5rem, env(safe-area-inset-left))",
+    top: "max(1.35rem, calc(var(--speak-page-safe-top) + 0.85rem))",
+    left: "max(0.85rem, calc(env(safe-area-inset-left) + 0.35rem))",
   } as const;
 
-  const classes = `absolute z-40 flex h-10 w-10 items-center justify-center rounded-full transition ${color} ${className}`;
+  const classes = label
+    ? `absolute z-40 inline-flex min-h-[40px] items-center rounded-full px-3 text-[15px] font-medium transition ${color} ${className}`
+    : `absolute z-40 flex h-10 w-10 items-center justify-center rounded-full transition ${color} ${className}`;
 
   if (href) {
     return (
-      <Link href={href} aria-label="Back" className={classes} style={style}>
-        <ArrowGlyph />
+      <Link
+        href={href}
+        aria-label={label ?? "Back"}
+        className={classes}
+        style={style}
+      >
+        {label ?? <ArrowGlyph />}
       </Link>
     );
   }
@@ -61,11 +70,11 @@ export function DemoBackArrow({
     <button
       type="button"
       onClick={onClick}
-      aria-label="Back"
+      aria-label={label ?? "Back"}
       className={classes}
       style={style}
     >
-      <ArrowGlyph />
+      {label ?? <ArrowGlyph />}
     </button>
   );
 }

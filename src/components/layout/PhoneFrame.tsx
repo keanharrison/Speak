@@ -18,6 +18,7 @@ function useSpeakViewport(enabled: boolean) {
   useEffect(() => {
     const root = document.documentElement;
     const body = document.body;
+    let stableHeight = 0;
 
     if (!enabled) {
       root.classList.remove("speak-device");
@@ -36,6 +37,17 @@ function useSpeakViewport(enabled: boolean) {
 
     root.classList.add("speak-device");
 
+    const isTextFieldFocused = () => {
+      const el = document.activeElement;
+      if (!(el instanceof HTMLElement)) return false;
+      const tag = el.tagName;
+      return (
+        tag === "INPUT" ||
+        tag === "TEXTAREA" ||
+        el.isContentEditable
+      );
+    };
+
     const sync = () => {
       const vv = window.visualViewport;
       const layoutH = root.clientHeight || window.innerHeight;
@@ -49,14 +61,32 @@ function useSpeakViewport(enabled: boolean) {
         return;
       }
 
-      const height = Math.max(1, Math.round(vv.height));
-      // Keep cream canvas under the status bar — don't inset from offsetTop
+      const vvHeight = Math.max(1, Math.round(vv.height));
       const top = 0;
       const left = Math.max(0, Math.round(vv.offsetLeft));
       const width = Math.max(1, Math.round(vv.width));
-      const bottomGap = Math.max(0, Math.round(layoutH - height - vv.offsetTop));
+      const rawShell = vvHeight + Math.round(vv.offsetTop);
+      const bottomGap = Math.max(
+        0,
+        Math.round(layoutH - vvHeight - vv.offsetTop),
+      );
 
-      root.style.setProperty("--speak-app-height", `${height + Math.round(vv.offsetTop)}px`);
+      // Keep shell height stable while the native keyboard is up so the UI
+      // doesn't squash — composer lifts separately in AskView.
+      const keyboardOpen =
+        isTextFieldFocused() && vvHeight < layoutH * 0.82;
+
+      if (keyboardOpen && stableHeight > 0) {
+        root.style.setProperty("--speak-app-height", `${stableHeight}px`);
+        root.style.setProperty("--speak-app-top", `${top}px`);
+        root.style.setProperty("--speak-app-left", `${left}px`);
+        root.style.setProperty("--speak-app-width", `${width}px`);
+        root.style.setProperty("--speak-app-bottom-gap", "0px");
+        return;
+      }
+
+      stableHeight = rawShell;
+      root.style.setProperty("--speak-app-height", `${rawShell}px`);
       root.style.setProperty("--speak-app-top", `${top}px`);
       root.style.setProperty("--speak-app-left", `${left}px`);
       root.style.setProperty("--speak-app-width", `${width}px`);
@@ -76,6 +106,8 @@ function useSpeakViewport(enabled: boolean) {
     vv?.addEventListener("scroll", sync);
     window.addEventListener("resize", sync);
     window.addEventListener("orientationchange", sync);
+    document.addEventListener("focusin", sync);
+    document.addEventListener("focusout", sync);
 
     // iOS sometimes settles insets a tick after chrome show/hide
     const settle = window.setTimeout(sync, 150);
@@ -86,6 +118,8 @@ function useSpeakViewport(enabled: boolean) {
       vv?.removeEventListener("scroll", sync);
       window.removeEventListener("resize", sync);
       window.removeEventListener("orientationchange", sync);
+      document.removeEventListener("focusin", sync);
+      document.removeEventListener("focusout", sync);
       root.classList.remove("speak-device");
       root.style.removeProperty("--speak-app-height");
       root.style.removeProperty("--speak-app-top");

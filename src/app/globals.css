@@ -461,13 +461,16 @@ body {
   background: #ffffff;
 }
 
-/* Tab bar + segment tracks — denser frost on photo */
+/* Full-width rectangular icon bar */
 .glass-tab-bar {
-  background: rgba(22, 26, 32, 0.55);
-  border: 0.5px solid rgba(255, 255, 255, 0.38);
+  background: rgba(22, 26, 32, 0.72);
+  border: 0.5px solid rgba(255, 255, 255, 0.28);
+  border-left: none;
+  border-right: none;
+  border-bottom: none;
   box-shadow:
-    0 16px 40px rgba(0, 0, 0, 0.22),
-    inset 0 1px 0 rgba(255, 255, 255, 0.28);
+    0 -8px 28px rgba(0, 0, 0, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.22);
   backdrop-filter: blur(32px) saturate(170%);
   -webkit-backdrop-filter: blur(32px) saturate(170%);
 }

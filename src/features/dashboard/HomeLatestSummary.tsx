@@ -118,7 +118,7 @@ export function HomeLatestSummary({
             topic={speakTopic}
             label="Ask Speak"
             className="w-full rounded-full"
-            variant="glassSecondary"
+            variant="solid"
           />
         </div>
       </div>

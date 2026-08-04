@@ -20,17 +20,23 @@ const iconMap = {
 } as const;
 
 /**
- * Light frosted pill. Active page = black circle + white icon.
+ * Full-width rectangular bottom icon bar (not a floating pill).
  */
 export function FloatingTabBar() {
   const pathname = usePathname();
 
   return (
     <nav
-      className="pointer-events-none absolute inset-x-0 bottom-0 z-40 flex justify-center px-3 pb-3"
+      className="pointer-events-none absolute inset-x-0 bottom-0 z-40"
       aria-label="Primary"
     >
-      <ul className="glass-tab-bar pointer-events-auto flex w-[min(100%,22.5rem)] items-center justify-between rounded-full px-3 py-1.5">
+      <ul
+        className="glass-tab-bar pointer-events-auto flex w-full items-center justify-around rounded-none border-x-0 border-b-0 px-1 pt-2.5"
+        style={{
+          paddingBottom:
+            "max(0.55rem, calc(var(--speak-page-safe-bottom) + 0.2rem))",
+        }}
+      >
         {mobileNav.tabs.map((tab) => {
           const Icon = iconMap[tab.icon as keyof typeof iconMap];
           if (!Icon) return null;
@@ -44,7 +50,7 @@ export function FloatingTabBar() {
                 href={tab.href}
                 aria-label={tab.label}
                 aria-current={isActive ? "page" : undefined}
-                className={`flex h-10 w-10 items-center justify-center rounded-full transition-colors [&_svg]:h-[26px] [&_svg]:w-[26px] ${
+                className={`flex h-11 w-11 items-center justify-center rounded-full transition-colors [&_svg]:h-[26px] [&_svg]:w-[26px] ${
                   isActive
                     ? "bg-white text-[#0A0A0A]"
                     : "text-white/55"

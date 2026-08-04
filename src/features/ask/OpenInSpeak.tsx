@@ -3,8 +3,8 @@ import Link from "next/link";
 type OpenInSpeakProps = {
   /** What Speak should greet about — e.g. "Kidney concentration" */
   topic: string;
-  /** full = black glass CTA; compact = smaller; glassSecondary = frosted white */
-  variant?: "full" | "compact" | "glassSecondary";
+  /** solid = black CTA white text; full/compact = white glass; glassSecondary = frosted */
+  variant?: "full" | "compact" | "glassSecondary" | "solid";
   className?: string;
   label?: string;
 };
@@ -17,6 +17,18 @@ export function OpenInSpeak({
   label = "Open in Speak",
 }: OpenInSpeakProps) {
   const href = `/ask?about=${encodeURIComponent(topic)}`;
+
+  if (variant === "solid") {
+    return (
+      <Link
+        href={href}
+        onClick={(event) => event.stopPropagation()}
+        className={`inline-flex min-h-[44px] items-center justify-center rounded-full bg-[#0A0A0A] px-5 text-[14px] font-semibold text-white transition hover:bg-black ${className}`}
+      >
+        {label}
+      </Link>
+    );
+  }
 
   if (variant === "glassSecondary") {
     return (

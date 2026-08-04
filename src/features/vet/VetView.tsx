@@ -27,7 +27,7 @@ export function VetView({ data }: VetViewProps) {
       className="relative z-10 mx-auto w-full flex-1 overflow-x-hidden px-5 pb-6"
       style={{
         paddingTop:
-          "max(1.35rem, calc(var(--speak-page-safe-top) + 0.85rem))",
+          "max(1.5rem, calc(var(--speak-page-safe-top) + 1rem))",
       }}
     >
       <h1 className="page-title mt-1">{data.title}</h1>

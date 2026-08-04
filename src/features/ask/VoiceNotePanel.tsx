@@ -39,7 +39,13 @@ export function VoiceNotePanel({ open, onClose, onSend }: VoiceNotePanelProps) {
   const ss = String(seconds % 60).padStart(2, "0");
 
   return (
-    <div className="absolute inset-x-0 bottom-0 z-40 px-5 pb-[4.25rem]">
+    <div
+      className="absolute inset-x-0 bottom-0 z-40 px-5"
+      style={{
+        paddingBottom:
+          "max(5.25rem, calc(var(--speak-page-safe-bottom) + 4.25rem))",
+      }}
+    >
       <div
         className="glass-light-card mx-auto w-full max-w-sm px-5 py-5"
         role="dialog"
