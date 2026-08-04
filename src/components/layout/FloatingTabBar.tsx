@@ -52,7 +52,7 @@ export function FloatingTabBar() {
                 aria-label={tab.label}
                 aria-current={isActive ? "page" : undefined}
                 className={`flex h-11 w-11 items-center justify-center transition-colors [&_svg]:h-[26px] [&_svg]:w-[26px] ${
-                  isActive ? "text-white" : "text-white/45"
+                  isActive ? "text-white" : "text-white/40"
                 }`}
               >
                 <Icon active={isActive} />

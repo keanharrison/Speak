@@ -17,7 +17,7 @@ export function BaileyAvatar({ size = "md", className = "" }: BaileyAvatarProps)
     <img
       src="/images/reference/bailey-avatar.jpg"
       alt="Bailey"
-      className={`${sizeClass[size]} shrink-0 rounded-full object-cover object-top ${className}`}
+      className={`${sizeClass[size]} shrink-0 rounded-full object-cover object-[center_30%] ${className}`}
     />
   );
 }

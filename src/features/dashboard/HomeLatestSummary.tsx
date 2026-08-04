@@ -42,8 +42,10 @@ export function HomeLatestSummary({
         <div className="flex min-w-0 items-start gap-3">
           <BaileyAvatar size="xl" className="mt-0.5 ring-2 ring-white/70" />
           <div className="min-w-0 pt-1">
-            <p className="text-[17px] font-semibold text-white">{petName}</p>
-            <p className="mt-0.5 text-[12px] text-white/65">{quarter}</p>
+            <p className="text-[20px] font-semibold tracking-tight text-white">
+              {petName}
+            </p>
+            <p className="mt-1 text-[15px] font-medium text-white/75">{quarter}</p>
           </div>
         </div>
 

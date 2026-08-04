@@ -691,6 +691,7 @@ export function CinematicIntro() {
                     setNameFade(true);
                     try {
                       sessionStorage.setItem("introSeen", "true");
+                      sessionStorage.removeItem("exploreSkipTyping");
                     } catch {
                       /* ignore */
                     }
@@ -1117,6 +1118,11 @@ export function CinematicIntro() {
   /** Demo navigation — step back through greeting → play → film */
   const goBack = useCallback(() => {
     if (phase === "idle") {
+      try {
+        sessionStorage.setItem("introGreetingSkipType", "1");
+      } catch {
+        /* ignore */
+      }
       setPhase("greeting");
       return;
     }
@@ -1164,6 +1170,7 @@ export function CinematicIntro() {
     pauseVideos();
     try {
       sessionStorage.setItem("introSeen", "true");
+      sessionStorage.removeItem("exploreSkipTyping");
     } catch {
       /* ignore */
     }
@@ -1177,18 +1184,19 @@ export function CinematicIntro() {
     router,
   ]);
 
-  // Greeting typewriter — skip animation when returning via Back
+  // Greeting typewriter — Back shows instantly; forward / Next path types
   useEffect(() => {
     if (phase !== "greeting") return;
     let cancelled = false;
-    let alreadyTyped = false;
+    let skipType = false;
     try {
-      alreadyTyped = sessionStorage.getItem("introGreetingTyped") === "1";
+      skipType = sessionStorage.getItem("introGreetingSkipType") === "1";
+      if (skipType) sessionStorage.removeItem("introGreetingSkipType");
     } catch {
       /* ignore */
     }
 
-    if (alreadyTyped) {
+    if (skipType) {
       setGreetingText(GREETING_COPY);
       setGreetingDone(true);
       setGreetingNextVisible(true);
@@ -1203,11 +1211,6 @@ export function CinematicIntro() {
       if (cancelled) return;
       if (i >= GREETING_COPY.length) {
         setGreetingDone(true);
-        try {
-          sessionStorage.setItem("introGreetingTyped", "1");
-        } catch {
-          /* ignore */
-        }
         window.setTimeout(() => {
           if (!cancelled) setGreetingNextVisible(true);
         }, GREETING_NEXT_DELAY_MS);

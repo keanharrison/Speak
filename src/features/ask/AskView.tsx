@@ -300,7 +300,7 @@ export function AskView({ data }: AskViewProps) {
       {!voiceNoteOpen ? (
         <div
           className={`relative z-30 shrink-0 px-5 pt-1 transition-[padding] duration-150 ${
-            keyboardOpen ? "pb-2" : "pb-[3.5rem]"
+            keyboardOpen ? "pb-2" : "pb-[5.25rem]"
           }`}
           style={{
             transform:

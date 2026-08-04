@@ -60,6 +60,15 @@ export function DemoBackArrow({
         aria-label={label ?? "Back"}
         className={classes}
         style={style}
+        onClick={() => {
+          if (href === "/explore" || href.startsWith("/explore")) {
+            try {
+              sessionStorage.setItem("exploreSkipTyping", "1");
+            } catch {
+              /* ignore */
+            }
+          }
+        }}
       >
         {label ?? <ArrowGlyph />}
       </Link>

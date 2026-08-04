@@ -273,12 +273,12 @@ body {
   inset: 0;
   pointer-events: none;
   z-index: 0;
-  background-image: url("/images/app-bg-volcano-dog.jpg");
+  background-image: url("/images/app-bg-golden-hour.jpg");
   background-size: cover;
-  background-position: center top;
+  background-position: center center;
   background-repeat: no-repeat;
-  transform: scale(1.08);
-  filter: blur(3.5px);
+  transform: scale(1.02);
+  filter: blur(2.5px);
 }
 
 .glass-light-page::after {
