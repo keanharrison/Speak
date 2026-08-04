@@ -1,14 +1,27 @@
 "use client";
 
-import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
+import {
+  FormEvent,
+  MouseEvent,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { SpeakAppIcon } from "@/components/ui/SpeakAppIcon";
-import { Menu, Mic, SquarePen, X } from "lucide-react";
+import {
+  ArrowUp,
+  ChevronDown,
+  Menu,
+  Mic,
+  Plus,
+  SquarePen,
+  X,
+} from "lucide-react";
 import { useTabBarVisibility } from "@/components/layout/TabBarVisibility";
-import { PromptMarquee } from "@/features/ask/PromptMarquee";
 import { SoftKeyboard } from "@/features/ask/SoftKeyboard";
 import { VoiceNotePanel } from "@/features/ask/VoiceNotePanel";
-import type { AskMessage, AskPageContent, AskSuggestion } from "@/types";
+import type { AskMessage, AskPageContent } from "@/types";
 
 type AskViewProps = {
   data: AskPageContent;
@@ -43,7 +56,6 @@ function chatTitleForId(data: AskPageContent, chatId: string | null) {
 
 /**
  * Speak chat — soft keyboard on composer focus; nav bar when keyboard is closed.
- * Prompt cards float just above the composer / keyboard.
  */
 export function AskView({ data }: AskViewProps) {
   const router = useRouter();
@@ -69,6 +81,7 @@ export function AskView({ data }: AskViewProps) {
 
   const emptyState = messages.length === 0;
   const showKeyboard = keyboardOpen && !voiceNoteOpen;
+  const canSend = draft.trim().length > 0;
 
   const quarterChats = useMemo(() => {
     const seen = new Set<string>();
@@ -156,10 +169,6 @@ export function AskView({ data }: AskViewProps) {
     sendQuestion(draft);
   }
 
-  function selectSuggestion(suggestion: AskSuggestion) {
-    sendQuestion(suggestion.title);
-  }
-
   function startNewChat() {
     setMessages([]);
     setDraft("");
@@ -177,6 +186,12 @@ export function AskView({ data }: AskViewProps) {
     setSidebarOpen(false);
     dismissKeyboard();
     router.replace(`/ask?chat=${encodeURIComponent(id)}`, { scroll: false });
+  }
+
+  function openVoiceNote(event: MouseEvent) {
+    event.stopPropagation();
+    dismissKeyboard();
+    setVoiceNoteOpen(true);
   }
 
   return (
@@ -218,7 +233,6 @@ export function AskView({ data }: AskViewProps) {
       <div className="scrollbar-hide min-h-0 flex-1 overflow-y-auto">
         {emptyState ? (
           <div className="flex min-h-full flex-col items-center justify-center px-5 pb-4 pt-2 text-center">
-            <SpeakAppIcon className="mb-4 h-[4.5rem] w-[4.5rem]" />
             <p className="text-[15px] font-medium text-[#0A0A0A]">
               Ask about Bailey&apos;s results
             </p>
@@ -259,66 +273,136 @@ export function AskView({ data }: AskViewProps) {
 
       {!voiceNoteOpen ? (
         <div
-          className={`relative z-30 shrink-0 bg-transparent pt-1 ${
-            showKeyboard ? "pb-2" : "pb-[6.25rem]"
+          className={`relative z-30 shrink-0 ${
+            showKeyboard
+              ? "bg-[#D1D3D9] px-2.5 pb-1.5 pt-2"
+              : "bg-transparent px-5 pb-[6.25rem] pt-1"
           }`}
           onClick={(event) => event.stopPropagation()}
         >
-          {emptyState ? (
-            <div className="mb-2">
-              <PromptMarquee
-                suggestions={data.suggestions}
-                onSelect={selectSuggestion}
-              />
-            </div>
-          ) : null}
-
-          <form onSubmit={handleSubmit} className="px-5">
-            <div
-              className="glass-panel relative flex min-h-[48px] cursor-text items-center gap-2 px-3 py-2"
-              onClick={focusComposer}
-            >
-              {!draft ? (
-                <div className="pointer-events-none absolute inset-y-0 left-4 flex items-center">
-                  {showKeyboard ? (
-                    <span className="typing-caret" aria-hidden />
-                  ) : null}
-                  <span className="text-[15px] text-[#6b6b6b]">
-                    {data.inputPlaceholder}
-                  </span>
-                </div>
-              ) : null}
+          <form onSubmit={handleSubmit}>
+            {showKeyboard ? (
               <div
-                ref={inputRef}
-                role="textbox"
-                tabIndex={0}
-                aria-label={data.inputPlaceholder}
-                aria-multiline="false"
-                onFocus={() => setKeyboardOpen(true)}
-                className="flex h-full min-w-0 flex-1 items-center pl-1 text-left text-[16px] text-[#0A0A0A] outline-none"
+                className="flex min-h-[44px] cursor-text items-center gap-2 rounded-full bg-white px-2 py-1.5 shadow-[0_1px_0_rgba(0,0,0,0.06)]"
+                onClick={focusComposer}
               >
-                {draft ? (
-                  <>
-                    <span className="whitespace-pre-wrap break-words">{draft}</span>
-                    {showKeyboard ? (
-                      <span className="typing-caret ml-0.5 shrink-0" aria-hidden />
+                <button
+                  type="button"
+                  aria-label="Add"
+                  className="flex size-8 shrink-0 items-center justify-center rounded-full bg-[#E8E8ED] text-[#3A3A3C]"
+                  onClick={(event) => event.stopPropagation()}
+                >
+                  <Plus className="h-4 w-4" strokeWidth={2.25} />
+                </button>
+                <button
+                  type="button"
+                  className="flex shrink-0 items-center gap-0.5 text-[15px] font-semibold text-[#0A0A0A]"
+                  onClick={(event) => event.stopPropagation()}
+                >
+                  Auto
+                  <ChevronDown className="h-3.5 w-3.5 text-[#6b6b6b]" strokeWidth={2.25} />
+                </button>
+                <div className="relative min-w-0 flex-1">
+                  {!draft ? (
+                    <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center">
+                      <span className="typing-caret" aria-hidden />
+                      <span className="text-[16px] text-[#8E8E93]">
+                        {data.inputPlaceholder}
+                      </span>
+                    </div>
+                  ) : null}
+                  <div
+                    ref={inputRef}
+                    role="textbox"
+                    tabIndex={0}
+                    aria-label={data.inputPlaceholder}
+                    aria-multiline="false"
+                    onFocus={() => setKeyboardOpen(true)}
+                    className="flex min-h-[28px] min-w-0 items-center text-left text-[16px] text-[#0A0A0A] outline-none"
+                  >
+                    {draft ? (
+                      <>
+                        <span className="whitespace-pre-wrap break-words">
+                          {draft}
+                        </span>
+                        <span
+                          className="typing-caret ml-0.5 shrink-0"
+                          aria-hidden
+                        />
+                      </>
                     ) : null}
-                  </>
-                ) : null}
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  aria-label="Voice note"
+                  onClick={openVoiceNote}
+                  className="flex size-8 shrink-0 items-center justify-center rounded-full bg-[#E8E8ED] text-[#3A3A3C]"
+                >
+                  <Mic className="h-4 w-4" strokeWidth={2} />
+                </button>
+                <button
+                  type="submit"
+                  aria-label="Send"
+                  disabled={!canSend}
+                  className={`flex size-8 shrink-0 items-center justify-center rounded-full transition-opacity ${
+                    canSend
+                      ? "bg-[#0A0A0A] text-white"
+                      : "bg-[#0A0A0A]/40 text-white"
+                  }`}
+                >
+                  <ArrowUp className="h-4 w-4" strokeWidth={2.5} />
+                </button>
               </div>
-              <button
-                type="button"
-                aria-label="Voice note"
-                onClick={(event) => {
-                  event.stopPropagation();
-                  dismissKeyboard();
-                  setVoiceNoteOpen(true);
-                }}
-                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#0A0A0A] text-white"
+            ) : (
+              <div
+                className="glass-panel relative flex min-h-[48px] cursor-text items-center gap-2 px-3 py-2"
+                onClick={focusComposer}
               >
-                <Mic className="h-4 w-4" strokeWidth={2} />
-              </button>
-            </div>
+                {!draft ? (
+                  <div className="pointer-events-none absolute inset-y-0 left-4 flex items-center">
+                    <span className="text-[15px] text-[#6b6b6b]">
+                      {data.inputPlaceholder}
+                    </span>
+                  </div>
+                ) : null}
+                <div
+                  ref={inputRef}
+                  role="textbox"
+                  tabIndex={0}
+                  aria-label={data.inputPlaceholder}
+                  aria-multiline="false"
+                  onFocus={() => setKeyboardOpen(true)}
+                  className="flex h-full min-w-0 flex-1 items-center pl-1 text-left text-[16px] text-[#0A0A0A] outline-none"
+                >
+                  {draft ? (
+                    <span className="whitespace-pre-wrap break-words">
+                      {draft}
+                    </span>
+                  ) : null}
+                </div>
+                <button
+                  type="button"
+                  aria-label="Voice note"
+                  onClick={openVoiceNote}
+                  className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#E8E8ED] text-[#3A3A3C]"
+                >
+                  <Mic className="h-4 w-4" strokeWidth={2} />
+                </button>
+                <button
+                  type="submit"
+                  aria-label="Send"
+                  disabled={!canSend}
+                  className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full transition-opacity ${
+                    canSend
+                      ? "bg-[#0A0A0A] text-white"
+                      : "bg-[#0A0A0A]/35 text-white"
+                  }`}
+                >
+                  <ArrowUp className="h-4 w-4" strokeWidth={2.5} />
+                </button>
+              </div>
+            )}
           </form>
         </div>
       ) : null}

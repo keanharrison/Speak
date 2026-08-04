@@ -466,8 +466,12 @@ body {
 
 .speak-soft-keyboard {
   background: #d1d3d9;
-  border-top: 0.5px solid rgba(0, 0, 0, 0.12);
-  box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.08);
+  border-top: none;
+  box-shadow: none;
+}
+
+.speak-soft-keyboard__suggestions {
+  background: #d1d3d9;
 }
 
 .speak-soft-key {

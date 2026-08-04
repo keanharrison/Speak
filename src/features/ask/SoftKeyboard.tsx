@@ -83,7 +83,26 @@ export function SoftKeyboard({
       aria-label="Keyboard"
       onMouseDown={(event) => event.preventDefault()}
     >
-      <div className="flex flex-col gap-[5px] px-1.5 pb-1.5 pt-1.5">
+      <div className="speak-soft-keyboard__suggestions flex items-center justify-between px-3 py-2">
+        {["to", "and", "on"].map((word, index) => (
+          <button
+            key={word}
+            type="button"
+            className={`flex-1 py-0.5 text-center text-[16px] text-[#0A0A0A] ${
+              index === 1
+                ? "border-x border-black/10"
+                : ""
+            }`}
+            onPointerDown={(event) =>
+              fireOnPointerDown(event, () => onKey(word))
+            }
+          >
+            {word}
+          </button>
+        ))}
+      </div>
+
+      <div className="flex flex-col gap-[5px] px-1.5 pb-1.5 pt-0.5">
         {rows.map((row, rowIndex) => (
           <div key={`row-${rowIndex}`} className="flex justify-center gap-[5px]">
             {layout === "letters" && rowIndex === 2 ? (
@@ -170,10 +189,11 @@ export function SoftKeyboard({
           </button>
           <button
             type="button"
-            className="speak-soft-key speak-soft-key--action min-w-[72px] px-3 text-[13px] font-semibold"
+            aria-label="Return"
+            className="speak-soft-key speak-soft-key--action min-w-[72px] px-3 text-[18px] font-semibold"
             onPointerDown={(event) => fireOnPointerDown(event, onReturn)}
           >
-            return
+            ↵
           </button>
         </div>
       </div>
