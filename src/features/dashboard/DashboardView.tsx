@@ -72,7 +72,7 @@ export function DashboardView({ data }: DashboardViewProps) {
         className="relative z-10 w-full max-w-full flex-1 px-5 pb-8"
         style={{
           paddingTop:
-            "max(5.25rem, calc(var(--speak-page-safe-top) + 4.25rem))",
+            "max(7rem, calc(var(--speak-page-safe-top) + 5.75rem))",
         }}
       >
         <div className="mb-5">
@@ -85,7 +85,7 @@ export function DashboardView({ data }: DashboardViewProps) {
 
         <HomeLatestSummary
           petName={pet.name}
-          dateLabel={latest.dateLabel}
+          quarter={latest.quarter}
           markers={latest.markers}
           detailsLabel={data.latestSummary.detailsLabel}
           onOpenDetails={() => openTest(latest.id)}

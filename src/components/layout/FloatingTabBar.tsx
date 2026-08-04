@@ -35,7 +35,7 @@ export function FloatingTabBar() {
         className="glass-tab-bar pointer-events-auto flex w-full items-center justify-around rounded-none border-x-0 border-b-0 px-1 pt-2"
         style={{
           paddingBottom:
-            "max(0.45rem, calc(var(--speak-page-safe-bottom) + 0.15rem))",
+          "max(0.35rem, calc(var(--speak-page-safe-bottom) + 0.1rem))",
         }}
       >
         {mobileNav.tabs.map((tab) => {

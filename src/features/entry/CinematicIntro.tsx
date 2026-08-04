@@ -162,7 +162,10 @@ const GREETING_INVITE_PREFIX = "Before you view our product demo, ";
 const AUDIO_SRC = "/audio/intro-vo.m4a?v=20260731i";
 
 /** Shared type for greeting + captions */
-const INTRO_MESSAGE_TYPE = "font-medium leading-relaxed tracking-[-0.01em]";
+const INTRO_MESSAGE_TYPE =
+  "font-medium leading-snug tracking-[-0.02em]";
+/** Shared onboarding prompt size — greeting + name match */
+const INTRO_PROMPT_SIZE = "text-[22px] sm:text-[24px]";
 /** Skip lead-in on VO — slip track forward so later beats land earlier vs picture */
 const AUDIO_START_S = 1.5;
 /** Same slip on music so VO + bed stay locked (beat aims at final clip) */
@@ -1292,24 +1295,30 @@ export function CinematicIntro() {
               paddingTop: "max(2.5rem, calc(var(--speak-page-safe-top) + 1.5rem))",
               paddingLeft: "max(1.25rem, env(safe-area-inset-left))",
               paddingRight: "max(1.25rem, env(safe-area-inset-right))",
+              // Reserve footer height so Next appearing doesn't shove the copy up
+              paddingBottom:
+                "max(5.75rem, calc(var(--speak-page-safe-bottom) + 4.75rem))",
             }}
           >
             <div className="relative w-full max-w-md">
               <p
-                className={`invisible whitespace-pre-wrap text-center text-[20px] text-[#0A0A0A] sm:text-[21px] ${INTRO_MESSAGE_TYPE}`}
+                className={`invisible whitespace-pre-wrap text-center text-[#0A0A0A] ${INTRO_PROMPT_SIZE} ${INTRO_MESSAGE_TYPE}`}
                 aria-hidden
               >
                 {GREETING_COPY}
               </p>
               <p
-                className={`absolute inset-0 whitespace-pre-wrap text-center text-[20px] text-[#0A0A0A] sm:text-[21px] ${INTRO_MESSAGE_TYPE}`}
+                className={`absolute inset-0 whitespace-pre-wrap text-center text-[#0A0A0A] ${INTRO_PROMPT_SIZE} ${INTRO_MESSAGE_TYPE}`}
               >
                 {greetingText}
                 {greetingText || greetingDone ? (
                   <span
                     className="ml-0.5 inline-block h-[1.05em] w-[2px] translate-y-[2px] bg-[#0A0A0A]"
                     style={{
-                      animation: "typing-caret-blink 1.05s step-end infinite",
+                      animation: greetingNextVisible
+                        ? "none"
+                        : "typing-caret-blink 1.05s step-end infinite",
+                      opacity: greetingNextVisible ? 0 : undefined,
                     }}
                     aria-hidden
                   />
@@ -1318,14 +1327,12 @@ export function CinematicIntro() {
             </div>
           </div>
 
-          {greetingNextVisible ? (
-            <IntroBottomBar
-              relative
-              showBack={false}
-              onNext={goToPlayScreen}
-              nextLabel="Next"
-            />
-          ) : null}
+          <IntroBottomBar
+            showBack={false}
+            showNext={greetingNextVisible}
+            onNext={goToPlayScreen}
+            nextLabel="Next"
+          />
         </div>
       ) : null}
 

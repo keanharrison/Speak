@@ -278,7 +278,7 @@ body {
   background-position: center top;
   background-repeat: no-repeat;
   transform: scale(1.08);
-  filter: blur(10px);
+  filter: blur(3.5px);
 }
 
 .glass-light-page::after {
@@ -289,9 +289,9 @@ body {
   z-index: 0;
   background: linear-gradient(
     180deg,
-    rgba(8, 10, 14, 0.28) 0%,
-    rgba(8, 10, 14, 0.18) 40%,
-    rgba(8, 10, 14, 0.42) 100%
+    rgba(8, 10, 14, 0.16) 0%,
+    rgba(8, 10, 14, 0.1) 40%,
+    rgba(8, 10, 14, 0.28) 100%
   );
 }
 

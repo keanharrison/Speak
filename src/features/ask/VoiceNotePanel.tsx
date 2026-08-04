@@ -43,7 +43,7 @@ export function VoiceNotePanel({ open, onClose, onSend }: VoiceNotePanelProps) {
       className="absolute inset-x-0 bottom-0 z-40 px-5"
       style={{
         paddingBottom:
-          "max(3.85rem, calc(var(--speak-page-safe-bottom) + 3.1rem))",
+          "max(3.35rem, calc(var(--speak-page-safe-bottom) + 2.85rem))",
       }}
     >
       <div

@@ -149,12 +149,12 @@ export function ExploreNameForm() {
         <div className="flex w-full max-w-[19rem] flex-col items-center">
           <div className="relative w-full">
             <p
-              className="invisible whitespace-pre-wrap text-center text-[26px] font-medium leading-snug tracking-[-0.02em] text-[#0A0A0A] sm:text-[28px]"
+              className="invisible whitespace-pre-wrap text-center text-[22px] font-medium leading-snug tracking-[-0.02em] text-[#0A0A0A] sm:text-[24px]"
               aria-hidden
             >
               {TITLE}
             </p>
-            <p className="absolute inset-0 whitespace-pre-wrap text-center text-[26px] font-medium leading-snug tracking-[-0.02em] text-[#0A0A0A] sm:text-[28px]">
+            <p className="absolute inset-0 whitespace-pre-wrap text-center text-[22px] font-medium leading-snug tracking-[-0.02em] text-[#0A0A0A] sm:text-[24px]">
               {titleText}
               {titleText || titleDone ? (
                 <span

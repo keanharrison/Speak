@@ -45,7 +45,7 @@ export function DemoBackArrow({
       : "text-[#0A0A0A]/85 hover:bg-black/5";
 
   const style = {
-    top: "max(2.35rem, calc(var(--speak-page-safe-top) + 1.65rem))",
+    top: "max(3.75rem, calc(var(--speak-page-safe-top) + 2.85rem))",
     left: "max(0.85rem, calc(env(safe-area-inset-left) + 0.35rem))",
   } as const;
 
