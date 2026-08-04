@@ -26,13 +26,7 @@ export function ResultsView({ data }: ResultsViewProps) {
         ))}
       </section>
 
-      <aside
-        className="mt-6 rounded-[14px] px-4 py-4"
-        style={{
-          backgroundColor: "#FDF3E7",
-          border: "0.5px solid var(--color-amber)",
-        }}
-      >
+      <aside className="glass-panel mt-6 px-4 py-4" role="status">
         <div className="flex items-start gap-3">
           <span
             className="mt-2 h-2 w-2 shrink-0 rounded-full bg-accent"

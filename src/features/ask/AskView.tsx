@@ -55,7 +55,7 @@ function chatTitleForId(data: AskPageContent, chatId: string | null) {
 }
 
 /**
- * Speak chat — soft keyboard on composer focus; nav bar when keyboard is closed.
+ * Speak chat — soft keyboard on composer focus; dismiss on outside tap.
  */
 export function AskView({ data }: AskViewProps) {
   const router = useRouter();
@@ -202,10 +202,7 @@ export function AskView({ data }: AskViewProps) {
       }}
       onClick={dismissKeyboard}
     >
-      <div
-        className="relative mx-5 mb-3 mt-1 shrink-0"
-        onClick={(event) => event.stopPropagation()}
-      >
+      <div className="relative mx-5 mb-3 mt-1 shrink-0">
         <h1 className="page-title text-center text-[24px]">Speak</h1>
         {threadTitle ? (
           <p className="mt-0.5 text-center text-[11px] text-[#6b6b6b]">
@@ -215,7 +212,10 @@ export function AskView({ data }: AskViewProps) {
         <button
           type="button"
           aria-label="Open screening quarters"
-          onClick={() => setSidebarOpen(true)}
+          onClick={(event) => {
+            event.stopPropagation();
+            setSidebarOpen(true);
+          }}
           className="absolute left-0 top-0.5 flex size-7 items-center justify-center text-[#0A0A0A]"
         >
           <Menu className="h-5 w-5" strokeWidth={1.75} />
@@ -223,7 +223,10 @@ export function AskView({ data }: AskViewProps) {
         <button
           type="button"
           aria-label="New chat"
-          onClick={startNewChat}
+          onClick={(event) => {
+            event.stopPropagation();
+            startNewChat();
+          }}
           className="absolute right-0 top-0.5 flex size-7 items-center justify-center text-[#0A0A0A]"
         >
           <SquarePen className="h-5 w-5" strokeWidth={1.75} />
@@ -238,10 +241,7 @@ export function AskView({ data }: AskViewProps) {
             </p>
           </div>
         ) : (
-          <div
-            className="flex flex-col gap-4 px-5 pb-4 pt-2"
-            onClick={(event) => event.stopPropagation()}
-          >
+          <div className="flex flex-col gap-4 px-5 pb-4 pt-2">
             {messages.map((message, index) => {
               const isUser = message.role === "user";
               return (
@@ -281,87 +281,53 @@ export function AskView({ data }: AskViewProps) {
           onClick={(event) => event.stopPropagation()}
         >
           <form onSubmit={handleSubmit}>
-            {showKeyboard ? (
-              <div
-                className="flex min-h-[44px] cursor-text items-center gap-2 rounded-full bg-white px-2 py-1.5 shadow-[0_1px_0_rgba(0,0,0,0.06)]"
-                onClick={focusComposer}
-              >
-                <button
-                  type="button"
-                  aria-label="Add"
-                  className="flex size-8 shrink-0 items-center justify-center rounded-full bg-[#E8E8ED] text-[#3A3A3C]"
-                  onClick={(event) => event.stopPropagation()}
-                >
-                  <Plus className="h-4 w-4" strokeWidth={2.25} />
-                </button>
-                <button
-                  type="button"
-                  className="flex shrink-0 items-center gap-0.5 text-[15px] font-semibold text-[#0A0A0A]"
-                  onClick={(event) => event.stopPropagation()}
-                >
-                  Auto
-                  <ChevronDown className="h-3.5 w-3.5 text-[#6b6b6b]" strokeWidth={2.25} />
-                </button>
-                <div className="relative min-w-0 flex-1">
-                  {!draft ? (
-                    <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center">
-                      <span className="typing-caret" aria-hidden />
-                      <span className="text-[16px] text-[#8E8E93]">
-                        {data.inputPlaceholder}
-                      </span>
-                    </div>
-                  ) : null}
-                  <div
-                    ref={inputRef}
-                    role="textbox"
-                    tabIndex={0}
-                    aria-label={data.inputPlaceholder}
-                    aria-multiline="false"
-                    onFocus={() => setKeyboardOpen(true)}
-                    className="flex min-h-[28px] min-w-0 items-center text-left text-[16px] text-[#0A0A0A] outline-none"
+            <div
+              className={`relative flex cursor-text items-center gap-2 ${
+                showKeyboard
+                  ? "glass-light-field min-h-[44px] rounded-full px-2 py-1.5"
+                  : "glass-panel min-h-[48px] px-3 py-2"
+              }`}
+              onClick={focusComposer}
+            >
+              {showKeyboard ? (
+                <>
+                  <button
+                    type="button"
+                    aria-label="Add"
+                    className="flex size-8 shrink-0 items-center justify-center rounded-full bg-black/[0.06] text-[#3A3A3C]"
+                    onClick={(event) => event.stopPropagation()}
                   >
-                    {draft ? (
-                      <>
-                        <span className="whitespace-pre-wrap break-words">
-                          {draft}
-                        </span>
-                        <span
-                          className="typing-caret ml-0.5 shrink-0"
-                          aria-hidden
-                        />
-                      </>
-                    ) : null}
-                  </div>
-                </div>
-                <button
-                  type="button"
-                  aria-label="Voice note"
-                  onClick={openVoiceNote}
-                  className="flex size-8 shrink-0 items-center justify-center rounded-full bg-[#E8E8ED] text-[#3A3A3C]"
-                >
-                  <Mic className="h-4 w-4" strokeWidth={2} />
-                </button>
-                <button
-                  type="submit"
-                  aria-label="Send"
-                  disabled={!canSend}
-                  className={`flex size-8 shrink-0 items-center justify-center rounded-full transition-opacity ${
-                    canSend
-                      ? "bg-[#0A0A0A] text-white"
-                      : "bg-[#0A0A0A]/40 text-white"
-                  }`}
-                >
-                  <ArrowUp className="h-4 w-4" strokeWidth={2.5} />
-                </button>
-              </div>
-            ) : (
-              <div
-                className="glass-panel relative flex min-h-[48px] cursor-text items-center gap-2 px-3 py-2"
-                onClick={focusComposer}
-              >
+                    <Plus className="h-4 w-4" strokeWidth={2.25} />
+                  </button>
+                  <button
+                    type="button"
+                    className="flex shrink-0 items-center gap-0.5 text-[15px] font-semibold text-[#0A0A0A]"
+                    onClick={(event) => event.stopPropagation()}
+                  >
+                    Auto
+                    <ChevronDown
+                      className="h-3.5 w-3.5 text-[#6b6b6b]"
+                      strokeWidth={2.25}
+                    />
+                  </button>
+                </>
+              ) : null}
+
+              <div className="relative min-w-0 flex-1">
                 {!draft ? (
-                  <div className="pointer-events-none absolute inset-y-0 left-4 flex items-center">
-                    <span className="text-[15px] text-[#6b6b6b]">
+                  <div
+                    className={`pointer-events-none absolute inset-y-0 flex items-center ${
+                      showKeyboard ? "left-0" : "left-1"
+                    }`}
+                  >
+                    {showKeyboard ? (
+                      <span className="typing-caret" aria-hidden />
+                    ) : null}
+                    <span
+                      className={`text-[16px] ${
+                        showKeyboard ? "text-[#8E8E93]" : "text-[#6b6b6b]"
+                      }`}
+                    >
                       {data.inputPlaceholder}
                     </span>
                   </div>
@@ -373,36 +339,51 @@ export function AskView({ data }: AskViewProps) {
                   aria-label={data.inputPlaceholder}
                   aria-multiline="false"
                   onFocus={() => setKeyboardOpen(true)}
-                  className="flex h-full min-w-0 flex-1 items-center pl-1 text-left text-[16px] text-[#0A0A0A] outline-none"
+                  className="flex min-h-[28px] min-w-0 items-center text-left text-[16px] text-[#0A0A0A] outline-none"
                 >
                   {draft ? (
-                    <span className="whitespace-pre-wrap break-words">
-                      {draft}
-                    </span>
+                    <>
+                      <span className="whitespace-pre-wrap break-words">
+                        {draft}
+                      </span>
+                      {showKeyboard ? (
+                        <span
+                          className="typing-caret ml-0.5 shrink-0"
+                          aria-hidden
+                        />
+                      ) : null}
+                    </>
                   ) : null}
                 </div>
-                <button
-                  type="button"
-                  aria-label="Voice note"
-                  onClick={openVoiceNote}
-                  className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#E8E8ED] text-[#3A3A3C]"
-                >
-                  <Mic className="h-4 w-4" strokeWidth={2} />
-                </button>
-                <button
-                  type="submit"
-                  aria-label="Send"
-                  disabled={!canSend}
-                  className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full transition-opacity ${
-                    canSend
-                      ? "bg-[#0A0A0A] text-white"
-                      : "bg-[#0A0A0A]/35 text-white"
-                  }`}
-                >
-                  <ArrowUp className="h-4 w-4" strokeWidth={2.5} />
-                </button>
               </div>
-            )}
+
+              <button
+                type="button"
+                aria-label="Voice note"
+                onClick={openVoiceNote}
+                className={`flex shrink-0 items-center justify-center rounded-full ${
+                  showKeyboard
+                    ? "size-8 bg-black/[0.06] text-[#3A3A3C]"
+                    : "h-9 w-9 bg-black/[0.06] text-[#3A3A3C]"
+                }`}
+              >
+                <Mic className="h-4 w-4" strokeWidth={2} />
+              </button>
+              <button
+                type="submit"
+                aria-label="Send"
+                disabled={!canSend}
+                className={`flex shrink-0 items-center justify-center rounded-full transition-opacity ${
+                  showKeyboard ? "size-8" : "h-9 w-9"
+                } ${
+                  canSend
+                    ? "bg-[#0A0A0A] text-white"
+                    : "bg-[#0A0A0A]/35 text-white"
+                }`}
+              >
+                <ArrowUp className="h-4 w-4" strokeWidth={2.5} />
+              </button>
+            </div>
           </form>
         </div>
       ) : null}
@@ -442,7 +423,7 @@ export function AskView({ data }: AskViewProps) {
             className="absolute inset-0 bg-black/35"
             onClick={() => setSidebarOpen(false)}
           />
-          <aside className="absolute inset-y-0 left-0 flex w-[78%] max-w-[300px] flex-col overflow-hidden rounded-r-[24px] bg-[rgba(255,255,255,0.92)] pt-10 shadow-[4px_0_24px_rgba(0,0,0,0.12)] backdrop-blur-[32px]">
+          <aside className="glass-panel absolute inset-y-0 left-0 flex w-[78%] max-w-[300px] flex-col overflow-hidden !rounded-l-none !rounded-r-[24px] pt-10">
             <div className="flex items-center justify-between px-4 pb-3 pt-1">
               <p className="text-[15px] font-semibold text-[#0A0A0A]">
                 {data.pastChatsHeading}

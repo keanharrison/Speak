@@ -63,7 +63,7 @@ export function MetricModal({ card, isOpen, onClose }: MetricModalProps) {
         </p>
         <p className="mt-1 text-[13px] text-muted">{card.technicalLabel}</p>
 
-        <div className="mt-5 rounded-[12px] bg-canvas px-3 py-3">
+        <div className="glass-light-field mt-5 rounded-[12px] px-3 py-3">
           <p className="text-[11px] font-medium uppercase tracking-[0.06em] text-muted">
             Trend
           </p>

@@ -19,11 +19,7 @@ export function DashboardStatusBanner({
 }: DashboardStatusBannerProps) {
   return (
     <div
-      className="relative flex w-full flex-col gap-4 rounded-[14px] px-4 py-4"
-      style={{
-        backgroundColor: "#FDF3E7",
-        border: "0.5px solid var(--color-amber)",
-      }}
+      className="glass-panel relative flex w-full flex-col gap-4 px-4 py-4"
       role="status"
     >
       <div className="flex items-start gap-3">

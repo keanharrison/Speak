@@ -101,8 +101,8 @@ export function HomeLatestSummary({
                     key={`stat-${marker.id}`}
                     type="button"
                     onClick={() => setActiveId(marker.id)}
-                    className={`rounded-[14px] px-3 py-2.5 text-left ${
-                      selected ? "bg-black/[0.07]" : "bg-black/[0.035]"
+                    className={`glass-light-field rounded-[14px] px-3 py-2.5 text-left ${
+                      selected ? "ring-1 ring-black/10" : ""
                     }`}
                   >
                     <p className="truncate text-[11px] text-[#6b6b6b]">

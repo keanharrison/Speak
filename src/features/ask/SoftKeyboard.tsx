@@ -1,6 +1,7 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import type { PointerEvent as ReactPointerEvent } from "react";
 
 type SoftKeyboardProps = {
   open?: boolean;
@@ -36,7 +37,7 @@ const SYMBOLS = [
 type Layout = "letters" | "numbers" | "symbols";
 
 function fireOnPointerDown(
-  event: React.PointerEvent,
+  event: ReactPointerEvent,
   action: () => void,
 ) {
   // Fire on press (not click release) so typing feels immediate
@@ -57,6 +58,13 @@ export function SoftKeyboard({
 }: SoftKeyboardProps) {
   const [layout, setLayout] = useState<Layout>("letters");
   const [shifted, setShifted] = useState(true);
+
+  useEffect(() => {
+    if (!open) {
+      setLayout("letters");
+      setShifted(true);
+    }
+  }, [open]);
 
   const pressLetter = useCallback(
     (key: string) => {

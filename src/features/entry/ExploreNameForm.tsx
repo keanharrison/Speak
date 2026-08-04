@@ -161,7 +161,6 @@ export function ExploreNameForm() {
           paddingLeft: "max(1.25rem, env(safe-area-inset-left))",
           paddingRight: "max(1.25rem, env(safe-area-inset-right))",
         }}
-        onClick={(event) => event.stopPropagation()}
       >
         {/* Fixed stack so the typed title doesn’t jump when the field appears */}
         <div className="flex w-full max-w-[19rem] flex-col items-center">
@@ -201,6 +200,7 @@ export function ExploreNameForm() {
               transition: "opacity 420ms cubic-bezier(0.22, 1, 0.36, 1)",
             }}
             aria-hidden={!formVisible}
+            onClick={(event) => event.stopPropagation()}
           >
             <div
               className="relative flex h-9 w-full cursor-text items-center rounded-full px-4"
