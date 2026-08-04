@@ -1,8 +1,7 @@
 "use client";
 
-import { FormEvent, useEffect, useRef, useState } from "react";
+import { ChangeEvent, FormEvent, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { SoftKeyboard } from "@/features/ask/SoftKeyboard";
 import { saveViewerName } from "@/lib/account";
 
 const TITLE = "What's your first name?";
@@ -10,7 +9,7 @@ const TITLE_CHAR_MS = 62;
 const FORM_REVEAL_DELAY_MS = 500;
 
 /**
- * Name capture — white onboarding canvas + SoftKeyboard on field tap.
+ * Name capture — white onboarding canvas + native iOS keyboard on field focus.
  */
 export function ExploreNameForm() {
   const router = useRouter();
@@ -20,7 +19,6 @@ export function ExploreNameForm() {
   const [titleText, setTitleText] = useState("");
   const [titleDone, setTitleDone] = useState(false);
   const [formVisible, setFormVisible] = useState(false);
-  const [keyboardOpen, setKeyboardOpen] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
   async function submitName() {
@@ -33,7 +31,7 @@ export function ExploreNameForm() {
 
     setIsSubmitting(true);
     setError("");
-    setKeyboardOpen(false);
+    inputRef.current?.blur();
 
     try {
       const response = await fetch("/api/viewer", {
@@ -69,14 +67,17 @@ export function ExploreNameForm() {
   }
 
   function dismissKeyboard() {
-    setKeyboardOpen(false);
     inputRef.current?.blur();
   }
 
-  function openKeyboard() {
+  function focusField() {
     if (!formVisible) return;
-    setKeyboardOpen(true);
-    inputRef.current?.focus({ preventScroll: true });
+    inputRef.current?.focus();
+  }
+
+  function onChange(event: ChangeEvent<HTMLInputElement>) {
+    setFirstName(event.target.value.slice(0, 40));
+    setError("");
   }
 
   // Type the prompt, then reveal field + actions
@@ -86,7 +87,6 @@ export function ExploreNameForm() {
     setTitleText("");
     setTitleDone(false);
     setFormVisible(false);
-    setKeyboardOpen(false);
 
     const tick = () => {
       if (cancelled) return;
@@ -121,6 +121,7 @@ export function ExploreNameForm() {
           paddingTop: "max(2.5rem, calc(var(--speak-page-safe-top) + 1.5rem))",
           paddingLeft: "max(1.25rem, env(safe-area-inset-left))",
           paddingRight: "max(1.25rem, env(safe-area-inset-right))",
+          paddingBottom: "max(1.5rem, calc(var(--speak-page-safe-bottom) + 1rem))",
         }}
       >
         <div className="flex w-full max-w-[19rem] flex-col items-center">
@@ -161,33 +162,22 @@ export function ExploreNameForm() {
           >
             <div
               className="relative flex h-11 w-full cursor-text items-center rounded-full border border-[#0A0A0A]/18 bg-[#F4F4F5] px-4"
-              onClick={openKeyboard}
+              onClick={focusField}
             >
-              {!firstName && keyboardOpen ? (
-                <span
-                  className="pointer-events-none absolute left-4 top-1/2 h-[1.05em] w-[2px] -translate-y-1/2 bg-[#0A0A0A]"
-                  style={{
-                    animation: "typing-caret-blink 1.05s step-end infinite",
-                  }}
-                  aria-hidden
-                />
-              ) : null}
               <input
                 ref={inputRef}
                 type="text"
                 name="firstName"
-                readOnly
-                inputMode="none"
-                autoComplete="off"
+                autoComplete="given-name"
                 autoCorrect="off"
                 spellCheck={false}
+                enterKeyHint="go"
                 maxLength={40}
                 value={firstName}
-                placeholder={keyboardOpen ? "" : "John"}
+                placeholder="John"
                 aria-label="First name"
                 tabIndex={formVisible ? 0 : -1}
-                onFocus={openKeyboard}
-                onClick={openKeyboard}
+                onChange={onChange}
                 className="h-full w-full cursor-text bg-transparent text-left text-[16px] font-normal text-[#0A0A0A] outline-none placeholder:text-[#0A0A0A]/35"
               />
             </div>
@@ -225,26 +215,6 @@ export function ExploreNameForm() {
             </div>
           </form>
         </div>
-      </div>
-
-      <div
-        className="relative z-50 mt-auto"
-        onClick={(event) => event.stopPropagation()}
-      >
-        <SoftKeyboard
-          open={keyboardOpen && formVisible}
-          onKey={(key) => {
-            setFirstName((prev) => `${prev}${key}`.slice(0, 40));
-            setError("");
-          }}
-          onBackspace={() => {
-            setFirstName((prev) => prev.slice(0, -1));
-            setError("");
-          }}
-          onReturn={() => {
-            void submitName();
-          }}
-        />
       </div>
     </main>
   );
