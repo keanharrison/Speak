@@ -32,16 +32,16 @@ export function HomeRecentChats({
               className="glass-panel flex w-full min-h-[52px] min-w-0 items-center gap-3 overflow-hidden px-4 py-3.5 text-left"
             >
               <div className="min-w-0 flex-1">
-                <p className="text-[15px] font-semibold text-[#0A0A0A]">
+                <p className="text-[15px] font-semibold text-white">
                   {chat.title}
                 </p>
                 {chat.preview ? (
-                  <p className="mt-0.5 truncate text-[12px] text-[#6b6b6b]">
+                  <p className="mt-0.5 truncate text-[12px] text-white/60">
                     {chat.preview}
                   </p>
                 ) : null}
               </div>
-              <span className="shrink-0 text-[13px] font-semibold text-[#0A0A0A]">
+              <span className="shrink-0 text-[13px] font-semibold text-white/90">
                 {ctaLabel}
               </span>
             </Link>

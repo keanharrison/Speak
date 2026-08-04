@@ -44,17 +44,17 @@ export function ShareWithVetCard({
       }`}
       aria-label="Share with vet"
     >
-      <h3 className="text-[15px] font-semibold text-[#0A0A0A]">
+      <h3 className="text-[15px] font-semibold text-white">
         {packet.heading}
       </h3>
-      <p className="mt-1 text-[13px] leading-relaxed text-[#6b6b6b]">
+      <p className="mt-1 text-[13px] leading-relaxed text-white/65">
         {packet.subtitle}
       </p>
       <ul className="mt-3 flex flex-col gap-2">
         {packet.bullets.map((bullet) => (
           <li
             key={bullet}
-            className="text-[13px] leading-relaxed text-[#0A0A0A] before:mr-2 before:text-[#0A0A0A] before:content-['•']"
+            className="text-[13px] leading-relaxed text-white before:mr-2 before:text-white before:content-['•']"
           >
             {bullet}
           </li>
@@ -67,7 +67,7 @@ export function ShareWithVetCard({
       >
         {copied ? packet.copiedLabel : packet.shareCta}
       </button>
-      <p className="mt-3 text-[11px] leading-relaxed text-[#6b6b6b]">
+      <p className="mt-3 text-[11px] leading-relaxed text-white/65">
         {packet.footnote}
       </p>
     </section>

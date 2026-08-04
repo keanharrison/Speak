@@ -65,17 +65,17 @@ export function KidneyTrendChart({
     >
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
-          <h2 className="text-[16px] font-semibold tracking-tight text-[#0A0A0A]">
+          <h2 className="text-[16px] font-semibold tracking-tight text-white">
             {chart.title}
           </h2>
-          <p className="mt-0.5 text-[12px] text-[#6b6b6b]">{chart.subtitle}</p>
+          <p className="mt-0.5 text-[12px] text-white/60">{chart.subtitle}</p>
         </div>
         {active ? (
           <div className="shrink-0 text-right">
-            <p className="text-[11px] font-medium text-[#6b6b6b]">
+            <p className="text-[11px] font-medium text-white/60">
               {active.periodLabel}
             </p>
-            <p className="text-[20px] font-semibold tracking-tight text-[#0A0A0A]">
+            <p className="text-[20px] font-semibold tracking-tight text-white">
               {active.value.toFixed(3)}
             </p>
           </div>
@@ -93,7 +93,7 @@ export function KidneyTrendChart({
           y1={refTopY}
           x2={width - padding.right}
           y2={refTopY}
-          stroke="#0A0A0A"
+          stroke="#FFFFFF"
           strokeWidth={1}
           strokeDasharray="4 4"
           opacity={0.28}
@@ -103,16 +103,16 @@ export function KidneyTrendChart({
           y1={refBottomY}
           x2={width - padding.right}
           y2={refBottomY}
-          stroke="#0A0A0A"
+          stroke="#FFFFFF"
           strokeWidth={1}
           strokeDasharray="4 4"
           opacity={0.28}
         />
-        <path d={areaPath} fill="rgba(0, 0, 0, 0.05)" />
+        <path d={areaPath} fill="rgba(255, 255, 255, 0.08)" />
         <path
           d={linePath}
           fill="none"
-          stroke="#0A0A0A"
+          stroke="#FFFFFF"
           strokeWidth={2.75}
           strokeLinecap="round"
           strokeLinejoin="round"
@@ -127,17 +127,17 @@ export function KidneyTrendChart({
                   y1={padding.top}
                   x2={c.x}
                   y2={padding.top + chartHeight}
-                  stroke="#0A0A0A"
+                  stroke="#FFFFFF"
                   strokeWidth={1}
-                  opacity={0.18}
+                  opacity={0.22}
                 />
               ) : null}
               <circle
                 cx={c.x}
                 cy={c.y}
                 r={selected ? 7 : 4.5}
-                fill="#0A0A0A"
-                stroke="#FFFFFF"
+                fill="#FFFFFF"
+                stroke="rgba(22,26,32,0.85)"
                 strokeWidth={selected ? 2.5 : 1.5}
               />
               {/* Hit target */}
@@ -163,7 +163,7 @@ export function KidneyTrendChart({
                 y={height - 12}
                 textAnchor="middle"
                 className={`text-[12px] ${
-                  selected ? "fill-[#0A0A0A] font-semibold" : "fill-[#6b6b6b]"
+                  selected ? "fill-white font-semibold" : "fill-white/55"
                 }`}
               >
                 {c.periodLabel}
@@ -173,7 +173,7 @@ export function KidneyTrendChart({
         })}
       </svg>
 
-      <p className="mt-1 text-[12px] leading-relaxed text-[#6b6b6b]">
+      <p className="mt-1 text-[12px] leading-relaxed text-white/55">
         {chart.referenceRangeLabel}
         {active ? ` · Selected ${active.periodLabel}` : null}
       </p>

@@ -126,6 +126,11 @@ body {
   color: #0a0a0a;
 }
 
+.glass-light-page .page-title {
+  color: #ffffff;
+  text-shadow: 0 1px 12px rgba(0, 0, 0, 0.35);
+}
+
 /* Section headings — “Resume in Speak”, “Past screenings”, etc. */
 .section-title {
   font-size: 15px;
@@ -134,12 +139,21 @@ body {
   color: #0a0a0a;
 }
 
+.glass-light-page .section-title {
+  color: rgba(255, 255, 255, 0.92);
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.3);
+}
+
 /* Eyebrows / muted labels — “Latest results” */
 .section-eyebrow {
   font-size: 13px;
   font-weight: 500;
   line-height: 1.4;
   color: #6b6b6b;
+}
+
+.glass-light-page .section-eyebrow {
+  color: rgba(255, 255, 255, 0.72);
 }
 
 /* Hide scrollbars everywhere inside the phone stage; content still scrolls */
@@ -244,62 +258,55 @@ body {
   overflow: hidden;
   height: 100%;
   min-height: 0;
-  background: var(--color-canvas);
+  background: #1a1a1a;
 }
 
-/* Soft graph-paper grid — full bleed to the top of the phone stage */
+/* Fixed photo — content scrolls over it */
 .glass-light-page::before {
   content: "";
   position: absolute;
   inset: 0;
   pointer-events: none;
-  opacity: 0.62;
-  background-image:
-    linear-gradient(rgba(0, 0, 0, 0.055) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0, 0, 0, 0.055) 1px, transparent 1px);
-  background-size: 24px 24px;
-  /* Fade only toward the bottom so the top canvas stays gridded */
-  mask-image: linear-gradient(180deg, #000 0%, #000 72%, transparent 100%);
-  -webkit-mask-image: linear-gradient(
-    180deg,
-    #000 0%,
-    #000 72%,
-    transparent 100%
-  );
+  z-index: 0;
+  background-image: url("/images/app-bg-volcano-dog.jpg");
+  background-size: cover;
+  background-position: center top;
+  background-repeat: no-repeat;
+  transform: scale(1.02);
 }
 
 .glass-light-page::after {
   content: "";
   position: absolute;
-  width: 280px;
-  height: 280px;
-  border-radius: 50%;
+  inset: 0;
   pointer-events: none;
-  filter: blur(80px);
-  background: rgba(255, 255, 255, 0.7);
-  top: -120px;
-  right: -80px;
-  opacity: 0.8;
+  z-index: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(8, 10, 14, 0.28) 0%,
+    rgba(8, 10, 14, 0.18) 40%,
+    rgba(8, 10, 14, 0.42) 100%
+  );
 }
 
 /*
- * True glassmorphism — translucent frost, thin rim highlight, soft depth.
- * Background (cream grid / photo) must show through.
+ * True glassmorphism — frosted panels with white / grey type on photo.
  */
 .glass-light-card {
   position: relative;
   isolation: isolate;
   overflow: hidden;
-  background: rgba(255, 255, 255, 0.18);
-  backdrop-filter: blur(40px) saturate(180%);
-  -webkit-backdrop-filter: blur(40px) saturate(180%);
-  border: 0.5px solid rgba(255, 255, 255, 0.55);
+  background: rgba(22, 26, 32, 0.48);
+  backdrop-filter: blur(40px) saturate(160%);
+  -webkit-backdrop-filter: blur(40px) saturate(160%);
+  border: 0.5px solid rgba(255, 255, 255, 0.38);
   border-radius: 24px;
+  color: #ffffff;
   box-shadow:
-    0 20px 50px rgba(0, 0, 0, 0.12),
-    0 4px 16px rgba(0, 0, 0, 0.06),
-    inset 0 1px 0 rgba(255, 255, 255, 0.7),
-    inset 0 -1px 0 rgba(255, 255, 255, 0.15);
+    0 20px 50px rgba(0, 0, 0, 0.22),
+    0 4px 16px rgba(0, 0, 0, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.35),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.08);
 }
 
 .glass-light-card::before {
@@ -311,10 +318,10 @@ body {
   z-index: 0;
   background: linear-gradient(
     135deg,
-    rgba(255, 255, 255, 0.45) 0%,
-    rgba(255, 255, 255, 0.08) 40%,
+    rgba(255, 255, 255, 0.22) 0%,
+    rgba(255, 255, 255, 0.05) 40%,
     rgba(255, 255, 255, 0.02) 70%,
-    rgba(255, 255, 255, 0.12) 100%
+    rgba(255, 255, 255, 0.1) 100%
   );
 }
 
@@ -323,16 +330,17 @@ body {
   position: relative;
   isolation: isolate;
   overflow: hidden;
-  background: rgba(255, 255, 255, 0.16);
-  backdrop-filter: blur(36px) saturate(175%);
-  -webkit-backdrop-filter: blur(36px) saturate(175%);
-  border: 0.5px solid rgba(255, 255, 255, 0.5);
+  background: rgba(22, 26, 32, 0.42);
+  backdrop-filter: blur(36px) saturate(160%);
+  -webkit-backdrop-filter: blur(36px) saturate(160%);
+  border: 0.5px solid rgba(255, 255, 255, 0.34);
   border-radius: 20px;
+  color: #ffffff;
   box-shadow:
-    0 14px 36px rgba(0, 0, 0, 0.1),
-    0 2px 10px rgba(0, 0, 0, 0.05),
-    inset 0 1px 0 rgba(255, 255, 255, 0.65),
-    inset 0 -1px 0 rgba(255, 255, 255, 0.12);
+    0 14px 36px rgba(0, 0, 0, 0.18),
+    0 2px 10px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.08);
 }
 
 .glass-panel::before {
@@ -344,43 +352,53 @@ body {
   z-index: 0;
   background: linear-gradient(
     135deg,
-    rgba(255, 255, 255, 0.38) 0%,
-    rgba(255, 255, 255, 0.06) 42%,
-    rgba(255, 255, 255, 0.1) 100%
+    rgba(255, 255, 255, 0.18) 0%,
+    rgba(255, 255, 255, 0.04) 42%,
+    rgba(255, 255, 255, 0.08) 100%
   );
+}
+
+/* Profile / denser panels — more opaque frost */
+.glass-panel--opaque,
+.glass-light-card--opaque {
+  background: rgba(22, 26, 32, 0.72);
+  border-color: rgba(255, 255, 255, 0.42);
+  backdrop-filter: blur(44px) saturate(170%);
+  -webkit-backdrop-filter: blur(44px) saturate(170%);
 }
 
 .glass-light-field {
   position: relative;
   isolation: isolate;
   overflow: hidden;
-  background: rgba(255, 255, 255, 0.28);
-  backdrop-filter: blur(24px) saturate(170%);
-  -webkit-backdrop-filter: blur(24px) saturate(170%);
-  border: 0.5px solid rgba(255, 255, 255, 0.6);
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(24px) saturate(160%);
+  -webkit-backdrop-filter: blur(24px) saturate(160%);
+  border: 0.5px solid rgba(255, 255, 255, 0.28);
+  color: #ffffff;
   box-shadow:
-    0 4px 16px rgba(0, 0, 0, 0.06),
-    inset 0 1px 0 rgba(255, 255, 255, 0.7);
+    0 4px 16px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.28);
 }
 
 .glass-light-field:focus {
   box-shadow:
-    0 0 0 2px rgba(255, 255, 255, 0.35),
-    inset 0 1px 0 rgba(255, 255, 255, 0.65);
+    0 0 0 2px rgba(255, 255, 255, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.35);
 }
 
-/* Primary CTA — black */
+/* Primary CTA — white with black writing */
 .glass-light-button {
-  background: rgba(10, 10, 10, 0.92);
+  background: rgba(255, 255, 255, 0.94);
   backdrop-filter: blur(24px) saturate(160%);
   -webkit-backdrop-filter: blur(24px) saturate(160%);
-  border: none;
-  color: #ffffff;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.28);
+  border: 0.5px solid rgba(255, 255, 255, 0.85);
+  color: #0a0a0a;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
 }
 
 .glass-light-button:hover:not(:disabled) {
-  background: rgba(0, 0, 0, 0.96);
+  background: #ffffff;
 }
 
 .glass-light-button:disabled {
@@ -388,12 +406,13 @@ body {
 }
 
 .glass-name-continue {
-  background: rgba(10, 10, 10, 0.92);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.28);
+  background: rgba(255, 255, 255, 0.94);
+  color: #0a0a0a;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
 }
 
 .glass-name-continue:hover:not(:disabled) {
-  background: rgba(0, 0, 0, 0.96);
+  background: #ffffff;
 }
 
 /* Blinking caret for soft-keyboard / custom typing fields */
@@ -420,41 +439,41 @@ body {
   animation: typing-caret-blink 1.05s step-end infinite;
 }
 
-/* Secondary CTA — light frosted glass */
+/* Secondary CTA — frosted white with black writing */
 .glass-light-button-secondary {
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.88);
   backdrop-filter: blur(28px) saturate(170%);
   -webkit-backdrop-filter: blur(28px) saturate(170%);
-  border: 0.5px solid rgba(255, 255, 255, 0.55);
+  border: 0.5px solid rgba(255, 255, 255, 0.75);
   color: #0a0a0a;
   box-shadow:
-    0 8px 24px rgba(0, 0, 0, 0.08),
-    inset 0 1px 0 rgba(255, 255, 255, 0.7);
+    0 8px 24px rgba(0, 0, 0, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.85);
 }
 
 .glass-light-button-secondary:hover:not(:disabled) {
-  background: rgba(255, 255, 255, 0.32);
+  background: #ffffff;
 }
 
-/* Tab bar + segment tracks — light frosted glass */
+/* Tab bar + segment tracks — denser frost on photo */
 .glass-tab-bar {
-  background: rgba(255, 255, 255, 0.22);
-  border: 0.5px solid rgba(255, 255, 255, 0.58);
+  background: rgba(22, 26, 32, 0.55);
+  border: 0.5px solid rgba(255, 255, 255, 0.38);
   box-shadow:
-    0 16px 40px rgba(0, 0, 0, 0.12),
-    inset 0 1px 0 rgba(255, 255, 255, 0.75);
-  backdrop-filter: blur(28px) saturate(180%);
-  -webkit-backdrop-filter: blur(28px) saturate(180%);
+    0 16px 40px rgba(0, 0, 0, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.28);
+  backdrop-filter: blur(32px) saturate(170%);
+  -webkit-backdrop-filter: blur(32px) saturate(170%);
 }
 
 .glass-segment-track {
-  background: rgba(255, 255, 255, 0.18);
-  border: 0.5px solid rgba(255, 255, 255, 0.52);
+  background: rgba(22, 26, 32, 0.55);
+  border: 0.5px solid rgba(255, 255, 255, 0.32);
   box-shadow:
-    0 8px 24px rgba(0, 0, 0, 0.08),
-    inset 0 1px 0 rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(24px) saturate(170%);
-  -webkit-backdrop-filter: blur(24px) saturate(170%);
+    0 8px 24px rgba(0, 0, 0, 0.16),
+    inset 0 1px 0 rgba(255, 255, 255, 0.22);
+  backdrop-filter: blur(28px) saturate(160%);
+  -webkit-backdrop-filter: blur(28px) saturate(160%);
 }
 
 /* ── In-app Speak soft keyboard ─────────────────────────────── */

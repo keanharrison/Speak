@@ -39,10 +39,10 @@ export function InsuranceClaimView() {
 
       {submitted ? (
         <section className="glass-panel mt-6 px-4 py-5">
-          <p className="text-[15px] font-semibold text-[#0A0A0A]">
+          <p className="text-[15px] font-semibold text-white">
             Claim draft ready
           </p>
-          <p className="mt-2 text-[14px] leading-relaxed text-[#6b6b6b]">
+          <p className="mt-2 text-[14px] leading-relaxed text-white/65">
             Demo only — nothing was sent. In the real product, Speak would
             package the screening, baseline trend, and vet packet for your
             insurer.
@@ -61,13 +61,13 @@ export function InsuranceClaimView() {
       ) : (
         <>
           <section className="glass-panel mt-6 px-4 py-4">
-            <p className="text-[12px] font-medium uppercase tracking-[0.06em] text-[#6b6b6b]">
+            <p className="text-[12px] font-medium uppercase tracking-[0.06em] text-white/65">
               Suggested from Home
             </p>
-            <p className="mt-2 text-[17px] font-semibold text-[#0A0A0A]">
+            <p className="mt-2 text-[17px] font-semibold text-white">
               Q3 kidney concentration change
             </p>
-            <p className="mt-1 text-[14px] leading-relaxed text-[#6b6b6b]">
+            <p className="mt-1 text-[14px] leading-relaxed text-white/65">
               One marker moved vs Bailey&apos;s baseline. Use Speak&apos;s
               record so the claim isn&apos;t just a vague worry.
             </p>
@@ -87,13 +87,13 @@ export function InsuranceClaimView() {
               <ul className="flex flex-col gap-2.5">
                 {STEPS.map((step, index) => (
                   <li key={step.id} className="glass-panel px-4 py-4">
-                    <p className="text-[12px] font-medium text-[#6b6b6b]">
+                    <p className="text-[12px] font-medium text-white/65">
                       Step {index + 1}
                     </p>
-                    <p className="mt-1 text-[15px] font-semibold text-[#0A0A0A]">
+                    <p className="mt-1 text-[15px] font-semibold text-white">
                       {step.title}
                     </p>
-                    <p className="mt-1 text-[13px] leading-relaxed text-[#6b6b6b]">
+                    <p className="mt-1 text-[13px] leading-relaxed text-white/65">
                       {step.body}
                     </p>
                   </li>

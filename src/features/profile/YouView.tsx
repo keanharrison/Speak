@@ -101,7 +101,7 @@ export function YouView({ data }: YouViewProps) {
           aria-selected={tab === "pet"}
           onClick={() => setTab("pet")}
           className={`flex min-h-[44px] flex-1 items-center justify-center rounded-full text-[13px] font-semibold transition-colors ${
-            tab === "pet" ? "glass-light-button" : "text-[#6b6b6b]"
+            tab === "pet" ? "glass-light-button" : "text-white/65"
           }`}
         >
           {data.petTabLabel}
@@ -112,7 +112,7 @@ export function YouView({ data }: YouViewProps) {
           aria-selected={tab === "owner"}
           onClick={() => setTab("owner")}
           className={`flex min-h-[44px] flex-1 items-center justify-center rounded-full text-[13px] font-semibold transition-colors ${
-            tab === "owner" ? "glass-light-button" : "text-[#6b6b6b]"
+            tab === "owner" ? "glass-light-button" : "text-white/65"
           }`}
         >
           {data.ownerTabLabel}
@@ -121,10 +121,10 @@ export function YouView({ data }: YouViewProps) {
 
       {tab === "pet" ? (
         <div className="mt-6 flex flex-col gap-4">
-          <section className="glass-panel overflow-hidden px-4 py-4">
+          <section className="glass-panel glass-panel--opaque overflow-hidden px-4 py-4">
             <div className="flex items-center gap-3">
-              <BaileyAvatar size="md" />
-              <h2 className="text-[20px] font-semibold tracking-tight text-[#0A0A0A]">
+              <BaileyAvatar size="md" className="ring-2 ring-white/70" />
+              <h2 className="text-[20px] font-semibold tracking-tight text-white">
                 {pet.title}
               </h2>
             </div>
@@ -134,12 +134,12 @@ export function YouView({ data }: YouViewProps) {
                   key={fact.label}
                   className={`flex items-baseline justify-between gap-3 py-2.5 ${
                     i < petFacts.length - 1
-                      ? "border-b border-black/[0.06]"
+                      ? "border-b border-white/10"
                       : ""
                   }`}
                 >
-                  <span className="text-[13px] text-[#6b6b6b]">{fact.label}</span>
-                  <span className="text-right text-[14px] font-medium text-[#0A0A0A]">
+                  <span className="text-[13px] text-white/65">{fact.label}</span>
+                  <span className="text-right text-[14px] font-medium text-white">
                     {fact.value}
                   </span>
                 </li>
@@ -151,65 +151,65 @@ export function YouView({ data }: YouViewProps) {
             <h3 className="section-title">{pet.historyHeading}</h3>
             <ul className="mt-3 flex flex-col gap-2.5">
               {pet.history.map((item) => (
-                <li key={item.quarter} className="glass-panel px-4 py-3">
+                <li key={item.quarter} className="glass-panel glass-panel--opaque px-4 py-3">
                   <div className="flex items-start justify-between gap-3">
                     <div>
-                      <p className="text-[14px] font-medium text-[#0A0A0A]">
+                      <p className="text-[14px] font-medium text-white">
                         {item.quarter}
                       </p>
-                      <p className="mt-1 text-[13px] leading-relaxed text-[#6b6b6b]">
+                      <p className="mt-1 text-[13px] leading-relaxed text-white/65">
                         {item.summary}
                       </p>
                     </div>
-                    <StatusBadge status={item.status} />
+                    <StatusBadge status={item.status} onGlass />
                   </div>
                 </li>
               ))}
             </ul>
           </section>
 
-          <section className="glass-panel px-4 py-3">
-            <p className="text-[12px] text-[#6b6b6b]">{pet.nextKitHeading}</p>
-            <p className="mt-1 text-[14px] font-medium text-[#0A0A0A]">
+          <section className="glass-panel glass-panel--opaque px-4 py-3">
+            <p className="text-[12px] text-white/65">{pet.nextKitHeading}</p>
+            <p className="mt-1 text-[14px] font-medium text-white">
               {pet.nextKitBody}
             </p>
           </section>
         </div>
       ) : (
         <div className="mt-6 flex flex-col gap-4">
-          <section className="glass-panel px-4 py-4">
+          <section className="glass-panel glass-panel--opaque px-4 py-4">
             <div className="flex items-center gap-3">
               <PersonAvatar size="md" label={displayName} />
               <div className="min-w-0">
-                <h2 className="text-[20px] font-semibold tracking-tight text-[#0A0A0A]">
+                <h2 className="text-[20px] font-semibold tracking-tight text-white">
                   {displayName}
                 </h2>
-                <p className="mt-0.5 text-[14px] text-[#6b6b6b]">Owner</p>
+                <p className="mt-0.5 text-[14px] text-white/65">Owner</p>
               </div>
             </div>
             <dl className="mt-4 flex flex-col gap-3 text-[13px]">
               <div>
-                <dt className="text-[#6b6b6b]">Email</dt>
-                <dd className="mt-0.5 font-medium text-[#0A0A0A]">
+                <dt className="text-white/65">Email</dt>
+                <dd className="mt-0.5 font-medium text-white">
                   {displayEmail}
                 </dd>
               </div>
               <div>
-                <dt className="text-[#6b6b6b]">Phone</dt>
-                <dd className="mt-0.5 font-medium text-[#0A0A0A]">
+                <dt className="text-white/65">Phone</dt>
+                <dd className="mt-0.5 font-medium text-white">
                   {owner.phone}
                 </dd>
               </div>
               <div>
-                <dt className="text-[#6b6b6b]">{owner.membershipLabel}</dt>
-                <dd className="mt-0.5 font-medium text-[#0A0A0A]">
+                <dt className="text-white/65">{owner.membershipLabel}</dt>
+                <dd className="mt-0.5 font-medium text-white">
                   {owner.membershipDetail}
                 </dd>
               </div>
             </dl>
           </section>
 
-          <section className="glass-panel overflow-hidden">
+          <section className="glass-panel glass-panel--opaque overflow-hidden">
             <h3 className="section-title px-4 pt-4">{data.notificationsHeading}</h3>
             <ul className="mt-1">
               {data.notifications.map((pref, i) => (
@@ -217,13 +217,13 @@ export function YouView({ data }: YouViewProps) {
                   key={pref.id}
                   className={`flex min-h-[44px] min-w-0 items-center justify-between gap-3 px-4 py-3 ${
                     i < data.notifications.length - 1
-                      ? "border-b border-black/[0.08]"
+                      ? "border-b border-white/10"
                       : ""
                   }`}
                 >
                   <div className="min-w-0 flex-1 pr-1">
-                    <p className="text-[15px] text-[#0A0A0A]">{pref.label}</p>
-                    <p className="mt-0.5 text-[12px] leading-snug text-[#6b6b6b]">
+                    <p className="text-[15px] text-white">{pref.label}</p>
+                    <p className="mt-0.5 text-[12px] leading-snug text-white/65">
                       {pref.detail}
                     </p>
                   </div>
@@ -241,7 +241,7 @@ export function YouView({ data }: YouViewProps) {
               ))}
             </ul>
           </section>
-          <p className="px-1 text-[12px] leading-relaxed text-[#6b6b6b]">
+          <p className="px-1 text-[12px] leading-relaxed text-white/65">
             {data.notificationsFootnote}
           </p>
         </div>

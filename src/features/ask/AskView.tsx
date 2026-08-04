@@ -205,7 +205,7 @@ export function AskView({ data }: AskViewProps) {
       <div className="relative mx-5 mb-3 mt-1 shrink-0">
         <h1 className="page-title text-center text-[24px]">Speak</h1>
         {threadTitle ? (
-          <p className="mt-0.5 text-center text-[11px] text-[#6b6b6b]">
+          <p className="mt-0.5 text-center text-[11px] text-white/65">
             {threadTitle}
           </p>
         ) : null}
@@ -216,7 +216,7 @@ export function AskView({ data }: AskViewProps) {
             event.stopPropagation();
             setSidebarOpen(true);
           }}
-          className="absolute left-0 top-0.5 flex size-7 items-center justify-center text-[#0A0A0A]"
+          className="absolute left-0 top-0.5 flex size-7 items-center justify-center text-white"
         >
           <Menu className="h-5 w-5" strokeWidth={1.75} />
         </button>
@@ -227,7 +227,7 @@ export function AskView({ data }: AskViewProps) {
             event.stopPropagation();
             startNewChat();
           }}
-          className="absolute right-0 top-0.5 flex size-7 items-center justify-center text-[#0A0A0A]"
+          className="absolute right-0 top-0.5 flex size-7 items-center justify-center text-white"
         >
           <SquarePen className="h-5 w-5" strokeWidth={1.75} />
         </button>
@@ -236,7 +236,7 @@ export function AskView({ data }: AskViewProps) {
       <div className="scrollbar-hide min-h-0 flex-1 overflow-y-auto">
         {emptyState ? (
           <div className="flex min-h-full flex-col items-center justify-center px-5 pb-4 pt-2 text-center">
-            <p className="text-[15px] font-medium text-[#0A0A0A]">
+            <p className="text-[15px] font-medium text-white/90">
               Ask about Bailey&apos;s results
             </p>
           </div>
@@ -252,12 +252,12 @@ export function AskView({ data }: AskViewProps) {
                   <div
                     className={`max-w-[85%] rounded-[18px] px-4 py-3 ${
                       isUser
-                        ? "glass-light-button text-white"
-                        : "glass-panel text-[#0A0A0A]"
+                        ? "bg-white/90 text-[#0A0A0A] shadow-[0_8px_24px_rgba(0,0,0,0.12)]"
+                        : "glass-panel text-white"
                     }`}
                   >
                     {!isUser ? (
-                      <p className="mb-1 text-[12px] font-medium text-[#6b6b6b]">
+                      <p className="mb-1 text-[12px] font-medium text-white/60">
                         Speak
                       </p>
                     ) : null}

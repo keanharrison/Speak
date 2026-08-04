@@ -12,6 +12,7 @@ import { KidneyTrendChart } from "@/features/dashboard/KidneyTrendChart";
 import { MetricModal } from "@/features/dashboard/MetricModal";
 import { StatusBadge } from "@/components/ui/StatusBadge";
 import { getAccountFirstName } from "@/lib/account";
+import { pet } from "@/lib/hardcoded-data";
 import type { DashboardPageContent, ScreeningTestSummary } from "@/types";
 
 type DashboardViewProps = {
@@ -66,7 +67,7 @@ export function DashboardView({ data }: DashboardViewProps) {
 
   return (
     <div className="relative min-h-full max-w-full overflow-x-hidden">
-      <DemoBackArrow href="/explore" />
+      <DemoBackArrow href="/explore" tone="light" />
       <main
         className="relative z-10 w-full max-w-full flex-1 px-5 pb-6"
         style={{
@@ -82,9 +83,8 @@ export function DashboardView({ data }: DashboardViewProps) {
         </div>
 
         <HomeLatestSummary
-          quarter={latest.quarter}
+          petName={pet.name}
           dateLabel={latest.dateLabel}
-          status={latest.status}
           markers={latest.markers}
           detailsLabel={data.latestSummary.detailsLabel}
           onOpenDetails={() => openTest(latest.id)}
@@ -128,7 +128,7 @@ function TestDetailView({
         <button
           type="button"
           onClick={onBack}
-          className="inline-flex min-h-[44px] items-center text-[13px] font-medium text-[#6b6b6b]"
+          className="inline-flex min-h-[44px] items-center text-[13px] font-medium text-white/70"
         >
           ← All screenings
         </button>
@@ -136,12 +136,12 @@ function TestDetailView({
         <header className="mt-3">
           <div className="flex items-start justify-between gap-3">
             <div className="min-w-0">
-              <h1 className="text-[26px] font-black tracking-tight text-[#0A0A0A]">
+              <h1 className="text-[26px] font-black tracking-tight text-white">
                 {test.quarter}
               </h1>
-              <p className="mt-1 text-[13px] text-[#6b6b6b]">{test.dateLabel}</p>
+              <p className="mt-1 text-[13px] text-white/65">{test.dateLabel}</p>
             </div>
-            <StatusBadge status={test.status} />
+            <StatusBadge status={test.status} onGlass />
           </div>
         </header>
 
@@ -150,7 +150,7 @@ function TestDetailView({
             isFlagged ? "glass-light-card" : "glass-panel"
           }`}
         >
-          <p className="text-[15px] leading-relaxed text-[#0A0A0A]">
+          <p className="text-[15px] leading-relaxed text-white/90">
             {test.bluf}
           </p>
           <div className="mt-4 flex flex-col gap-2.5">
@@ -173,7 +173,7 @@ function TestDetailView({
         {showTrend ? <KidneyTrendChart chart={trendChart} compact /> : null}
 
         <section aria-label="Markers" className="mt-6">
-          <h2 className="text-[15px] font-semibold text-[#0A0A0A]">Markers</h2>
+          <h2 className="text-[15px] font-semibold text-white">Markers</h2>
           <div className="mt-3 grid grid-cols-2 gap-2.5">
             {test.markers.map((card) => (
               <CompactMarkerCard

@@ -37,12 +37,12 @@ export function VetView({ data }: VetViewProps) {
 
       <section className="glass-panel mt-4 px-4 py-4">
         <h2 className="section-title">{data.clinicHeading}</h2>
-        <p className="mt-2 text-[17px] font-semibold text-[#0A0A0A]">
+        <p className="mt-2 text-[17px] font-semibold text-white">
           {data.vetName}
         </p>
-        <p className="mt-0.5 text-[14px] text-[#0A0A0A]">{data.clinic}</p>
-        <p className="mt-3 text-[13px] text-[#6b6b6b]">{data.phone}</p>
-        <p className="mt-0.5 text-[13px] text-[#6b6b6b]">{data.address}</p>
+        <p className="mt-0.5 text-[14px] text-white">{data.clinic}</p>
+        <p className="mt-3 text-[13px] text-white/65">{data.phone}</p>
+        <p className="mt-0.5 text-[13px] text-white/65">{data.address}</p>
       </section>
 
       <section className="mt-6">
@@ -52,17 +52,17 @@ export function VetView({ data }: VetViewProps) {
             <li key={visit.id} className="glass-panel px-4 py-3">
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
-                  <p className="text-[14px] font-medium text-[#0A0A0A]">
+                  <p className="text-[14px] font-medium text-white">
                     {visit.dateLabel}
                   </p>
-                  <p className="mt-0.5 text-[12px] text-[#6b6b6b]">
+                  <p className="mt-0.5 text-[12px] text-white/65">
                     {visit.clinic}
                   </p>
-                  <p className="mt-1.5 text-[13px] leading-snug text-[#0A0A0A]">
+                  <p className="mt-1.5 text-[13px] leading-snug text-white">
                     {visit.reason}
                   </p>
                 </div>
-                <span className="shrink-0 text-[11px] font-medium text-[#6b6b6b]">
+                <span className="shrink-0 text-[11px] font-medium text-white/65">
                   {visit.statusLabel}
                 </span>
               </div>
@@ -73,21 +73,21 @@ export function VetView({ data }: VetViewProps) {
 
       <section className="glass-panel mt-4 px-4 py-4">
         <h2 className="section-title">{data.insuranceHeading}</h2>
-        <p className="mt-2 text-[14px] font-medium text-[#0A0A0A]">
+        <p className="mt-2 text-[14px] font-medium text-white">
           {data.insuranceDetail}
         </p>
-        <p className="mt-1 text-[12px] text-[#6b6b6b]">{data.insuranceHint}</p>
+        <p className="mt-1 text-[12px] text-white/65">{data.insuranceHint}</p>
       </section>
 
       <div className="mt-6 text-center">
         <button
           type="button"
           onClick={() => setScheduleNote(true)}
-          className="min-h-[44px] text-[14px] font-medium text-[#0A0A0A] underline-offset-2 hover:underline"
+          className="min-h-[44px] text-[14px] font-medium text-white underline-offset-2 hover:underline"
         >
           {data.scheduleCta}
         </button>
-        <p className="mt-2 text-[12px] text-[#6b6b6b]">
+        <p className="mt-2 text-[12px] text-white/65">
           {scheduleNote
             ? "Demo only — call your clinic to book. Speak won't book for you."
             : data.scheduleHint}
@@ -101,10 +101,10 @@ export function VetView({ data }: VetViewProps) {
             <li key={item.quarter} className="glass-panel px-4 py-3">
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
-                  <p className="text-[14px] font-medium text-[#0A0A0A]">
+                  <p className="text-[14px] font-medium text-white">
                     {item.quarter}
                   </p>
-                  <p className="mt-1 text-[13px] leading-relaxed text-[#6b6b6b]">
+                  <p className="mt-1 text-[13px] leading-relaxed text-white/65">
                     {item.summary}
                   </p>
                 </div>

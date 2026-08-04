@@ -7,7 +7,7 @@ type StatusBadgeProps = {
   onGlass?: boolean;
 };
 
-/** Changed = black/grey · Within baseline = green (no red). */
+/** Changed = grey · Within baseline = green (light text for glass on photo). */
 export function StatusBadge({ status, onGlass = false }: StatusBadgeProps) {
   const isChanged = status === "changed";
   const label = markerStatusLabel[status];
@@ -17,13 +17,13 @@ export function StatusBadge({ status, onGlass = false }: StatusBadgeProps) {
       <span
         className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-medium ${
           isChanged
-            ? "bg-black/10 text-[#0A0A0A]"
-            : "bg-[#2A8A5A]/15 text-[#2A8A5A]"
+            ? "bg-white/12 text-white/75"
+            : "bg-[#34C759]/20 text-[#7DFFB0]"
         }`}
       >
         <span
           className={`h-1.5 w-1.5 rounded-full ${
-            isChanged ? "bg-[#6b6b6b]" : "bg-[#2A8A5A]"
+            isChanged ? "bg-white/55" : "bg-[#7DFFB0]"
           }`}
           aria-hidden
         />
