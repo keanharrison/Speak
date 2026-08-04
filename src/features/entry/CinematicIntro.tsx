@@ -11,6 +11,7 @@ import {
 } from "@/features/entry/introMusic";
 
 import { SpeakAppIcon } from "@/components/ui/SpeakAppIcon";
+import { SpeakWordmark } from "@/components/ui/SpeakWordmark";
 
 /**
  * Speak cinematic intro — greeting → play → captions → Speak → name.
@@ -159,12 +160,9 @@ const GREETING_INVITE_PREFIX = "Before you view our product demo, ";
 
 /** Voiceover — place file in /public/audio/ (served on Vercel as a static asset). */
 const AUDIO_SRC = "/audio/intro-vo.m4a?v=20260731i";
-/** Front screen + blurred video backdrop */
-const GREETING_BG_SRC = "/images/intro/greeting-bg-front.jpg";
 
-/** Shared type for greeting + captions (system / SF stack) */
-const INTRO_MESSAGE_TYPE =
-  "font-medium leading-relaxed tracking-[-0.01em] text-white";
+/** Shared type for greeting + captions */
+const INTRO_MESSAGE_TYPE = "font-medium leading-relaxed tracking-[-0.01em]";
 /** Skip lead-in on VO — slip track forward so later beats land earlier vs picture */
 const AUDIO_START_S = 1.5;
 /** Same slip on music so VO + bed stay locked (beat aims at final clip) */
@@ -237,40 +235,6 @@ function PauseGlyph() {
       <span className="block h-5 w-[5px] rounded-[1px] bg-black" />
       <span className="block h-5 w-[5px] rounded-[1px] bg-black" />
     </span>
-  );
-}
-
-function BackArrowGlyph() {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      className="h-5 w-5"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2.25"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden
-    >
-      <path d="M15 18l-6-6 6-6" />
-    </svg>
-  );
-}
-
-function ForwardArrowGlyph() {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      className="h-5 w-5"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2.25"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden
-    >
-      <path d="M9 18l6-6-6-6" />
-    </svg>
   );
 }
 
@@ -1276,43 +1240,18 @@ export function CinematicIntro() {
     phase === "speak" || phase === "fade";
 
   return (
-    <main className="relative flex min-h-0 flex-1 flex-col overflow-hidden bg-black">
+    <main className="relative flex min-h-0 flex-1 flex-col overflow-hidden bg-white">
       <audio ref={audioRef} src={AUDIO_SRC} preload="auto" />
 
-      {/* Blurred ocean still behind the glass film stage / Speak endcard */}
+      {/* Blurred still behind film — only while video chrome needs depth */}
       {showBlurBg ? (
-        <>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={GREETING_BG_SRC}
-            alt=""
-            className="pointer-events-none absolute inset-0 h-full w-full scale-110 object-cover blur-2xl"
-            aria-hidden
-          />
-          <div
-            className="pointer-events-none absolute inset-0 bg-black/40"
-            aria-hidden
-          />
-        </>
+        <div className="pointer-events-none absolute inset-0 bg-white" aria-hidden />
       ) : null}
 
       {showGreeting ? (
-        <div className="absolute inset-0 z-40 overflow-hidden bg-[#6a7a88]">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={GREETING_BG_SRC}
-            alt=""
-            className="pointer-events-none absolute inset-0 h-full w-full object-cover object-center"
-            aria-hidden
-          />
+        <div className="absolute inset-0 z-40 flex flex-col overflow-hidden bg-white">
           <div
-            className="pointer-events-none absolute inset-x-0 top-0 h-[52%] bg-gradient-to-b from-black/35 via-black/12 to-transparent"
-            aria-hidden
-          />
-
-          {/* Message centered in the sky half (above the sea line) */}
-          <div
-            className="relative z-10 flex h-[48%] flex-col items-center justify-center px-7"
+            className="relative z-10 flex flex-1 flex-col items-center justify-center px-7"
             style={{
               paddingTop: "max(2.5rem, calc(var(--speak-page-safe-top) + 1.5rem))",
               paddingLeft: "max(1.25rem, env(safe-area-inset-left))",
@@ -1321,19 +1260,18 @@ export function CinematicIntro() {
           >
             <div className="relative w-full max-w-md">
               <p
-                className={`invisible whitespace-pre-wrap text-center text-[20px] sm:text-[21px] ${INTRO_MESSAGE_TYPE}`}
+                className={`invisible whitespace-pre-wrap text-center text-[20px] text-[#0A0A0A] sm:text-[21px] ${INTRO_MESSAGE_TYPE}`}
                 aria-hidden
               >
                 {GREETING_COPY}
               </p>
               <p
-                className={`absolute inset-0 whitespace-pre-wrap text-center text-[20px] sm:text-[21px] ${INTRO_MESSAGE_TYPE}`}
-                style={{ textShadow: "0 1px 14px rgba(0,0,0,0.4)" }}
+                className={`absolute inset-0 whitespace-pre-wrap text-center text-[20px] text-[#0A0A0A] sm:text-[21px] ${INTRO_MESSAGE_TYPE}`}
               >
                 {greetingText}
                 {greetingText || greetingDone ? (
                   <span
-                    className="ml-0.5 inline-block h-[1.05em] w-[2px] translate-y-[2px] bg-white"
+                    className="ml-0.5 inline-block h-[1.05em] w-[2px] translate-y-[2px] bg-[#0A0A0A]"
                     style={{
                       animation: "typing-caret-blink 1.05s step-end infinite",
                     }}
@@ -1345,24 +1283,28 @@ export function CinematicIntro() {
           </div>
 
           {greetingNextVisible ? (
-            <button
-              type="button"
-              onClick={goToPlayScreen}
-              className="absolute z-20 inline-flex h-10 items-center justify-center rounded-full bg-white px-5 text-[13px] font-semibold text-black shadow-[0_8px_24px_rgba(0,0,0,0.28)] transition hover:bg-white/92"
+            <div
+              className="relative z-20 flex w-full justify-center px-7 pb-8"
               style={{
-                right: "max(1.25rem, env(safe-area-inset-right))",
-                bottom: "max(1.35rem, calc(var(--speak-page-safe-bottom) + 0.75rem))",
+                paddingBottom:
+                  "max(2rem, calc(var(--speak-page-safe-bottom) + 1.25rem))",
               }}
             >
-              Next
-            </button>
+              <button
+                type="button"
+                onClick={goToPlayScreen}
+                className="inline-flex h-11 min-w-[7.5rem] items-center justify-center rounded-full bg-[#0A0A0A] px-8 text-[14px] font-semibold text-white transition hover:bg-black"
+              >
+                Next
+              </button>
+            </div>
           ) : null}
         </div>
       ) : null}
 
-      {/* Glass film stage over blurred ocean */}
+      {/* Film stage on white canvas */}
       <div
-        className={`absolute inset-0 z-10 flex flex-col items-center justify-center gap-3 px-3 ${
+        className={`absolute inset-0 z-10 flex flex-col items-center justify-center gap-4 bg-white px-4 ${
           showFilmShell && !showGreeting
             ? ""
             : "pointer-events-none"
@@ -1370,7 +1312,7 @@ export function CinematicIntro() {
         style={{
           paddingTop: "max(3.25rem, calc(var(--speak-page-safe-top) + 2.5rem))",
           paddingBottom:
-            "max(1.25rem, calc(var(--speak-page-safe-bottom) + 0.75rem))",
+            "max(5.5rem, calc(var(--speak-page-safe-bottom) + 4.5rem))",
           opacity: showFilmShell && !showGreeting && !filmFadeOut ? 1 : 0,
           transition: `opacity ${MONTAGE_TO_BLUR_MS}ms cubic-bezier(0.4, 0, 0.2, 1)`,
           pointerEvents:
@@ -1378,20 +1320,15 @@ export function CinematicIntro() {
         }}
       >
         <div
-          className={`relative aspect-[16/9] w-full max-w-[40rem] max-h-[min(58vh,28rem)] overflow-hidden rounded-[18px] sm:rounded-[22px] group-data-[phone-orientation=portrait]/phone:max-h-[min(42vh,22rem)] group-data-[phone-orientation=portrait]/phone:w-[calc(100%-0.5rem)] group-data-[phone-orientation=portrait]/phone:max-w-none ${
+          className={`relative aspect-[16/9] w-full max-w-[40rem] max-h-[min(52vh,26rem)] overflow-hidden rounded-[14px] bg-black group-data-[phone-orientation=portrait]/phone:max-h-[min(40vh,20rem)] group-data-[phone-orientation=portrait]/phone:w-[calc(100%-0.5rem)] group-data-[phone-orientation=portrait]/phone:max-w-none ${
             showFilmShell ? "" : "pointer-events-none absolute"
           }`}
           style={{
-            border: "0.5px solid rgba(255,255,255,0.55)",
-            background: "rgba(255,255,255,0.12)",
-            boxShadow:
-              "0 20px 50px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.65), inset 0 -1px 0 rgba(255,255,255,0.12)",
-            backdropFilter: "blur(28px) saturate(170%)",
-            WebkitBackdropFilter: "blur(28px) saturate(170%)",
+            border: "1.5px solid #0A0A0A",
             opacity: showFilmShell ? 1 : 0,
           }}
         >
-          <div className="absolute inset-[1px] overflow-hidden rounded-[17px] sm:rounded-[21px] bg-black/80">
+          <div className="absolute inset-0 overflow-hidden bg-black">
             <div
               className="absolute inset-0"
               style={{
@@ -1448,7 +1385,7 @@ export function CinematicIntro() {
                   type="button"
                   onClick={startIntro}
                   disabled={!ready}
-                  className="flex h-16 w-16 items-center justify-center rounded-full bg-white/95 transition hover:bg-white disabled:opacity-40"
+                  className="flex h-16 w-16 items-center justify-center rounded-full bg-white transition hover:bg-white/92 disabled:opacity-40"
                   aria-label="Play intro"
                 >
                   <PlayGlyph />
@@ -1497,15 +1434,13 @@ export function CinematicIntro() {
           </div>
         </div>
 
-        {/* Captions under the glass stage — same type as greeting */}
+        {/* Captions under the stage */}
         {showFilmShell ? (
           <div className="flex w-full shrink-0 justify-center px-3">
             <p
-              className={`min-h-[2.75em] max-w-[min(24rem,94%)] text-center text-[16px] sm:text-[17px] ${INTRO_MESSAGE_TYPE}`}
+              className={`min-h-[2.75em] max-w-[min(24rem,94%)] text-center text-[16px] text-[#0A0A0A] sm:text-[17px] ${INTRO_MESSAGE_TYPE}`}
               style={{
-                color: CAPTION_COLOR,
                 visibility: showCaptionUnder ? "visible" : "hidden",
-                textShadow: "0 1px 14px rgba(0,0,0,0.55)",
               }}
               aria-hidden={!showCaptionUnder}
             >
@@ -1515,32 +1450,28 @@ export function CinematicIntro() {
         ) : null}
 
         {(showIdle || showVideo) && !showGreeting ? (
-          <>
+          <div
+            className="absolute inset-x-0 bottom-0 z-[60] flex items-center justify-between gap-4 px-6"
+            style={{
+              paddingBottom:
+                "max(1.5rem, calc(var(--speak-page-safe-bottom) + 1rem))",
+            }}
+          >
             <button
               type="button"
               onClick={goBack}
-              aria-label="Back"
-              className="absolute z-[60] flex h-10 w-10 items-center justify-center rounded-full text-white/90 transition hover:bg-white/15"
-              style={{
-                top: INTRO_ARROW_TOP,
-                left: "max(0.65rem, env(safe-area-inset-left))",
-              }}
+              className="text-[15px] font-medium text-[#0A0A0A] transition hover:opacity-70"
             >
-              <BackArrowGlyph />
+              Back
             </button>
             <button
               type="button"
               onClick={goForward}
-              aria-label="Skip to name"
-              className="absolute z-[60] flex h-10 w-10 items-center justify-center rounded-full text-white/90 transition hover:bg-white/15"
-              style={{
-                top: INTRO_ARROW_TOP,
-                right: "max(0.65rem, env(safe-area-inset-right))",
-              }}
+              className="inline-flex h-11 min-w-[7.5rem] items-center justify-center rounded-full bg-[#0A0A0A] px-8 text-[14px] font-semibold text-white transition hover:bg-black"
             >
-              <ForwardArrowGlyph />
+              Next
             </button>
-          </>
+          </div>
         ) : null}
       </div>
 
@@ -1582,7 +1513,7 @@ export function CinematicIntro() {
 
       {showSpeakEnd ? (
         <div
-          className="absolute inset-0 z-20 flex flex-col items-center justify-center"
+          className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-white"
           style={{
             paddingTop: "max(1rem, var(--speak-page-safe-top))",
             paddingBottom: "max(1rem, var(--speak-page-safe-bottom))",
@@ -1590,21 +1521,9 @@ export function CinematicIntro() {
             paddingRight: "max(1.25rem, env(safe-area-inset-right))",
           }}
         >
-          <button
-            type="button"
-            onClick={goBack}
-            aria-label="Back"
-            className="absolute z-30 flex h-10 w-10 items-center justify-center rounded-full text-white/90 transition hover:bg-white/15"
-            style={{
-              top: INTRO_ARROW_TOP,
-              left: "max(0.65rem, env(safe-area-inset-left))",
-            }}
-          >
-            <BackArrowGlyph />
-          </button>
-          <div className="flex flex-col items-center justify-center text-center">
+          <div className="flex flex-col items-center justify-center gap-6 text-center">
             <div
-              className="flex items-center justify-center"
+              className="flex flex-col items-center justify-center gap-5"
               style={{
                 opacity: speakLogo || speakIn ? 1 : 0,
                 transform:
@@ -1615,7 +1534,8 @@ export function CinematicIntro() {
                   "opacity 700ms cubic-bezier(0.22, 1, 0.36, 1), transform 700ms cubic-bezier(0.22, 1, 0.36, 1)",
               }}
             >
-              <SpeakAppIcon className="h-[8.25rem] w-[8.25rem] sm:h-[10rem] sm:w-[10rem]" />
+              <SpeakAppIcon className="h-[7.5rem] w-[7.5rem] sm:h-[9rem] sm:w-[9rem]" />
+              <SpeakWordmark className="text-[42px] sm:text-[48px]" />
             </div>
           </div>
         </div>
@@ -1624,7 +1544,7 @@ export function CinematicIntro() {
       <div
         className="pointer-events-none absolute inset-0 z-50"
         style={{
-          background: "#000000",
+          background: "#ffffff",
           opacity: nameFade || endScreenFade ? 1 : 0,
           transition: `opacity ${
             nameFade ? FADE_TO_NAME_MS : END_SCREEN_FADE_MS

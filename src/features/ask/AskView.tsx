@@ -19,6 +19,7 @@ import {
   X,
 } from "lucide-react";
 import { useTabBarVisibility } from "@/components/layout/TabBarVisibility";
+import { SpeakWordmark } from "@/components/ui/SpeakWordmark";
 import { SoftKeyboard } from "@/features/ask/SoftKeyboard";
 import { VoiceNotePanel } from "@/features/ask/VoiceNotePanel";
 import type { AskMessage, AskPageContent } from "@/types";
@@ -203,7 +204,12 @@ export function AskView({ data }: AskViewProps) {
       onClick={dismissKeyboard}
     >
       <div className="relative mx-5 mb-3 mt-1 shrink-0">
-        <h1 className="page-title text-center text-[24px]">Speak</h1>
+        <h1 className="text-center">
+          <SpeakWordmark
+            tone="light"
+            className="text-[28px] sm:text-[30px]"
+          />
+        </h1>
         {threadTitle ? (
           <p className="mt-0.5 text-center text-[11px] text-white/65">
             {threadTitle}

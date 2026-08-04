@@ -2,25 +2,21 @@
 
 import { FormEvent, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { DemoBackArrow } from "@/components/layout/DemoBackArrow";
 import { SoftKeyboard } from "@/features/ask/SoftKeyboard";
 import { saveViewerName } from "@/lib/account";
 
 const TITLE = "What's your first name?";
-const NAME_BG_SRC = "/images/intro/name-bg-ocean.jpg";
-const BLACK_REVEAL_MS = 1400;
 const TITLE_CHAR_MS = 62;
 const FORM_REVEAL_DELAY_MS = 500;
 
 /**
- * Name capture — original sky-half layout + Speak SoftKeyboard on field tap.
+ * Name capture — white onboarding canvas + SoftKeyboard on field tap.
  */
 export function ExploreNameForm() {
   const router = useRouter();
   const [firstName, setFirstName] = useState("");
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [blackOut, setBlackOut] = useState(true);
   const [titleText, setTitleText] = useState("");
   const [titleDone, setTitleDone] = useState(false);
   const [formVisible, setFormVisible] = useState(false);
@@ -83,17 +79,8 @@ export function ExploreNameForm() {
     inputRef.current?.focus({ preventScroll: true });
   }
 
-  // Black → page reveal
-  useEffect(() => {
-    const reveal = window.requestAnimationFrame(() => {
-      window.requestAnimationFrame(() => setBlackOut(false));
-    });
-    return () => window.cancelAnimationFrame(reveal);
-  }, []);
-
   // Type the prompt, then reveal field + actions
   useEffect(() => {
-    if (blackOut) return;
     let cancelled = false;
     let i = 0;
     setTitleText("");
@@ -121,64 +108,34 @@ export function ExploreNameForm() {
       cancelled = true;
       window.clearTimeout(start);
     };
-  }, [blackOut]);
+  }, []);
 
   return (
     <main
-      className="relative flex min-h-0 flex-1 flex-col overflow-hidden bg-[#6a7a88]"
+      className="relative flex min-h-0 flex-1 flex-col overflow-hidden bg-white"
       onClick={dismissKeyboard}
     >
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        src={NAME_BG_SRC}
-        alt=""
-        className="pointer-events-none absolute inset-0 h-full w-full object-cover object-center"
-        aria-hidden
-      />
       <div
-        className="pointer-events-none absolute inset-x-0 top-0 h-[55%] bg-gradient-to-b from-black/40 via-black/15 to-transparent"
-        aria-hidden
-      />
-
-      <div
-        className="pointer-events-none absolute inset-0 z-40 bg-black"
-        style={{
-          opacity: blackOut ? 1 : 0,
-          transition: `opacity ${BLACK_REVEAL_MS}ms cubic-bezier(0.4, 0, 0.2, 1)`,
-          visibility: blackOut ? "visible" : "hidden",
-        }}
-        aria-hidden
-      />
-
-      <div onClick={(event) => event.stopPropagation()}>
-        <DemoBackArrow tone="light" onClick={goBackToIntro} />
-      </div>
-
-      <div
-        className="relative z-50 flex h-[48%] flex-col items-center justify-center px-7"
+        className="relative z-50 flex flex-1 flex-col items-center justify-center px-7"
         style={{
           paddingTop: "max(2.5rem, calc(var(--speak-page-safe-top) + 1.5rem))",
           paddingLeft: "max(1.25rem, env(safe-area-inset-left))",
           paddingRight: "max(1.25rem, env(safe-area-inset-right))",
         }}
       >
-        {/* Fixed stack so the typed title doesn’t jump when the field appears */}
         <div className="flex w-full max-w-[19rem] flex-col items-center">
           <div className="relative w-full">
             <p
-              className="invisible whitespace-pre-wrap text-center text-[26px] font-medium leading-snug tracking-[-0.02em] text-white sm:text-[28px]"
+              className="invisible whitespace-pre-wrap text-center text-[26px] font-medium leading-snug tracking-[-0.02em] text-[#0A0A0A] sm:text-[28px]"
               aria-hidden
             >
               {TITLE}
             </p>
-            <p
-              className="absolute inset-0 whitespace-pre-wrap text-center text-[26px] font-medium leading-snug tracking-[-0.02em] text-white sm:text-[28px]"
-              style={{ textShadow: "0 1px 14px rgba(0,0,0,0.4)" }}
-            >
+            <p className="absolute inset-0 whitespace-pre-wrap text-center text-[26px] font-medium leading-snug tracking-[-0.02em] text-[#0A0A0A] sm:text-[28px]">
               {titleText}
               {titleText || titleDone ? (
                 <span
-                  className="ml-0.5 inline-block h-[1.05em] w-[2px] translate-y-[2px] bg-white"
+                  className="ml-0.5 inline-block h-[1.05em] w-[2px] translate-y-[2px] bg-[#0A0A0A]"
                   style={{
                     animation: formVisible
                       ? "none"
@@ -203,30 +160,18 @@ export function ExploreNameForm() {
             onClick={(event) => event.stopPropagation()}
           >
             <div
-              className="relative flex h-9 w-full cursor-text items-center rounded-full px-4"
-              style={{
-                border: "0.5px solid rgba(255,255,255,0.55)",
-                background: "rgba(255,255,255,0.22)",
-                boxShadow:
-                  "inset 0 1px 0 rgba(255,255,255,0.65), 0 8px 24px rgba(0,0,0,0.12)",
-                backdropFilter: "blur(20px) saturate(160%)",
-                WebkitBackdropFilter: "blur(20px) saturate(160%)",
-              }}
+              className="relative flex h-11 w-full cursor-text items-center rounded-full border border-[#0A0A0A]/18 bg-[#F4F4F5] px-4"
               onClick={openKeyboard}
             >
               {!firstName && keyboardOpen ? (
                 <span
-                  className="pointer-events-none absolute left-4 top-1/2 h-[1.05em] w-[2px] -translate-y-1/2 bg-white"
+                  className="pointer-events-none absolute left-4 top-1/2 h-[1.05em] w-[2px] -translate-y-1/2 bg-[#0A0A0A]"
                   style={{
                     animation: "typing-caret-blink 1.05s step-end infinite",
                   }}
                   aria-hidden
                 />
               ) : null}
-              {/*
-                readOnly + inputMode=none blocks the native keyboard.
-                SoftKeyboard drives the value, same as Speak.
-              */}
               <input
                 ref={inputRef}
                 type="text"
@@ -243,27 +188,37 @@ export function ExploreNameForm() {
                 tabIndex={formVisible ? 0 : -1}
                 onFocus={openKeyboard}
                 onClick={openKeyboard}
-                className="h-full w-full cursor-text bg-transparent text-left text-[16px] font-normal text-white outline-none placeholder:text-white/45"
+                className="h-full w-full cursor-text bg-transparent text-left text-[16px] font-normal text-[#0A0A0A] outline-none placeholder:text-[#0A0A0A]/35"
               />
             </div>
 
             {error ? (
               <p
-                className="mt-2 text-center text-[12px] font-medium text-white/90"
+                className="mt-2 text-center text-[12px] font-medium text-[#0A0A0A]"
                 role="alert"
               >
                 {error}
               </p>
             ) : null}
 
-            {/* Same gap as title → field */}
-            <div className="mt-7 flex items-center justify-center">
+            <div className="mt-8 flex w-full items-center justify-between gap-4">
+              <button
+                type="button"
+                onClick={(event) => {
+                  event.stopPropagation();
+                  goBackToIntro();
+                }}
+                tabIndex={formVisible ? 0 : -1}
+                className="text-[15px] font-medium text-[#0A0A0A] transition hover:opacity-70"
+              >
+                Back
+              </button>
               <button
                 type="submit"
                 disabled={isSubmitting || !formVisible}
                 tabIndex={formVisible ? 0 : -1}
                 onClick={(event) => event.stopPropagation()}
-                className="inline-flex h-10 items-center justify-center rounded-full bg-white px-5 text-[14px] font-semibold text-[#0A0A0A] shadow-[0_8px_24px_rgba(0,0,0,0.22)] transition hover:bg-white/92 disabled:opacity-60"
+                className="inline-flex h-11 min-w-[10rem] items-center justify-center rounded-full bg-[#0A0A0A] px-6 text-[14px] font-semibold text-white transition hover:bg-black disabled:opacity-60"
               >
                 {isSubmitting ? "…" : "Continue to demo"}
               </button>

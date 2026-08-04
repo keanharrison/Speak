@@ -1,10 +1,18 @@
 import type { Metadata, Viewport } from "next";
-import { IBM_Plex_Mono, Inter } from "next/font/google";
+import { IBM_Plex_Mono, Inter, Inter_Tight } from "next/font/google";
 import "./globals.css";
 
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-inter",
+  display: "swap",
+});
+
+/** Brand display — Inter Tight ≈ Superpower NB International substitute */
+const interTight = Inter_Tight({
+  subsets: ["latin"],
+  weight: ["700", "800"],
+  variable: "--font-speak-brand",
   display: "swap",
 });
 
@@ -53,7 +61,7 @@ export const viewport: Viewport = {
   maximumScale: 1,
   viewportFit: "cover",
   /** Match canvas so iOS doesn't paint a black status strip */
-  themeColor: "#f5f0e8",
+  themeColor: "#ffffff",
   /** Prefer resizing the layout when Safari chrome / keyboard shows */
   interactiveWidget: "resizes-content",
 };
@@ -66,7 +74,7 @@ export default function RootLayout({
   return (
     <html lang="en" data-theme="cream">
       <body
-        className={`${inter.variable} ${ibmPlexMono.variable} font-sans antialiased`}
+        className={`${inter.variable} ${interTight.variable} ${ibmPlexMono.variable} font-sans antialiased`}
       >
         {children}
       </body>
